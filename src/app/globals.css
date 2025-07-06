@@ -1,0 +1,426 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F7F5F4;
+  --foreground: #4A332E;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-noto-serif-georgian);
+}
+
+* {
+  box-sizing: border-box
+}
+
+*:before,
+*:after {
+  box-sizing: border-box
+}
+
+article,
+aside,
+dialog,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+video,
+iframe,
+blockquote,
+cite,
+p {
+  display: block;
+  margin: 0;
+  padding: 0
+}
+
+fieldset {
+  border: none;
+  display: block;
+  margin: 0;
+  padding: 0
+}
+
+label {
+  position: relative;
+  display: block;
+  margin: 0
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0
+}
+
+img,
+video {
+  max-width: 100%
+}
+
+ins {
+  text-decoration: none
+}
+
+table {
+  border-collapse: collapse
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  background: var(--background);
+  color: var(--foreground);  
+  transition: .3s cubic-bezier(0.76, 0, 0.24, 1)
+}
+
+a {
+  text-decoration: none;
+  color: #F24822;
+  transition: .2s;
+  outline: none;
+}
+
+a:hover,
+a:focus {
+  outline: none;
+  text-decoration: none;
+  color: #AA2608;
+  outline: none;
+}
+
+input,
+textarea,
+button,
+select,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+}
+
+button,
+input[type=submit] {
+  cursor: pointer;
+  outline: none;
+}
+
+button:focus,
+input[type=submit]:focus {
+  outline: none;
+}
+
+.debugbar {
+  color: #fff;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  padding: 6px;
+  gap: 6px;
+}
+
+.debugbar > div {
+  background: #222;
+  padding: 3px;
+}
+
+
+
+.btn {
+  font-size: 1.15rem;
+  font-weight: normal;
+  line-height: 1.1;
+  color: #8A2008;
+  border: 1px solid transparent;
+  background: #EAE7E6;
+  border-radius: 12px;
+  box-shadow: 0px 3px 0px #d4d0ce;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0.6em 1.5em;
+  height: 56px;
+
+  transition: 0.1s;
+  user-select: none;
+}
+
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: 0px 0px 0px #D7D3D2;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-small {
+  font-size: 1rem;
+  height: 44px;
+}
+
+.btn-large {
+  font-size: 1.25rem;
+  height: 72px;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #F24822;
+  box-shadow: 0px 3px 0px #AA2608;
+}
+
+.btn-primary:active {
+  box-shadow: 0px 0px 0px #AA2608;
+}
+
+
+
+
+.gameplay-game {
+
+}
+
+.slider {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.slider-wrapper {
+  overflow: hidden;
+}
+
+.slider-track {
+  width: fit-content;
+  display: flex;
+  flex-wrap: nowrap;
+  transition: 0.8s;
+  /* transition: 1.5s cubic-bezier(0.83, 0, 0.17, 1); */
+}
+
+.slider-slide {
+  width: 100vw;
+  min-width: 100vw;
+  /* background: yellow;
+  width: 45vw;
+  min-width: 45vw; */
+
+  transition: 0.8s;
+  /* transition: 1.5s cubic-bezier(0.83, 0, 0.17, 1); */
+}
+
+.slider-slide-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px;
+
+  width: 100%;
+  height: 100%;
+
+  transition: 0.99s;
+  /* transition: 1.5s cubic-bezier(0.83, 0, 0.17, 1); */
+}
+
+.slider-slide.processed:not(.learned) {
+  opacity: 0;
+  /* transform: scale(0.95) rotate(-2deg) translateX( var(--slide-width, 0) ); */
+  transform: scale(0.95) rotate(-40deg);
+  transform-origin: 0% 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.slider-slide.learned {
+  opacity: 0;
+  transform-origin: center center;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.slider-slide.learned .slider-slide-inner {
+  transform: translateX( calc(var(--slide-width, 0) / 2) ) rotate(5deg) scale(0.8);
+}
+
+
+/* The green ring on learned card */
+.slider-slide.learned .flashcard-front {
+  box-shadow: inset 0px 0px 0px 8px rgba(14,194,113,1);
+}
+
+
+.slider-slide-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 400px;
+  max-width: 100%;
+  padding: 0 32px;
+}
+
+.finish-message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 440px;
+  max-width: 100%;
+  margin: auto;
+  padding: 32px;
+  min-height: 90vh;
+}
+
+.finish-message-title {
+  text-align: center;
+}
+
+.finish-message-text {
+  text-align: center;
+}
+
+.finish-message-text p {
+  margin: 0;
+  margin-bottom: 0.5em;
+}
+
+.finish-message-actions {
+  margin-top: 24px;
+}
+
+
+.divider {
+  background: rgba(0, 0, 0, 0.1);
+  display: block;
+  width: 100%;
+  height: 2px;
+  border-radius: 6px;
+}
+
+.hint {
+  font-size: 0.87rem;
+  opacity: 0.6;
+  margin-top: 16px;
+}
+
+.navbar {
+  width: 100%;
+}
+
+.navbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  width: 100%;
+  margin: auto;
+}
+
+.navbar-aside {
+  width: 60px;
+  max-width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-title {
+  font-size: 0.875rem;
+  text-align: center;
+
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-button {
+  border: none;
+  background: transparent;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-button img {
+  display: block;
+  height: 16px;
+  width: auto;
+}
+
+.screen-gameplay {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+}
+
+.gameplay-game {
+  overflow: hidden;
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* :root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+} */
