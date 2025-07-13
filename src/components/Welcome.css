@@ -17,20 +17,12 @@
     padding-left: 32px;
 }
 
-.welcome-logo {
+.welcome-logo svg {
     display: block;
     width: 100px;
     height: auto;
     margin: 0;
     margin-bottom: 24px;
-}
-
-.welcome-title {
-    font-weight: 600;
-    font-size: 2rem;
-    letter-spacing: -0.02em;
-
-    text-align: center;
 }
 
 .welcome-descr {
