@@ -2,9 +2,6 @@ import { useState, useEffect } from 'react';
 
 import './Welcome.css';
 
-import Logo from '../assets/images/logo.png';
-import iconReset from '../assets/images/icon-reset-red.svg';
-
 const Welcome = ({onPlay, alphabetLength, onReset}) => {
 
     const [showSettings, setShowSettings] = useState(false);
@@ -44,7 +41,7 @@ const Welcome = ({onPlay, alphabetLength, onReset}) => {
             <div className="welcome-body">
 
                 <div className="welcome-header">
-                    <img className='welcome-logo' src={Logo} alt="" />
+                    <img className='welcome-logo' src="/images/logo.png" alt="" />
                     <h1 className="welcome-title">Tbilingo</h1>
                     <h2 className='welcome-descr'>Georgian alphabet flashcards</h2>
                 </div>
@@ -97,7 +94,7 @@ const Welcome = ({onPlay, alphabetLength, onReset}) => {
 
                     <div className="settings-item">
                         <button className='reset-button' onClick={onReset}>
-                            <img src={iconReset} alt="" />
+                            <img src="/images/icon-reset-red.svg" alt="" />
                             <span>Reset progress</span>
                         </button>
                     </div>

@@ -75,7 +75,7 @@
 
 .welcome-settings-btn {
     font-size: 0;
-    background: url(../assets/images/icon-gear-black.svg) no-repeat center center;
+    background: url(/images/icon-gear-black.svg) no-repeat center center;
     background-size: auto 24px;
     border: none;
   
@@ -116,7 +116,7 @@
 
 .welcome-settings-close {
     font-size: 0;
-    background: url(../assets/images/icon-close-black.svg) no-repeat center center;
+    background: url(/images/icon-close-black.svg) no-repeat center center;
     background-size: auto 24px;
     border: none;
 
