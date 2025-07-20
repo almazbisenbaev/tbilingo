@@ -1,0 +1,33 @@
+.course-link {
+    color: #F24822;
+    background: #F2482210;
+    border-radius: 16px;
+
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    width: 100%;
+    min-height: 80px;
+    padding: 20px;
+}
+
+.course-link:hover {
+    color: #F24822;
+    background: #F2482220;
+}
+
+.course-link-content {
+
+}
+
+.course-link-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.course-link-label {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: #555;
+}

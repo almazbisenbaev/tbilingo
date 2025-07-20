@@ -149,8 +149,9 @@ input[type=submit]:focus {
 
 .btn {
   font-size: 1.15rem;
-  font-weight: normal;
+  font-weight: 600;
   line-height: 1.1;
+  text-decoration: none;
   color: #8A2008;
   border: 1px solid transparent;
   background: #EAE7E6;
@@ -168,9 +169,14 @@ input[type=submit]:focus {
   user-select: none;
 }
 
+.btn:hover, .btn:focus {
+  color: #8A2008;
+}
+
 .btn:active {
-  transform: translateY(2px);
+  color: #8A2008;
   box-shadow: 0px 0px 0px #D7D3D2;
+  transform: translateY(2px);
 }
 
 .btn-block {
@@ -191,6 +197,10 @@ input[type=submit]:focus {
   color: #fff;
   background-color: #F24822;
   box-shadow: 0px 3px 0px #AA2608;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  color: #fff;
 }
 
 .btn-primary:active {
@@ -336,9 +346,7 @@ input[type=submit]:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
   width: 100%;
-  margin: auto;
 }
 
 .navbar-aside {
@@ -424,3 +432,215 @@ input[type=submit]:focus {
     background-color: #f9f9f9;
   }
 } */
+
+
+
+
+.welcome {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  min-height: 99vh;
+  padding-top: 32px;
+  padding-right: 32px;
+  padding-left: 32px;
+
+  width: 480px;
+  max-width: 100%;
+  margin: auto;
+}
+
+.welcome-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  padding-right: 32px;
+  padding-left: 32px;
+  padding-bottom: 32px;
+}
+
+.welcome-logo svg {
+  display: block;
+  width: 120px;
+  height: auto;
+  margin: 0;
+  margin-bottom: 24px;
+}
+
+.welcome-descr {
+  font-size: 1.2rem;
+  line-height: 1.4;
+  font-weight: normal;
+
+  text-align: center;
+}
+
+.welcome-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.welcome-progress {
+  font-size: 0.95rem;
+
+  padding-top: 16px;
+}
+
+.welcome-footer {
+  font-size: 0.875rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+
+  padding-right: 32px;
+  padding-left: 32px;
+  margin-top: 32px;
+}
+
+
+.welcome-settings-btn {
+  font-size: 0;
+  background: url(/images/icon-gear-black.svg) no-repeat center center;
+  background-size: auto 24px;
+  border: none;
+
+  position: absolute;
+  z-index: 1;
+  top: 24px;
+  right: 24px;
+
+  width: 40px;
+  height: 40px;
+}
+
+.settings-drawer {
+  background: #FFFFFF;
+  border-radius: 20px 0 0 20px;
+  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.1);
+
+  max-width: 80vw;
+  width: 400px;
+  position: fixed;
+  z-index: 500;
+  top: 16px;
+
+  padding: 32px;
+
+  opacity: 0;
+  visibility: hidden;
+  right: -80vw;
+
+  transition: 0.3s;
+}
+
+.settings-drawer-shown {
+  right: 0;
+  opacity: 1;
+  visibility: visible;
+}
+
+.welcome-settings-close {
+  font-size: 0;
+  background: url(/images/icon-close-black.svg) no-repeat center center;
+  background-size: auto 24px;
+  border: none;
+
+  width: 30px;
+  height: 30px;
+
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+}
+
+.settings-items {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.settings-item {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+
+.settings-ff-items {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.settings-ff-item {
+  flex: 1;
+  position: relative;
+}
+
+.settings-ff-item input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 2px;
+  opacity: 0;
+}
+
+.settings-ff-item-preview {
+  font-size: 28px;
+  background: #EFE9E9;
+  border: 2px solid transparent;
+  border-radius: 6px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  padding-bottom: 10px;
+
+  transition: 0.2s;;
+}
+
+.settings-ff-item input:checked + .settings-ff-item-preview {
+  border-color: rgba(0, 0, 0, 0.5);
+  background-color: #d4d0ce;
+}
+
+.settings-ff-item-sans .settings-ff-item-preview {
+  font-family: sans-serif;
+}
+
+.settings-ff-item-serif .settings-ff-item-preview {
+  font-family: var(--font-noto-serif-georgian);
+}
+
+
+.reset-button {
+  font-size: 1rem;
+  color: #F22237;
+  background: transparent;
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0;
+}
+
+.reset-button img {
+  height: 1.1em;
+  width: auto;
+}
+
+

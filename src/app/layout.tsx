@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from '@vercel/analytics/next';
 import { Inter } from 'next/font/google';
 import { Noto_Serif_Georgian } from 'next/font/google';
 import "./globals.css";
@@ -15,7 +16,7 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-
+// import IOSInstallPrompt from '@/components/IOSInstallPrompt';
 
 export const metadata: Metadata = {
   title: "Tbilingo – Learn Georgian alphabet with flashcards",
@@ -40,6 +41,10 @@ export default function RootLayout({
         className={`${notoS_Georgian.variable} ${inter.variable} antialiased`}
       >
         {children}
+
+        {/* <IOSInstallPrompt /> */}
+
+        <Analytics />
       </body>
     </html>
   );

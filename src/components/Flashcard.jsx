@@ -31,14 +31,14 @@ const Flashcard = ({letter, onNext, onLearned}) => {
                     <div className='flashcard-name'>{letter.name}</div>
                     <div className='flashcard-pronunciation'>Pronounciation: <b>{letter.pronunciation}</b></div>
                     <div>
-                    <audio
-                        controls
-                        className="flashcard-audio"
-                        src={letter.audioUrl}
-                        preload="auto"
-                    >
-                        Your browser does not support the audio element.
-                    </audio>
+                        {/* <audio
+                            controls
+                            className="flashcard-audio"
+                            src={letter.audioUrl}
+                            preload="auto"
+                        >
+                            Your browser does not support the audio element.
+                        </audio> */}
                     </div>
                 </div>
             
