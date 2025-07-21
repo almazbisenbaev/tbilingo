@@ -28,7 +28,7 @@ export default function AlphabetCourse() {
 
 
   return (
-    <div className='h-screen flex flex-col justify-between py-4'>
+    <div className='h-svh flex flex-col justify-between py-4'>
 
       <div className='w-full max-w-2xl mx-auto p-4'>
         <div className="navbar">

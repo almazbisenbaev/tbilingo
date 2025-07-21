@@ -147,7 +147,7 @@ export default function AlphabetLearn(){
 
 
     return (
-        <div className='h-screen flex flex-col justify-between py-4'>
+        <div className='h-svh flex flex-col justify-between py-4'>
 
             {/* <div className={`screen-gameplay font-type-${fontType}`}> */}
             <div className={`screen-gameplay`}>
