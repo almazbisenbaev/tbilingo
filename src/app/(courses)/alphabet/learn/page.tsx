@@ -24,7 +24,7 @@ export default function AlphabetLearn(){
     // IDs of characters that are found in localstorage
     const [learnedCharacters, setLearnedCharacters] = useState<number[]>([]); 
 
-    const [learnedCharactersCount, setLearnedCharactersCount] = useState<number>(0); 
+    // const [learnedCharactersCount, setLearnedCharactersCount] = useState<number>(0); 
   
     // Characters that the viewers has seen suring the gameplay
     const [processedCharacters, setProcessedCharacters] = useState<number[]>([]); 
@@ -35,10 +35,19 @@ export default function AlphabetLearn(){
     // Need to calculate the width of flashcards so I can transform them with animation
     const [slideWidth, setSlideWidth] = useState<number>(0);
 
-    // const [fontType, setFontType] = useState<'sans' | 'serif'>('sans');
+    const [fontType, setFontType] = useState<'sans' | 'serif'>('sans');
 
 
     useEffect(() => {
+
+
+        // Load font setting from local storage
+        const storedFontSettingFromLocal = localStorage.getItem('fontType');
+        if (storedFontSettingFromLocal !== null) {
+            setFontType(storedFontSettingFromLocal as 'sans' | 'serif');
+        }
+
+
     
         // Load learned characters from localstorage
         const learnedCharactersInLocal = JSON.parse(localStorage.getItem('learnedLetters') || '[]');
@@ -69,34 +78,18 @@ export default function AlphabetLearn(){
     }, []);
 
 
-    // When charactersToReview changes
+    // When learnedCharacters changes
     useEffect(() => {
         console.log('learnedCharacters state updated:');
         console.log(learnedCharacters);
     }, [learnedCharacters]);
+
 
     // When charactersToReview changes
     useEffect(() => {
         console.log('charactersToReview state updated:');
         console.log(charactersToReview);
     }, [charactersToReview]);
-
-
-    // useEffect(() => {
-    //   // Count the learned characters
-    //   const learnedCharactersInLocal: number[] = JSON.parse(localStorage.getItem('learnedLetters') || '[]');
-    //   setLearnedCharactersCount(learnedCharactersInLocal.length);
-    //   // Load font setting from local storage
-    //   const storedFontSettingFromLocal = localStorage.getItem('fontType');
-    //   if (storedFontSettingFromLocal !== null) {
-    //     setFontType(storedFontSettingFromLocal as 'sans' | 'serif');
-    //   }
-    //   if(screen == 'gameplay'){
-    //     if (processedCharacters.length >= charactersToReview.length) {
-    //       changeScreen('all_reviewed');
-    //     }
-    //   }
-    // }, [processedCharacters, charactersToReview.length, screen]);
 
 
     // The function that moves the slides when a flashcard is processed
@@ -149,8 +142,7 @@ export default function AlphabetLearn(){
     return (
         <div className='h-svh flex flex-col justify-between py-4'>
 
-            {/* <div className={`screen-gameplay font-type-${fontType}`}> */}
-            <div className={`screen-gameplay`}>
+            <div className={`screen-gameplay font-type-${fontType}`}>
 
                 <div className='w-full max-w-2xl mx-auto p-4'>
                     <div className="navbar">

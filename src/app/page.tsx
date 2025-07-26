@@ -4,7 +4,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link'
+// import Link from 'next/link'
 import CourseLink from '@/components/CourseLink';
 
 export default function App() {
@@ -13,14 +13,14 @@ export default function App() {
   const [selectedFontType, setSelectedFontType] = useState('');
 
 
-  // useEffect(() => {
-  //   // Load font type from localstorage and set as checked in settings
-  //   const storedFontSettingFromLocal = localStorage.getItem('fontType');
-  //   if (storedFontSettingFromLocal !== null) {
-  //   setSelectedFontType(storedFontSettingFromLocal);
-  //   // console.log(storedFontSettingFromLocal);
-  //   }
-  // }, []);
+  useEffect(() => {
+    // Load font type from localstorage and set as checked in settings
+    const storedFontSettingFromLocal = localStorage.getItem('fontType');
+    if (storedFontSettingFromLocal !== null) {
+    setSelectedFontType(storedFontSettingFromLocal);
+    console.log(storedFontSettingFromLocal);
+    }
+  }, []);
 
 
   // When user chooses a font type
