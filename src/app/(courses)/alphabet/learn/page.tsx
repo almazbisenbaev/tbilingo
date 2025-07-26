@@ -51,8 +51,8 @@ export default function AlphabetLearn(){
 
         const charactersMissingInLocal = alphabet.filter((letter: any) => !learnedCharactersInLocal.includes(letter.id)) as AlphabetLetter[];
 
-        console.log('charactersMissingInLocal');
-        console.log(charactersMissingInLocal);
+        // console.log('charactersMissingInLocal');
+        // console.log(charactersMissingInLocal);
 
         setProcessedCharacters([]);
         setLearnedCharacters([]);
@@ -73,17 +73,17 @@ export default function AlphabetLearn(){
 
 
     // When learnedCharacters changes
-    useEffect(() => {
-        console.log('learnedCharacters state updated:');
-        console.log(learnedCharacters);
-    }, [learnedCharacters]);
+    // useEffect(() => {
+        // console.log('learnedCharacters state updated:');
+        // console.log(learnedCharacters);
+    // }, [learnedCharacters]);
 
 
     // When charactersToReview changes
-    useEffect(() => {
-        console.log('charactersToReview state updated:');
-        console.log(charactersToReview);
-    }, [charactersToReview]);
+    // useEffect(() => {
+    //     console.log('charactersToReview state updated:');
+    //     console.log(charactersToReview);
+    // }, [charactersToReview]);
 
 
     // The function that moves the slides when a flashcard is processed
