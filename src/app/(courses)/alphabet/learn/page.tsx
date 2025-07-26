@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-// import shuffleArray from '@/utils/shuffle-array';
+import shuffleArray from '@/utils/shuffle-array';
 
 import { alphabet } from '@/data/alphabet';
 import { useFontStore } from '@/stores/fontStore';
@@ -41,8 +41,6 @@ export default function AlphabetLearn(){
 
     useEffect(() => {
 
-
-    
         // Load learned characters from localstorage
         const learnedCharactersInLocal = JSON.parse(localStorage.getItem('learnedLetters') || '[]');
 
@@ -57,8 +55,12 @@ export default function AlphabetLearn(){
         setProcessedCharacters([]);
         setLearnedCharacters([]);
         setSlideWidth(0);
-        // setCharactersToReview(shuffleArray(charactersMissingInLocal));
-        setCharactersToReview(charactersMissingInLocal);
+
+        const shuffledCharactersMissingInLocal = shuffleArray(charactersMissingInLocal);
+
+        const selectedCharacters = shuffledCharactersMissingInLocal.slice(0, 10);
+
+        setCharactersToReview(selectedCharacters);
 
         setTimeout(() => {
             const element = document.querySelector('.slider-slide');
