@@ -7,6 +7,7 @@ import Link from 'next/link';
 // import shuffleArray from '@/utils/shuffle-array';
 
 import { alphabet } from '@/data/alphabet';
+import { useFontStore } from '@/stores/fontStore';
 
 // Type for a single alphabet letter
 interface AlphabetLetter {
@@ -35,17 +36,10 @@ export default function AlphabetLearn(){
     // Need to calculate the width of flashcards so I can transform them with animation
     const [slideWidth, setSlideWidth] = useState<number>(0);
 
-    const [fontType, setFontType] = useState<'sans' | 'serif'>('sans');
+    const { fontType } = useFontStore();
 
 
     useEffect(() => {
-
-
-        // Load font setting from local storage
-        const storedFontSettingFromLocal = localStorage.getItem('fontType');
-        if (storedFontSettingFromLocal !== null) {
-            setFontType(storedFontSettingFromLocal as 'sans' | 'serif');
-        }
 
 
     

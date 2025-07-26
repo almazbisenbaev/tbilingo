@@ -3,35 +3,21 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 // import Link from 'next/link'
 import CourseLink from '@/components/CourseLink';
+import { useFontStore } from '@/stores/fontStore';
 
 export default function App() {
 
   const [showSettings, setShowSettings] = useState(false);
-  const [selectedFontType, setSelectedFontType] = useState('');
-
-
-  useEffect(() => {
-    // Load font type from localstorage and set as checked in settings
-    const storedFontSettingFromLocal = localStorage.getItem('fontType');
-    if (storedFontSettingFromLocal !== null) {
-    setSelectedFontType(storedFontSettingFromLocal);
-    console.log(storedFontSettingFromLocal);
-    }
-  }, []);
+  const { fontType, setFontType } = useFontStore();
 
 
   // When user chooses a font type
   const onFontSettingChange = (event : any) => {
-
     const choice = event.target.value;
-    setSelectedFontType(choice);
-    localStorage.setItem('fontType', choice);
-
-    // console.log(selectedFontType);
-    // console.log(localStorage.getItem('fontType'));
+    setFontType(choice);
   };
 
 
@@ -117,7 +103,7 @@ export default function App() {
                               <input name='font-type' 
                                       type="radio" 
                                       value='sans' 
-                                      checked={selectedFontType === 'sans'}
+                                      checked={fontType === 'sans'}
                                       onChange={onFontSettingChange}
                               />
                               <div className="settings-ff-item-preview">ჯ ფ ტ</div>
@@ -126,7 +112,7 @@ export default function App() {
                               <input name='font-type' 
                                       type="radio" 
                                       value='serif' 
-                                      checked={selectedFontType === 'serif'}
+                                      checked={fontType === 'serif'}
                                       onChange={onFontSettingChange}
                               />
                               <div className="settings-ff-item-preview">ჯ ფ ტ</div>
