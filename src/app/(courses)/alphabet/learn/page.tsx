@@ -36,6 +36,9 @@ export default function AlphabetLearn(){
     // Need to calculate the width of flashcards so I can transform them with animation
     const [slideWidth, setSlideWidth] = useState<number>(0);
 
+    // State to track if all cards have been reviewed
+    const [allCardsReviewed, setAllCardsReviewed] = useState<boolean>(false);
+
     const { fontType } = useFontStore();
 
 
@@ -72,6 +75,14 @@ export default function AlphabetLearn(){
 
     
     }, []);
+
+
+    // Check if all cards have been reviewed
+    useEffect(() => {
+        if (charactersToReview.length > 0 && processedCharacters.length === charactersToReview.length) {
+            setAllCardsReviewed(true);
+        }
+    }, [processedCharacters, charactersToReview]);
 
 
     // When learnedCharacters changes
@@ -138,72 +149,73 @@ export default function AlphabetLearn(){
     return (
         <div className='h-svh flex flex-col justify-between py-4'>
 
-            <div className={`screen-gameplay font-type-${fontType}`}>
+            {!allCardsReviewed && (
+                <div className={`screen-gameplay font-type-${fontType}`}>
 
-                <div className='w-full max-w-2xl mx-auto p-4'>
-                    <div className="navbar">
-                        <div className="navbar-row">
-                            <div className="navbar-aside">
-                            <Link href="/alphabet" className='navbar-button'>
-                                <Image
-                                src="/images/icon-back.svg"
-                                alt="Back"
-                                width={24}
-                                height={24}
-                                />
-                            </Link>
+                    <div className='w-full max-w-2xl mx-auto p-4'>
+                        <div className="navbar">
+                            <div className="navbar-row">
+                                <div className="navbar-aside">
+                                <Link href="/alphabet" className='navbar-button'>
+                                    <Image
+                                    src="/images/icon-back.svg"
+                                    alt="Back"
+                                    width={24}
+                                    height={24}
+                                    />
+                                </Link>
+                                </div>
+                                <div className="navbar-title"></div>
+                                <div className="navbar-aside"></div>
                             </div>
-                            <div className="navbar-title"></div>
-                            <div className="navbar-aside"></div>
                         </div>
                     </div>
-                </div>
 
-                <div className="gameplay-game">
-                    <div className="slider">
-                        <div className="slider-wrapper">
-                        <div className="slider-track">
-                            {charactersToReview.map((item, index) => {
-                                const isProcessed = processedCharacters.includes(item.id);
-                                const isLearned = learnedCharacters.includes(item.id);
-                                return  <div key={item.id} 
-                                            className={`slider-slide ${isProcessed ? 'processed' : 'not-processed'} ${isLearned ? 'learned' : 'not-learned'}`}
-                                                style={{
-                                                '--slide-width': slideWidth + 'px',
-                                                } as React.CSSProperties}
-                                        >
-                                            <div className='slider-slide-inner'>
+                    <div className="gameplay-game">
+                        <div className="slider">
+                            <div className="slider-wrapper">
+                            <div className="slider-track">
+                                {charactersToReview.map((item, index) => {
+                                    const isProcessed = processedCharacters.includes(item.id);
+                                    const isLearned = learnedCharacters.includes(item.id);
+                                    return  <div key={item.id} 
+                                                className={`slider-slide ${isProcessed ? 'processed' : 'not-processed'} ${isLearned ? 'learned' : 'not-learned'}`}
+                                                    style={{
+                                                    '--slide-width': slideWidth + 'px',
+                                                    } as React.CSSProperties}
+                                            >
+                                                <div className='slider-slide-inner'>
 
-                                                <Flashcard 
-                                                    letter={item} 
-                                                    onNext={() => markAsToReview(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
-                                                    onLearned={() => markAsLearned(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
-                                                />
+                                                    <Flashcard 
+                                                        letter={item} 
+                                                        onNext={() => markAsToReview(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
+                                                        onLearned={() => markAsLearned(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
+                                                    />
 
-                                                <div className='slider-slide-actions'>
-                                                    <button 
-                                                        className='btn btn-block btn-primary'
-                                                        onClick={event => {markAsToReview(item.id, index, event.currentTarget.closest('.slider-slide') as HTMLElement)}}
-                                                    >Next card</button>
-                                                    <button 
-                                                        className='btn btn-block'
-                                                        onClick={event => {markAsLearned(item.id, index, event.currentTarget.closest('.slider-slide') as HTMLElement)}}
-                                                    >Mark as learned</button>
+                                                    <div className='slider-slide-actions'>
+                                                        <button 
+                                                            className='btn btn-block btn-primary'
+                                                            onClick={event => {markAsToReview(item.id, index, event.currentTarget.closest('.slider-slide') as HTMLElement)}}
+                                                        >Next card</button>
+                                                        <button 
+                                                            className='btn btn-block'
+                                                            onClick={event => {markAsLearned(item.id, index, event.currentTarget.closest('.slider-slide') as HTMLElement)}}
+                                                        >Mark as learned</button>
+                                                    </div>
+
                                                 </div>
-
-                                            </div>
-                                        </div>;
-                            })}
-                        </div>
+                                            </div>;
+                                })}
+                            </div>
+                            </div>
                         </div>
                     </div>
+
+
                 </div>
+            )}
 
-
-            </div>
-
-            {/* {screen === 'all_reviewed' && (
-                <>
+            {allCardsReviewed && (
                 <div className="screen-finish">
 
                     <div className="finish-message">
@@ -213,13 +225,12 @@ export default function AlphabetLearn(){
                         <p>If you're not sure whether you memorized all the letters, you can reset your progress and start from 0.</p>
                     </div>
                     <div className='finish-message-actions'>
-                        <button className='btn btn-small btn-secondary' onClick={() => {changeScreen('home')}}>Go back</button>
+                        <Link href="/alphabet" className='btn btn-small btn-secondary'>Go back</Link>
                     </div>
                     </div>
 
                 </div>
-                </>
-            )} */}
+            )}
 
         
         </div>
