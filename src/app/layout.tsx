@@ -16,8 +16,6 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-// import IOSInstallPrompt from '@/components/IOSInstallPrompt';
-
 export const metadata: Metadata = {
   title: "Tbilingo – Learn Georgian alphabet with flashcards",
   description: "An easy way to learn the Georgian alphabet",
@@ -40,9 +38,8 @@ export default function RootLayout({
       <body
         className={`${notoS_Georgian.variable} ${inter.variable} antialiased`}
       >
+        
         {children}
-
-        {/* <IOSInstallPrompt /> */}
 
         <Analytics />
       </body>
