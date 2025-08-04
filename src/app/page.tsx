@@ -21,25 +21,11 @@ export default function App() {
   };
 
 
-  //   useEffect(() => {
-
-  //     // Load font type from localstorage and set as checked in settings
-  //     const storedFontSettingFromLocal = localStorage.getItem('fontType');
-  //     if (storedFontSettingFromLocal !== null) {
-  //         setSelectedFontType(storedFontSettingFromLocal);
-  //         // console.log(storedFontSettingFromLocal);
-  //     }
-
-  //     const savedLearnedCharacters = JSON.parse(localStorage.getItem('learnedLetters') || '[]');
-  //     setLearnedCharactersCount(savedLearnedCharacters.length);
-
-  // }, []);
-
-
   return (
     <>
 
       <div className="welcome">
+        
         <div className="welcome-body">
 
           <div className="welcome-header">
@@ -85,6 +71,11 @@ export default function App() {
           </div>
 
         </div>
+
+        <div className="welcome-footer">
+          <div className="credits">Made by <a target="_blank" href="//almazbisenbaev.github.io">Almaz Bisenbaev</a></div>
+        </div>
+
       </div>
 
 
@@ -132,10 +123,6 @@ export default function App() {
               </div> */}
 
           </div>
-      </div>
-
-      <div className="welcome-footer">
-          <div className="credits">Made by <a target="_blank" href="//almazbisenbaev.github.io">Almaz Bisenbaev</a></div>
       </div>
 
     </>

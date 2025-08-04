@@ -406,41 +406,13 @@ input[type=submit]:focus {
   justify-content: center;
 }
 
-/* :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-} */
-
-
 
 
 .welcome {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  min-height: 99vh;
+  min-height: 99svh;
   padding-top: 32px;
   padding-right: 32px;
   padding-left: 32px;
