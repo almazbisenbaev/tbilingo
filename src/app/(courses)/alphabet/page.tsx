@@ -32,6 +32,10 @@ export default function AlphabetCourse() {
   const [slideWidth, setSlideWidth] = useState<number>(0);
   const [allCardsReviewed, setAllCardsReviewed] = useState<boolean>(false);
 
+  // Confirmation dialog state
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+  const [pendingLearnedAction, setPendingLearnedAction] = useState<{characterId: number, index: number, element: HTMLElement | null} | null>(null);
+
   const { fontType } = useFontStore();
 
   useEffect(() => {
@@ -108,6 +112,15 @@ export default function AlphabetCourse() {
   // What happens when user marks a character as learned
   const markAsLearned = (characterId: number, index: number, element: HTMLElement | null) => {
     if (!processedCharacters.includes(characterId)) {
+      setPendingLearnedAction({ characterId, index, element });
+      setShowConfirmation(true);
+    }
+  };
+
+  // Handle confirmation for marking as learned
+  const confirmMarkAsLearned = () => {
+    if (pendingLearnedAction) {
+      const { characterId, index, element } = pendingLearnedAction;
       setTimeout(() => {
         setProcessedCharacters((prev) => [...prev, characterId]); // Add to processed characters
         setLearnedCharacters((prev) => [...prev, characterId]); // Add to processed characters
@@ -115,6 +128,14 @@ export default function AlphabetCourse() {
         saveLetterToLocal(characterId); // Save letter to localstorage
       }, 450);
     }
+    setShowConfirmation(false);
+    setPendingLearnedAction(null);
+  };
+
+  // Cancel marking as learned
+  const cancelMarkAsLearned = () => {
+    setShowConfirmation(false);
+    setPendingLearnedAction(null);
   };
 
   // Reset gameplay and go back to main page
@@ -247,6 +268,29 @@ export default function AlphabetCourse() {
                 </div>
                 </div>
 
+            </div>
+        )}
+
+        {/* Confirmation Dialog for Mark as Learned */}
+        {showConfirmation && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 mx-4 max-w-sm w-full">
+                    <h3 className="text-lg text-center font-semibold mb-6">Are you sure you want to mark this character as learned? </h3>
+                    <div className="flex gap-3">
+                        <button 
+                            onClick={cancelMarkAsLearned}
+                            className="btn btn-secondary flex-1"
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            onClick={confirmMarkAsLearned}
+                            className="btn btn-primary flex-1"
+                        >
+                            Confirm
+                        </button>
+                    </div>
+                </div>
             </div>
         )}
 
