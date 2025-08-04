@@ -8,6 +8,7 @@ import { useState } from 'react';
 import CourseLink from '@/components/CourseLink';
 import { useFontStore } from '@/stores/fontStore';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
+import { useBackButtonHandler } from '@/utils/useBackButtonHandler';
 
 export default function App() {
 
@@ -15,6 +16,9 @@ export default function App() {
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const { fontType, setFontType } = useFontStore();
+
+  // Handle Android back button behavior
+  useBackButtonHandler();
 
 
   // When user chooses a font type
