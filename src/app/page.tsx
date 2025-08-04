@@ -7,6 +7,7 @@ import { useState } from 'react';
 // import Link from 'next/link'
 import CourseLink from '@/components/CourseLink';
 import { useFontStore } from '@/stores/fontStore';
+import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 
 export default function App() {
 
@@ -103,6 +104,8 @@ export default function App() {
           </div>
 
         </div>
+
+        <PWAInstallPrompt />
 
         <div className="welcome-footer">
           <div className="credits">Made by <a target="_blank" href="//almazbisenbaev.github.io">Almaz Bisenbaev</a></div>

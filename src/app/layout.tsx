@@ -3,6 +3,7 @@ import { Analytics } from '@vercel/analytics/next';
 import { Inter } from 'next/font/google';
 import { Noto_Serif_Georgian } from 'next/font/google';
 import "./globals.css";
+import ServiceWorkerRegistration from '../components/ServiceWorkerRegistration';
 
 const notoS_Georgian = Noto_Serif_Georgian({
   subsets: ['georgian'],
@@ -42,6 +43,7 @@ export default function RootLayout({
         {children}
 
         <Analytics />
+        <ServiceWorkerRegistration />
       </body>
     </html>
   );
