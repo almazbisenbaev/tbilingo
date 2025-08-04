@@ -1,20 +1,35 @@
 .course-link {
     color: #F24822;
-    background: #F2482210;
+    border: 2px solid #F2482233;
     border-radius: 16px;
 
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 28px;
 
     width: 100%;
-    min-height: 80px;
-    padding: 20px;
+    min-height: 96px;
+    padding: 20px 24px;
 }
 
 .course-link:hover {
     color: #F24822;
+    background: #F2482210;
+}
+
+.course-link:active {
     background: #F2482220;
+}
+
+.course-link-disabled {
+    border-color: #00000010;
+    background: #00000010;
+    color: #000000;
+    cursor: not-allowed;
+}
+
+.course-link-disabled img {
+    filter: grayscale(100%);
 }
 
 .course-link-content {

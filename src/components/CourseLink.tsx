@@ -8,13 +8,13 @@ export default function CourseLink({href, title, icon, disabled}: {href: string,
         <>
             <Link 
                 href={href} 
-                className='course-link'   
+                className={`course-link ${disabled ? 'course-link-disabled' : ''}`}
                 style={{
                     pointerEvents: (disabled) ? "none" : "auto",
                 }}
             >
                 <div className='course-link-icon'>
-                    <Image src={icon} alt={title} width={32} height={32} />
+                    <Image src={icon} alt={title} width={38} height={38} />
                 </div>
                 <div className='course-link-content'>
                     <div className='course-link-title'>{title}</div>
