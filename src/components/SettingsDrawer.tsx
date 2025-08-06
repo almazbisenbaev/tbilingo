@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useFontStore } from '@/stores/fontStore';
+import ConfirmationDialog from './ConfirmationDialog';
+import SuccessPopup from './SuccessPopup';
 
 export default function SettingsDrawer() {
   const [showSettings, setShowSettings] = useState(false);
@@ -73,41 +75,21 @@ export default function SettingsDrawer() {
           </div>
         </div>
       </div>
-      {/* Reset Confirmation Dialog */}
-      {showResetConfirmation && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-500">
-          <div className="bg-white rounded-lg p-6 mx-4 max-w-sm w-full">
-            <h3 className="text-lg text-center font-semibold mb-6">Are you sure you want to reset your learning progress?</h3>
-            <p className="text-center text-gray-600 mb-6">This will clear all your learned letters and cannot be undone.</p>
-            <div className="flex gap-3">
-              <button 
-                onClick={cancelReset}
-                className="btn btn-secondary flex-1"
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={confirmReset}
-                className="btn btn-primary flex-1"
-              >
-                Reset Progress
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Success Popup */}
-      {showSuccessPopup && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 mx-4 max-w-sm w-full">
-            <div className="text-center">
-              <div className="text-green-500 text-4xl mb-4">✓</div>
-              <h3 className="text-lg font-semibold mb-2">Progress Reset Successfully!</h3>
-              <p className="text-gray-600">Your learning progress has been cleared.</p>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmationDialog
+        isOpen={showResetConfirmation}
+        title="Are you sure you want to reset your learning progress?"
+        message="This will clear all your learned letters and cannot be undone."
+        confirmText="Reset Progress"
+        cancelText="Cancel"
+        onConfirm={confirmReset}
+        onCancel={cancelReset}
+      />
+      <SuccessPopup
+        isOpen={showSuccessPopup}
+        title="Progress Reset Successfully!"
+        message="Your learning progress has been cleared."
+        onClose={() => setShowSuccessPopup(false)}
+      />
     </>
   );
 }

@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { CourseLinkProps } from '@/types';
 
 import './CourseLink.css';
 
-export default function CourseLink({href, title, icon, disabled}: {href: string, title: string, icon: string, disabled: boolean}){
+export default function CourseLink({ href, title, icon, disabled }: CourseLinkProps) {
     return (
         <>
             <Link 

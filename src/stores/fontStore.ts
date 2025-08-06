@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-type FontType = 'sans' | 'serif';
+import { FontType } from '@/types';
 
 interface FontState {
   fontType: FontType;
