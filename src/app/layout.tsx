@@ -35,6 +35,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
+        <meta name="google-site-verification" content="cfuRApAKvRomU8FRnyOL2giMwdwF-q1WMg1l7Q-W1og" />
       </head>
       <body
         className={`${notoS_Georgian.variable} ${inter.variable} antialiased`}
