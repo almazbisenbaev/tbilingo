@@ -91,7 +91,6 @@ input[type=submit]:focus {
   border: 1px solid transparent;
   background: #EAE7E6;
   border-radius: 12px;
-  box-shadow: 0px 3px 0px #d4d0ce;
 
   display: inline-flex;
   align-items: center;
@@ -110,7 +109,6 @@ input[type=submit]:focus {
 
 .btn:active {
   color: #8A2008;
-  box-shadow: 0px 0px 0px #D7D3D2;
   transform: translateY(2px);
 }
 
@@ -131,15 +129,10 @@ input[type=submit]:focus {
 .btn-primary {
   color: #fff;
   background-color: #F24822;
-  box-shadow: 0px 3px 0px #AA2608;
 }
 
 .btn-primary:hover, .btn-primary:focus {
   color: #fff;
-}
-
-.btn-primary:active {
-  box-shadow: 0px 0px 0px #AA2608;
 }
 
 
