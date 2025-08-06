@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import shuffleArray from '@/utils/shuffle-array';
+import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 
 import { alphabet } from '@/data/alphabet';
 import { useFontStore } from '@/stores/fontStore';
@@ -21,6 +22,7 @@ interface AlphabetLetter {
 }
 
 export default function AlphabetCourse() {
+  useBackToHomeNavigation();
 
   const [learnedCharacters, setLearnedCharacters] = useState<number[]>([]); // Store characters that the viewers has seen suring the gameplay
   const [learnedCharactersCount, setLearnedCharactersCount] = useState<number>(0); // Store the learned characters from localstorage

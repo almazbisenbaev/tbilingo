@@ -1,51 +1,33 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
-export const useBackButtonHandler = () => {
+// This hook ensures that on any route except '/', the back button always returns to home and never further back
+export const useBackToHomeNavigation = () => {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Only handle back button on home page
-    if (pathname !== '/') {
-      return;
+    if (pathname === '/') return;
+
+    // If the previous page is not '/', replace the history so that the only way back is to '/'
+    // This works by pushing '/' and then replacing the current state with the current path
+    // So the stack is: [/, /current]
+    if (window.history.length <= 2) {
+      window.history.pushState(null, '', '/');
+      window.history.replaceState(null, '', pathname);
+    } else {
+      // For safety, always ensure the stack is [/, /current]
+      window.history.pushState(null, '', '/');
+      window.history.replaceState(null, '', pathname);
     }
 
-    // Add an entry to history when on home page to ensure we can detect back button
-    window.history.pushState(null, '', '/');
-
     const handlePopState = (event: PopStateEvent) => {
-      // Prevent the default back navigation
-      event.preventDefault();
-      
-      // Try to close the app
-      if ((window.navigator as any).standalone || window.matchMedia('(display-mode: standalone)').matches) {
-        // This is a PWA, try to close the app
-        try {
-          window.close();
-        } catch (e) {
-          // If window.close() fails, try alternative approach
-          window.location.href = 'about:blank';
-        }
-      } else {
-        // For regular browser, try to close directly first
-        try {
-          window.close();
-        } catch (e) {
-          // If window.close() fails, show a confirmation dialog
-          if (confirm('Do you want to close the app?')) {
-            window.location.href = 'about:blank';
-          } else {
-            // If user cancels, push a new state to prevent going back
-            window.history.pushState(null, '', '/');
-          }
-        }
+      // If user presses back, always go to home
+      if (window.location.pathname !== '/') {
+        window.location.replace('/');
       }
     };
 
-    // Add event listener for popstate (back button)
     window.addEventListener('popstate', handlePopState);
-
-    // Cleanup
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
