@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 export default function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallButton, setShowInstallButton] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -14,11 +15,15 @@ export default function PWAInstallPrompt() {
       setDeferredPrompt(e);
       // Show the install button
       setShowInstallButton(true);
+      setIsVisible(true);
     };
 
     const handleAppInstalled = () => {
       // Hide the install button when the app is installed
-      setShowInstallButton(false);
+      setIsVisible(false);
+      setTimeout(() => {
+        setShowInstallButton(false);
+      }, 300);
       setDeferredPrompt(null);
       console.log('PWA was installed');
     };
@@ -57,7 +62,10 @@ export default function PWAInstallPrompt() {
 
     // Clear the deferredPrompt
     setDeferredPrompt(null);
-    setShowInstallButton(false);
+    setIsVisible(false);
+    setTimeout(() => {
+      setShowInstallButton(false);
+    }, 300);
   };
 
   if (!showInstallButton) {
@@ -65,7 +73,7 @@ export default function PWAInstallPrompt() {
   }
 
   return (
-    <div className="pwa-install-container">
+    <div className={`pwa-install-container ${isVisible ? 'animate-fade-in' : 'animate-fade-out'}`}>
       <button
         onClick={handleInstallClick}
         className="pwa-install-button"

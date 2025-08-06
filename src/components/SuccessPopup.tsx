@@ -1,4 +1,6 @@
 import React from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
 
 interface SuccessPopupProps {
   isOpen: boolean;
@@ -13,18 +15,49 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
   message,
   onClose,
 }) => {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 mx-4 max-w-sm w-full">
-        <div className="text-center">
-          <div className="text-green-500 text-4xl mb-4">✓</div>
-          <h3 className="text-lg font-semibold mb-2">{title}</h3>
-          <p className="text-gray-600">{message}</p>
+    <Transition appear show={isOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={onClose}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black/50" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-75"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-75"
+            >
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <div className="text-center">
+                  <div className="text-green-500 text-4xl mb-4">✓</div>
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-semibold mb-2"
+                  >
+                    {title}
+                  </Dialog.Title>
+                  <p className="text-gray-600">{message}</p>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
         </div>
-      </div>
-    </div>
+      </Dialog>
+    </Transition>
   );
 };
 
