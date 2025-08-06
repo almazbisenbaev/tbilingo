@@ -1,4 +1,7 @@
-const CACHE_NAME = 'tbilingo-v1';
+// Dynamic cache name with timestamp to force cache busting
+const CACHE_VERSION = Date.now().toString();
+const CACHE_NAME = `tbilingo-v${CACHE_VERSION}`;
+
 const urlsToCache = [
   '/',
   '/alphabet',
@@ -42,38 +45,86 @@ const urlsToCache = [
 
 // Install event - cache resources
 self.addEventListener('install', (event) => {
+  console.log('Service Worker installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Opened cache');
+        console.log('Opened cache:', CACHE_NAME);
         return cache.addAll(urlsToCache);
       })
-  );
-});
-
-// Fetch event - serve from cache if available
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request);
+      .catch((error) => {
+        console.error('Cache installation failed:', error);
       })
   );
+  // Force the waiting service worker to become the active service worker
+  self.skipWaiting();
 });
 
-// Activate event - clean up old caches
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
+// Fetch event - implement network-first strategy for HTML pages
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Network-first strategy for HTML pages and API calls
+  if (request.method === 'GET' && 
+      (request.headers.get('accept')?.includes('text/html') || 
+       url.pathname === '/' || 
+       url.pathname.startsWith('/alphabet'))) {
+    
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // Clone the response before caching
+          const responseToCache = response.clone();
+          
+          caches.open(CACHE_NAME)
+            .then((cache) => {
+              cache.put(request, responseToCache);
+            });
+          
+          return response;
         })
-      );
-    })
+        .catch(() => {
+          // If network fails, try to serve from cache
+          return caches.match(request);
+        })
+    );
+  } else {
+    // Cache-first strategy for static assets
+    event.respondWith(
+      caches.match(request)
+        .then((response) => {
+          return response || fetch(request);
+        })
+    );
+  }
+});
+
+// Activate event - clean up old caches and take control immediately
+self.addEventListener('activate', (event) => {
+  console.log('Service Worker activating...');
+  event.waitUntil(
+    Promise.all([
+      // Clean up old caches
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      }),
+      // Take control of all clients immediately
+      self.clients.claim()
+    ])
   );
+});
+
+// Listen for messages from the main thread
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 }); 
