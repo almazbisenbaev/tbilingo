@@ -234,17 +234,6 @@ export default function AlphabetCourse() {
                                                     onLearned={() => markAsLearned(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
                                                 />
 
-                                                <div className='slider-slide-actions'>
-                                                    <button 
-                                                        className='btn btn-block btn-primary'
-                                                        onClick={event => {markAsToReview(item.id, index, event.currentTarget.closest('.slider-slide') as HTMLElement)}}
-                                                    >Next card</button>
-                                                    <button 
-                                                        className='btn btn-block'
-                                                        onClick={event => {markAsLearned(item.id, index, event.currentTarget.closest('.slider-slide') as HTMLElement)}}
-                                                    >Mark as learned</button>
-                                                </div>
-
                                             </div>
                                         </div>;
                             })}
