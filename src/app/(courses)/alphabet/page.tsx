@@ -49,28 +49,42 @@ export default function AlphabetCourse() {
 
   }, []);
 
-  // Initialize gameplay
+  /**
+   * Initializes the gameplay session with flashcards
+   * This function:
+   * 1. Loads the user's progress from localStorage
+   * 2. Filters out already learned characters
+   * 3. Randomly selects characters for the current session
+   * 4. Sets up the UI for the learning experience
+   */
   const startGameplay = () => {
+    // Get previously learned characters from localStorage
     const learnedCharactersInLocal = JSON.parse(localStorage.getItem('learnedLetters') || '[]');
+    // Filter out characters that have already been learned
     const charactersMissingInLocal = alphabet.filter((letter: any) => !learnedCharactersInLocal.includes(letter.id)) as AlphabetLetter[];
     
+    // Reset session state
     setProcessedCharacters([]);
     setLearnedCharacters(learnedCharactersInLocal);
     setSlideWidth(0);
 
+    // Shuffle remaining characters and select a subset for this session
     const shuffledCharactersMissingInLocal = shuffleArray(charactersMissingInLocal);
+    // Limit to 10 characters per session for better learning experience
     const selectedCharacters = shuffledCharactersMissingInLocal.slice(0, 10);
 
+    // Update state to start the gameplay
     setCharactersToReview(selectedCharacters);
     setIsGameplayActive(true);
 
+    // Calculate slide width after component renders for proper animations
     setTimeout(() => {
         const element = document.querySelector('.slider-slide');
         if(element){
             const slideWidth = element.getBoundingClientRect().width;
             setSlideWidth(slideWidth);
         }
-    }, 200);
+    }, 200); // Short delay to ensure DOM is ready
   };
 
   // Check if all cards have been reviewed
@@ -80,56 +94,97 @@ export default function AlphabetCourse() {
     }
   }, [processedCharacters, charactersToReview]);
 
-  // The function that moves the slides when a flashcard is processed
+  /**
+   * Handles the animation between flashcards by sliding the track horizontally
+   * Uses CSS transform to create a smooth sliding animation
+   * @param index - The index of the current slide (not used but kept for API consistency)
+   * @param element - The DOM element of the current slide
+   */
   const switchSlide = (index: number, element: HTMLElement | null) => {
-    if (!element) return;
+    if (!element) return; // Safety check if element doesn't exist
+    
+    // Get the width of the current slide for accurate movement
     const slideWidth = element.getBoundingClientRect().width;
+    
+    // Find the slider track element that contains all slides
     const sliderTrack = document.querySelector('.slider-track') as HTMLElement | null;
+    
     if(sliderTrack){
-        // Get current translateX value
+        // Extract the current transform matrix to get the current position
         const currentTransform = getComputedStyle(sliderTrack).transform;
         const matrix = new window.DOMMatrix(currentTransform);
-        const currentTranslateX = matrix.m41; // Get the current translateX value
-        // Update the transform by adding the element width
+        const currentTranslateX = matrix.m41; // m41 is the translateX value in the matrix
+        
+        // Move the track left by the width of one slide to show the next card
+        // The negative value moves the track to the left
         sliderTrack.style.transform = `translateX(${currentTranslateX - slideWidth}px)`;
     }
   }
 
-  // Add the letter to the list of learned letters in localstorage
+  /**
+   * Persists a learned letter to localStorage to maintain user progress across sessions
+   * This function is called when a user confirms they've learned a character
+   * @param characterId - The ID of the character to save as learned
+   */
   const saveLetterToLocal = (characterId: number) => {
+    // Retrieve current learned characters from localStorage
     const learnedCharactersInLocal: number[] = JSON.parse(localStorage.getItem('learnedLetters') || '[]');
     localStorage.setItem('learnedLetters', JSON.stringify([...learnedCharactersInLocal, characterId]));
   }
 
-  // What happens when user just switches to the next card
+  /**
+   * Marks a character as "to review" and advances to the next card
+   * This function is called when the user clicks "Next card" without marking it as learned
+   * @param characterId - The ID of the character to mark as reviewed
+   * @param index - The index of the current slide
+   * @param element - The DOM element of the current slide for animation
+   */
   const markAsToReview = (characterId: number, index: number, element: HTMLElement | null) => {
     if (!processedCharacters.includes(characterId)) {
       setTimeout(() => {
         setProcessedCharacters((prevProcessedCharacters) => [...prevProcessedCharacters, characterId]);
         switchSlide(index, element);
-      }, 250);
+      }, 250); // Small delay for better user experience
     }
   };
 
-  // What happens when user marks a character as learned
+  /**
+   * Initiates the process of marking a character as learned
+   * Shows a confirmation dialog before actually marking it as learned
+   * This is called when the user clicks "Mark as learned" button
+   * @param characterId - The ID of the character to mark as learned
+   * @param index - The index of the current slide
+   * @param element - The DOM element of the current slide for animation
+   */
   const markAsLearned = (characterId: number, index: number, element: HTMLElement | null) => {
     if (!processedCharacters.includes(characterId)) {
+      // Store the action details to be executed after confirmation
       setPendingLearnedAction({ characterId, index, element });
+      // Show confirmation dialog
       setShowConfirmation(true);
     }
   };
 
-  // Handle confirmation for marking as learned
+  /**
+   * Handles the confirmation of marking a character as learned
+   * This is executed when the user confirms in the dialog
+   * Performs multiple actions:
+   * 1. Adds the character to processed characters (for this session)
+   * 2. Adds the character to learned characters (persistent)
+   * 3. Advances to the next slide
+   * 4. Saves the learned status to localStorage
+   */
   const confirmMarkAsLearned = () => {
     if (pendingLearnedAction) {
       const { characterId, index, element } = pendingLearnedAction;
       setTimeout(() => {
-        setProcessedCharacters((prev) => [...prev, characterId]); // Add to processed characters
-        setLearnedCharacters((prev) => [...prev, characterId]); // Add to processed characters
-        switchSlide(index, element); // Jump to the next slide
-        saveLetterToLocal(characterId); // Save letter to localstorage
-      }, 450);
+        setProcessedCharacters((prev) => [...prev, characterId]); // Add to processed characters for this session
+        setLearnedCharacters((prev) => [...prev, characterId]); // Add to learned characters list
+        switchSlide(index, element); // Animate to the next slide
+        saveLetterToLocal(characterId); // Persist the learned status in localStorage
+      }, 450); // Delay for better user experience and to allow animation to complete
     }
+    // Clean up the confirmation state
     setShowConfirmation(false);
     setPendingLearnedAction(null);
   };

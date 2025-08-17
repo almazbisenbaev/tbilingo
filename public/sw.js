@@ -1,4 +1,11 @@
+/**
+ * Service Worker for Tbilingo PWA
+ * Handles caching of app assets for offline functionality
+ * and manages updates to the application
+ */
+
 // Dynamic cache name with timestamp to force cache busting
+// This ensures users get fresh content when the app updates
 const CACHE_VERSION = Date.now().toString();
 const CACHE_NAME = `tbilingo-v${CACHE_VERSION}`;
 
@@ -43,13 +50,17 @@ const urlsToCache = [
   '/audio/zhani.mp3'
 ];
 
-// Install event - cache resources
+/**
+ * Install event handler - caches all essential resources when SW is installed
+ * This ensures the app can work offline after the first visit
+ */
 self.addEventListener('install', (event) => {
   console.log('Service Worker installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('Opened cache:', CACHE_NAME);
+        // Add all specified URLs to the cache for offline access
         return cache.addAll(urlsToCache);
       })
       .catch((error) => {
@@ -57,6 +68,7 @@ self.addEventListener('install', (event) => {
       })
   );
   // Force the waiting service worker to become the active service worker
+  // This ensures the new service worker activates immediately without waiting
   self.skipWaiting();
 });
 
@@ -122,9 +134,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Listen for messages from the main thread
+/**
+ * Message event handler - listens for messages from the main application
+ * Used primarily to handle update notifications and control service worker lifecycle
+ */
 self.addEventListener('message', (event) => {
+  // Handle the SKIP_WAITING message which forces the service worker to activate immediately
+  // This is typically sent when the user agrees to update the application
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-}); 
+});

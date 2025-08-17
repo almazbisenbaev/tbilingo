@@ -45,27 +45,33 @@ export default function PWAInstallPrompt() {
     };
   }, []);
 
+  /**
+   * Handles the user clicking the install button
+   * Triggers the browser's native PWA installation prompt
+   * and manages UI state based on user's response
+   */
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
+    if (!deferredPrompt) return; // Safety check if prompt isn't available
 
-    // Show the install prompt
+    // Show the browser's native install prompt
     deferredPrompt.prompt();
 
-    // Wait for the user to respond to the prompt
+    // Wait for the user to respond to the prompt (accept or dismiss)
     const { outcome } = await deferredPrompt.userChoice;
 
+    // Log the user's choice for analytics/debugging
     if (outcome === 'accepted') {
       console.log('User accepted the install prompt');
     } else {
       console.log('User dismissed the install prompt');
     }
 
-    // Clear the deferredPrompt
-    setDeferredPrompt(null);
-    setIsVisible(false);
+    // Clean up after prompt is handled
+    setDeferredPrompt(null); // Clear the prompt reference
+    setIsVisible(false); // Hide the install UI immediately
     setTimeout(() => {
-      setShowInstallButton(false);
-    }, 300);
+      setShowInstallButton(false); // Completely remove the install button after animation
+    }, 300); // Short delay for animation to complete
   };
 
   if (!showInstallButton) {
@@ -94,4 +100,4 @@ export default function PWAInstallPrompt() {
       </button>
     </div>
   );
-} 
+}

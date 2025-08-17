@@ -2,9 +2,22 @@ import { useState } from 'react';
 import { FlashcardProps } from '@/types';
 import './Flashcard.css';
 
+/**
+ * Flashcard component for displaying Georgian alphabet characters
+ * Features a flip animation to show character details and pronunciation
+ * 
+ * The component has two sides:
+ * 1. Front: Shows only the Georgian character
+ * 2. Back: Shows the name, pronunciation, and audio playback
+ */
+
 const Flashcard: React.FC<FlashcardProps> = ({ letter, onNext, onLearned }) => {
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
 
+  /**
+   * Handles the action when user clicks to reveal the answer
+   * Triggers the card flip animation by setting showAnswer state to true
+   */
   const handleShowAnswer = () => {
     setShowAnswer(true);
   };
@@ -58,4 +71,4 @@ const Flashcard: React.FC<FlashcardProps> = ({ letter, onNext, onLearned }) => {
   );
 };
 
-export default Flashcard; 
+export default Flashcard;
