@@ -68,6 +68,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
                     type="button"
                     className="btn btn-secondary flex-1"
                     onClick={onCancel}
+                    aria-label={cancelText}
                   >
                     {cancelText}
                   </button>
@@ -75,6 +76,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
                     type="button"
                     className="btn btn-primary flex-1"
                     onClick={onConfirm}
+                    aria-label={confirmText}
                   >
                     {confirmText}
                   </button>
@@ -88,4 +90,4 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   );
 };
 
-export default ConfirmationDialog; 
+export default ConfirmationDialog;

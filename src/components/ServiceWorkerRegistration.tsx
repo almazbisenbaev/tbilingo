@@ -67,9 +67,12 @@ export default function ServiceWorkerRegistration() {
     setIsUpdating(true);
     try {
       await applyUpdate();
+      // The page will reload automatically when update is successful
     } catch (error) {
       console.error('Update failed:', error);
       setIsUpdating(false);
+      // Show error message to user
+      alert('Update failed. Please refresh the page manually.');
     }
   };
 
@@ -80,15 +83,16 @@ export default function ServiceWorkerRegistration() {
         top: 0,
         left: 0,
         right: 0,
-        backgroundColor: '#4CAF50',
+        backgroundColor: '#F24822', // Match app's primary color
         color: 'white',
-        padding: '10px',
+        padding: '12px 16px',
         textAlign: 'center',
         zIndex: 9999,
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+        boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+        fontFamily: 'var(--font-sans)'
       }}>
         <span>🔄 New version available!</span>
         <button 
@@ -96,14 +100,16 @@ export default function ServiceWorkerRegistration() {
           disabled={isUpdating}
           style={{
             backgroundColor: 'white',
-            color: '#4CAF50',
+            color: '#F24822', // Match app's primary color
             border: 'none',
-            padding: '5px 10px',
+            padding: '8px 12px',
             borderRadius: '4px',
             cursor: isUpdating ? 'not-allowed' : 'pointer',
             fontWeight: 'bold',
-            opacity: isUpdating ? 0.7 : 1
+            opacity: isUpdating ? 0.7 : 1,
+            transition: 'all 0.2s ease'
           }}
+          aria-label="Update application"
         >
           {isUpdating ? 'Updating...' : 'Update Now'}
         </button>
@@ -112,4 +118,4 @@ export default function ServiceWorkerRegistration() {
   }
 
   return null;
-} 
+}

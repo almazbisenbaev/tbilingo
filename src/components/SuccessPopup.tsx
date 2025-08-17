@@ -43,7 +43,7 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
             >
               <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all">
                 <div className="text-center">
-                  <div className="text-green-500 text-4xl mb-4">✓</div>
+                  <div className="text-green-500 text-4xl mb-4" aria-hidden="true">✓</div>
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-semibold mb-2"
@@ -51,6 +51,14 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
                     {title}
                   </Dialog.Title>
                   <p className="text-gray-600">{message}</p>
+                  <button
+                    type="button"
+                    className="mt-4 inline-flex justify-center rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
+                    onClick={onClose}
+                    aria-label="Close success message"
+                  >
+                    Got it
+                  </button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
@@ -61,4 +69,4 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
   );
 };
 
-export default SuccessPopup; 
+export default SuccessPopup;

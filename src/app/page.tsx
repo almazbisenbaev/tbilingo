@@ -1,11 +1,20 @@
-// TO DO:
-// Add start screen for alphabet with stats and stuff
+// Alphabet course start screen with progress stats implemented
+
+'use client';
 
 import SettingsDrawer from '@/components/SettingsDrawer';
 import CourseLink from '@/components/CourseLink';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
+import { useLearnedLetters } from '@/hooks/useLearnedLetters';
+import { alphabet } from '@/data/alphabet';
 
 export default function App() {
+  // Get learned letters data from the hook
+  const { learnedCount } = useLearnedLetters();
+  
+  // Calculate progress percentage for the alphabet course
+  const totalLetters = alphabet.length;
+  const progress = totalLetters > 0 ? Math.round((learnedCount / totalLetters) * 100) : 0;
   return (
     <>
       <div className="welcome">
@@ -32,6 +41,9 @@ export default function App() {
               title="Learn alphabet"
               icon="/images/icon-alphabet.svg"
               disabled={false}
+              progress={progress}
+              completedItems={learnedCount}
+              totalItems={totalLetters}
             />
             <CourseLink 
               href="/"

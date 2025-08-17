@@ -24,7 +24,7 @@ export const alphabet = [
     { character: 'ღ', name: 'ghani', pronunciation: 'gh', id: 23, audioUrl: '/audio/ghani.mp3' },
     { character: 'ყ', name: 'qari', pronunciation: 'qʼ', id: 24, audioUrl: '/audio/qari.mp3' },
     { character: 'შ', name: 'shini', pronunciation: 'sh', id: 25, audioUrl: '/audio/shini.mp3' },
-    { character: 'ჩ', name: 'chini', pronunciation: 'chʰ', id: 26, audioUrl: '/audio/shini.mp3' },
+    { character: 'ჩ', name: 'chini', pronunciation: 'chʰ', id: 26, audioUrl: '/audio/chini.mp3' },
     { character: 'ც', name: 'tsani', pronunciation: 'tsʰ', id: 27, audioUrl: '/audio/tsani.mp3' },
     { character: 'ძ', name: 'dzili', pronunciation: 'dz', id: 28, audioUrl: '/audio/dzili.mp3' },
     { character: 'წ', name: 'tsili', pronunciation: 'tsʼ', id: 29, audioUrl: '/audio/tsili.mp3' },

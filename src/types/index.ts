@@ -11,6 +11,9 @@ export interface CourseLinkProps {
   title: string;
   icon: string;
   disabled: boolean;
+  progress?: number; // Percentage of completion (0-100)
+  totalItems?: number; // Total number of items in the course
+  completedItems?: number; // Number of completed items
 }
 
 export interface FlashcardProps {
@@ -25,4 +28,4 @@ export interface PendingLearnedAction {
   element: HTMLElement | null;
 }
 
-export type FontType = 'sans' | 'serif'; 
+export type FontType = 'sans' | 'serif';

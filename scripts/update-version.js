@@ -40,11 +40,28 @@ function updatePWAUtilsVersion() {
   }
 }
 
+// Update version in package.json
+function updatePackageVersion() {
+  const packagePath = path.join(__dirname, '../package.json');
+  const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+  
+  // Get version from manifest to ensure consistency
+  const manifestPath = path.join(__dirname, '../public/manifest.json');
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  
+  // Update package.json version to match manifest
+  packageJson.version = manifest.version;
+  
+  fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
+  console.log(`Updated package.json version to ${packageJson.version}`);
+}
+
 // Main function
 function main() {
   try {
     updateManifestVersion();
     updatePWAUtilsVersion();
+    updatePackageVersion();
     console.log('Version update completed successfully!');
   } catch (error) {
     console.error('Error updating version:', error);
@@ -54,4 +71,4 @@ function main() {
 
 if (require.main === module) {
   main();
-} 
+}
