@@ -109,7 +109,6 @@ export default function ServiceWorkerRegistration() {
             opacity: isUpdating ? 0.7 : 1,
             transition: 'all 0.2s ease'
           }}
-          aria-label="Update application"
         >
           {isUpdating ? 'Updating...' : 'Update Now'}
         </button>

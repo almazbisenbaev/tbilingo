@@ -28,7 +28,6 @@ export default function CourseLink({
                 style={{
                     pointerEvents: (disabled) ? "none" : "auto",
                 }}
-                aria-label={`${title}${disabled ? ' (coming soon)' : ''}${!disabled && completedItems !== undefined && totalItems !== undefined ? `, ${completedItems} out of ${totalItems} completed` : ''}`}
             >
                 <div className='course-link-icon'>
                     <Image src={icon} alt={title} width={38} height={38} />

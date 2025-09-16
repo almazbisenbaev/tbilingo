@@ -84,7 +84,6 @@ export default function SettingsDrawer() {
                             type="button"
                             className="welcome-settings-close"
                             onClick={() => setShowSettings(false)}
-                            aria-label="Close settings"
                           >
                             Close
                           </button>

@@ -83,7 +83,6 @@ export default function PWAInstallPrompt() {
       <button
         onClick={handleInstallClick}
         className="pwa-install-button"
-        aria-label="Install Tbilingo app"
       >
         <svg 
           className="w-5 h-5" 
