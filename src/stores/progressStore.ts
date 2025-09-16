@@ -24,7 +24,6 @@ export interface ProgressState {
   resetAllProgress: () => void;
   getCourseProgress: (courseType: CourseType) => CourseProgress;
   getLearnedCount: (courseType: CourseType) => number;
-  migrateLegacyData: () => void;
 }
 
 // Helper function to calculate completion percentage
@@ -174,70 +173,7 @@ export const useProgressStore = create<ProgressState>()(
         return state.courses[courseType].learnedItems.length;
       },
 
-      migrateLegacyData: () => {
-        // Check for old localStorage data and migrate it
-        if (typeof window !== 'undefined') {
-          try {
-            // Migrate old 'learnedLetters' data
-            const oldLearnedLetters = localStorage.getItem('learnedLetters');
-            if (oldLearnedLetters) {
-              const learnedItems = JSON.parse(oldLearnedLetters);
-              if (Array.isArray(learnedItems) && learnedItems.length > 0) {
-                set((state) => ({
-                  courses: {
-                    ...state.courses,
-                    alphabet: {
-                      ...state.courses.alphabet,
-                      learnedItems,
-                      lastUpdated: new Date().toISOString(),
-                      completionPercentage: calculateCompletionPercentage(
-                        learnedItems,
-                        state.courses.alphabet.totalItems
-                      ),
-                    },
-                  },
-                }));
-                // Remove old data
-                localStorage.removeItem('learnedLetters');
-              }
-            }
-
-            // Migrate old 'courseProgress' data
-            const oldCourseProgress = localStorage.getItem('courseProgress');
-            if (oldCourseProgress) {
-              const progressData = JSON.parse(oldCourseProgress);
-              if (progressData && typeof progressData === 'object') {
-                set((state) => {
-                  const updatedCourses = { ...state.courses };
-                  
-                  Object.keys(progressData).forEach((courseType) => {
-                    if (courseType in updatedCourses) {
-                      const oldCourse = progressData[courseType];
-                      if (oldCourse && oldCourse.learnedItems) {
-                        updatedCourses[courseType as CourseType] = {
-                          ...updatedCourses[courseType as CourseType],
-                          learnedItems: oldCourse.learnedItems,
-                          lastUpdated: oldCourse.lastUpdated || new Date().toISOString(),
-                          completionPercentage: calculateCompletionPercentage(
-                            oldCourse.learnedItems,
-                            updatedCourses[courseType as CourseType].totalItems
-                          ),
-                        };
-                      }
-                    }
-                  });
-
-                  return { courses: updatedCourses };
-                });
-                // Remove old data
-                localStorage.removeItem('courseProgress');
-              }
-            }
-          } catch (error) {
-            console.error('Error migrating legacy progress data:', error);
-          }
-        }
-      },
+      
     }),
     {
       name: 'tbilingo-progress',

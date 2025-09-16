@@ -25,27 +25,7 @@ export const useCourseProgress = (courseType: CourseType) => {
   // Load progress from localStorage when the component mounts
   useEffect(() => {
     try {
-      // Check for old format first (only for alphabet course)
-      if (courseType === 'alphabet') {
-        const oldProgress = localStorage.getItem('learnedLetters');
-        if (oldProgress) {
-          // Migrate old progress to new format
-          const learnedItems = JSON.parse(oldProgress);
-          const newProgress = {
-            [courseType]: {
-              learnedItems,
-              lastUpdated: new Date().toISOString()
-            }
-          };
-          // Save to new format
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(newProgress));
-          // Remove old key
-          localStorage.removeItem('learnedLetters');
-          setProgress(newProgress);
-          setIsLoading(false);
-          return;
-        }
-      }
+      
 
       // Check for new format
       const stored = localStorage.getItem(STORAGE_KEY);

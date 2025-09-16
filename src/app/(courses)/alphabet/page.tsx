@@ -44,18 +44,17 @@ export default function AlphabetCourse() {
     addLearnedItem, 
     isItemLearned, 
     initializeCourse,
-    migrateLegacyData 
+
   } = useProgressStore();
 
   useEffect(() => {
-    // Migrate any legacy data and initialize the course
-    migrateLegacyData();
+    
     initializeCourse('alphabet', alphabet.length);
     
     // Load learned characters from the store
     const alphabetProgress = getCourseProgress('alphabet');
     setLearnedCharacters(alphabetProgress.learnedItems);
-  }, [initializeCourse, migrateLegacyData, getCourseProgress]);
+  }, [initializeCourse, getCourseProgress]);
 
   /**
    * Initializes the gameplay session with flashcards

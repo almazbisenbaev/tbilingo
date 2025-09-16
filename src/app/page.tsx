@@ -13,18 +13,17 @@ export default function App() {
     getCourseProgress,
     initializeCourse,
     resetAllProgress,
-    migrateLegacyData,
+    
   } = useProgressStore();
 
   // Initialize courses and migrate legacy data on mount
   useEffect(() => {
-    // Migrate any legacy data first
-    migrateLegacyData();
+    
     
     // Initialize courses with their total item counts
     initializeCourse('alphabet', alphabet.length);
     initializeCourse('numbers', numbers.length);
-  }, [initializeCourse, migrateLegacyData]);
+  }, [initializeCourse]);
 
   // Get progress data for both courses
   const alphabetProgress = getCourseProgress('alphabet');

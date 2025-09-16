@@ -23,7 +23,7 @@ interface NumberItem {
 export default function NumbersCourse() {
     useBackToHomeNavigation();
     
-    const { getCourseProgress, addLearnedItem, initializeCourse, migrateLegacyData } = useProgressStore();
+    const { getCourseProgress, addLearnedItem, initializeCourse } = useProgressStore();
     const { fontType } = useFontStore();
     
     const [isGameplayActive, setIsGameplayActive] = useState(false);
@@ -35,17 +35,7 @@ export default function NumbersCourse() {
 
     // Initialize course progress on component mount
     useEffect(() => {
-        // Migrate old localStorage data if it exists
-        const oldLearnedNumbers = localStorage.getItem('learnedNumbers');
-        if (oldLearnedNumbers) {
-            try {
-                const oldData = JSON.parse(oldLearnedNumbers);
-                migrateLegacyData();
-                localStorage.removeItem('learnedNumbers');
-            } catch (error) {
-                console.error('Error migrating old numbers data:', error);
-            }
-        }
+        
         
         // Initialize course with total items
         initializeCourse('numbers', numbers.length);
@@ -53,7 +43,7 @@ export default function NumbersCourse() {
         // Load current progress
         const numbersProgress = getCourseProgress('numbers');
         setLearnedCharacters(numbersProgress.learnedItems);
-    }, [getCourseProgress, initializeCourse, migrateLegacyData]);
+    }, [getCourseProgress, initializeCourse]);
 
     const endGameplay = () => {
         setIsGameplayActive(false);
