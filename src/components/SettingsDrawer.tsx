@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { useFontStore } from '@/stores/fontStore';
+import { useProgressStore } from '@/stores/progressStore';
 import ConfirmationDialog from './ConfirmationDialog';
 import SuccessPopup from './SuccessPopup';
 
@@ -12,6 +13,7 @@ export default function SettingsDrawer() {
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const { fontType, setFontType } = useFontStore();
+  const { resetAllProgress } = useProgressStore();
 
   const onFontSettingChange = (event: any) => {
     const choice = event.target.value;
@@ -23,7 +25,7 @@ export default function SettingsDrawer() {
   };
 
   const confirmReset = () => {
-    localStorage.removeItem('learnedLetters');
+    resetAllProgress();
     setShowResetConfirmation(false);
     setShowSettings(false);
     setShowSuccessPopup(true);

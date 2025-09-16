@@ -1,20 +1,51 @@
-// Alphabet course start screen with progress stats implemented
-
 'use client';
 
+import { useEffect } from 'react';
 import SettingsDrawer from '@/components/SettingsDrawer';
 import CourseLink from '@/components/CourseLink';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
-import { useLearnedLetters } from '@/hooks/useLearnedLetters';
+import { useProgressStore } from '@/stores/progressStore';
 import { alphabet } from '@/data/alphabet';
+import { numbers } from '@/data/numbers';
 
 export default function App() {
-  // Get learned letters data from the hook
-  const { learnedCount } = useLearnedLetters();
+  const {
+    getCourseProgress,
+    initializeCourse,
+    resetAllProgress,
+    migrateLegacyData,
+  } = useProgressStore();
+
+  // Initialize courses and migrate legacy data on mount
+  useEffect(() => {
+    // Migrate any legacy data first
+    migrateLegacyData();
+    
+    // Initialize courses with their total item counts
+    initializeCourse('alphabet', alphabet.length);
+    initializeCourse('numbers', numbers.length);
+  }, [initializeCourse, migrateLegacyData]);
+
+  // Get progress data for both courses
+  const alphabetProgress = getCourseProgress('alphabet');
+  const numbersProgress = getCourseProgress('numbers');
   
-  // Calculate progress percentage for the alphabet course
-  const totalLetters = alphabet.length;
-  const progress = totalLetters > 0 ? Math.round((learnedCount / totalLetters) * 100) : 0;
+  // Debug logs
+  console.log('Alphabet progress:', {
+    learned: alphabetProgress.learnedItems.length,
+    total: alphabetProgress.totalItems,
+    percentage: alphabetProgress.completionPercentage
+  });
+  console.log('Numbers progress:', {
+    learned: numbersProgress.learnedItems.length,
+    total: numbersProgress.totalItems,
+    percentage: numbersProgress.completionPercentage
+  });
+  
+  // Debug function to reset progress
+  const handleResetAllProgress = () => {
+    resetAllProgress();
+  };
   return (
     <>
       <div className="welcome">
@@ -41,15 +72,18 @@ export default function App() {
               title="Learn alphabet"
               icon="/images/icon-alphabet.svg"
               disabled={false}
-              progress={progress}
-              completedItems={learnedCount}
-              totalItems={totalLetters}
+              progress={alphabetProgress.completionPercentage}
+              completedItems={alphabetProgress.learnedItems.length}
+              totalItems={alphabetProgress.totalItems}
             />
             <CourseLink 
-              href="/"
+              href="/numbers"
               title="Learn numbers"
               icon="/images/icon-numbers.svg"
-              disabled={true}
+              disabled={false}
+              progress={numbersProgress.completionPercentage}
+              completedItems={numbersProgress.learnedItems.length}
+              totalItems={numbersProgress.totalItems}
             />
             <CourseLink 
               href="/"
@@ -63,6 +97,22 @@ export default function App() {
         <div className="welcome-footer">
           <div className="credits">Made by <a target="_blank" href="//almazbisenbaev.github.io">Almaz Bisenbaev</a></div>
         </div>
+      </div>
+      <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000 }}>
+        <button 
+          onClick={handleResetAllProgress}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#ff4d4f',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '14px'
+          }}
+        >
+          Reset All Progress (Debug)
+        </button>
       </div>
       {/* Settings and interactive logic moved to client component */}
       <SettingsDrawer />

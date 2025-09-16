@@ -22,6 +22,10 @@ export interface FlashcardProps {
   onLearned: () => void;
 }
 
+export interface ItemNumberProps {
+  number: number
+}
+
 export interface PendingLearnedAction {
   characterId: number;
   index: number;

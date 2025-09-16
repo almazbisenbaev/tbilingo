@@ -9,7 +9,17 @@ import './CourseLink.css';
  * Optionally shows progress information when progress data is provided
  */
 
-export default function CourseLink({ href, title, icon, disabled, progress, totalItems, completedItems }: CourseLinkProps) {
+export default function CourseLink({ 
+  href, 
+  title, 
+  icon, 
+  disabled = false, 
+  progress = 0, 
+  totalItems = 0, 
+  completedItems = 0 
+}: CourseLinkProps) {
+  // Debug log to check the props being received
+  console.log(`CourseLink [${title}]:`, { progress, completedItems, totalItems });
     return (
         <>
             <Link 
@@ -28,7 +38,7 @@ export default function CourseLink({ href, title, icon, disabled, progress, tota
                     {disabled && (
                         <div className='course-link-label'>Coming soon</div>
                     )}
-                    {!disabled && progress !== undefined && (
+                    {!disabled && progress !== undefined && progress >= 0 && (
                         <div className='course-link-progress'>
                             <div className='progress-bar'>
                                 <div 

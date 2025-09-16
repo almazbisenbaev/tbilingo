@@ -1,16 +1,17 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
+import { useProgressStore } from '@/stores/progressStore';
+import { useFontStore } from '@/stores/fontStore';
+import { alphabet } from '@/data/alphabet';
+import { shuffleArray } from '@/utils/shuffle-array';
+import Flashcard from '@/components/Flashcard';
+import ConfirmationDialog from '@/components/ConfirmationDialog';
+import SuccessPopup from '@/components/SuccessPopup';
 
 import Image from 'next/image';
 import Link from 'next/link';
-
-import shuffleArray from '@/utils/shuffle-array';
-import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
-
-import { alphabet } from '@/data/alphabet';
-import { useFontStore } from '@/stores/fontStore';
-import Flashcard from '@/components/Flashcard';
 
 // Type for a single alphabet letter
 interface AlphabetLetter {
@@ -24,9 +25,8 @@ interface AlphabetLetter {
 export default function AlphabetCourse() {
   useBackToHomeNavigation();
 
-  const [learnedCharacters, setLearnedCharacters] = useState<number[]>([]); // Store characters that the viewers has seen suring the gameplay
-  const [learnedCharactersCount, setLearnedCharactersCount] = useState<number>(0); // Store the learned characters from localstorage
-
+  const [learnedCharacters, setLearnedCharacters] = useState<number[]>([]); // Store characters that the viewers has seen during the gameplay
+  
   // Gameplay states
   const [isGameplayActive, setIsGameplayActive] = useState<boolean>(false);
   const [processedCharacters, setProcessedCharacters] = useState<number[]>([]); 
@@ -39,15 +39,23 @@ export default function AlphabetCourse() {
   const [pendingLearnedAction, setPendingLearnedAction] = useState<{characterId: number, index: number, element: HTMLElement | null} | null>(null);
 
   const { fontType } = useFontStore();
+  const { 
+    getCourseProgress, 
+    addLearnedItem, 
+    isItemLearned, 
+    initializeCourse,
+    migrateLegacyData 
+  } = useProgressStore();
 
   useEffect(() => {
+    // Migrate any legacy data and initialize the course
+    migrateLegacyData();
+    initializeCourse('alphabet', alphabet.length);
     
-    // Load learned characters from localstorage
-    const learnedCharactersInLocal = JSON.parse(localStorage.getItem('learnedLetters') || '[]');
-    setLearnedCharacters(learnedCharactersInLocal);
-    setLearnedCharactersCount(learnedCharactersInLocal.length);
-
-  }, []);
+    // Load learned characters from the store
+    const alphabetProgress = getCourseProgress('alphabet');
+    setLearnedCharacters(alphabetProgress.learnedItems);
+  }, [initializeCourse, migrateLegacyData, getCourseProgress]);
 
   /**
    * Initializes the gameplay session with flashcards
@@ -58,8 +66,10 @@ export default function AlphabetCourse() {
    * 4. Sets up the UI for the learning experience
    */
   const startGameplay = () => {
-    // Get previously learned characters from localStorage
-    const learnedCharactersInLocal = JSON.parse(localStorage.getItem('learnedLetters') || '[]');
+    // Get previously learned characters from progress store
+    const alphabetProgress = getCourseProgress('alphabet');
+    const learnedCharactersInLocal = alphabetProgress.learnedItems;
+    
     // Filter out characters that have already been learned
     const charactersMissingInLocal = alphabet.filter((letter: any) => !learnedCharactersInLocal.includes(letter.id)) as AlphabetLetter[];
     
@@ -122,15 +132,14 @@ export default function AlphabetCourse() {
   }
 
   /**
-   * Persists a learned letter to localStorage to maintain user progress across sessions
+   * Persists a learned letter to the progress store to maintain user progress across sessions
    * This function is called when a user confirms they've learned a character
    * @param characterId - The ID of the character to save as learned
    */
   const saveLetterToLocal = (characterId: number) => {
-    // Retrieve current learned characters from localStorage
-    const learnedCharactersInLocal: number[] = JSON.parse(localStorage.getItem('learnedLetters') || '[]');
-    localStorage.setItem('learnedLetters', JSON.stringify([...learnedCharactersInLocal, characterId]));
-  }
+    // Add the learned character to the progress store
+    addLearnedItem('alphabet', characterId);
+  };
 
   /**
    * Marks a character as "to review" and advances to the next card
@@ -202,8 +211,8 @@ export default function AlphabetCourse() {
     setProcessedCharacters([]);
     setCharactersToReview([]);
     // Reload learned characters count
-    const learnedCharactersInLocal = JSON.parse(localStorage.getItem('learnedLetters') || '[]');
-    setLearnedCharactersCount(learnedCharactersInLocal.length);
+    const alphabetProgress = getCourseProgress('alphabet');
+    setLearnedCharacters(alphabetProgress.learnedItems);
   };
 
   // Main alphabet page
@@ -231,7 +240,7 @@ export default function AlphabetCourse() {
         </div>
 
         <div className='w-full max-w-2xl mx-auto p-4'>
-          <div className='text-center'>Learned <b>{learnedCharactersCount}</b> out of <b>{alphabet.length}</b> characters</div>
+          <div className='text-center'>Learned <b>{learnedCharacters.length}</b> out of <b>{alphabet.length}</b> characters</div>
         </div>
 
         <div className='w-full max-w-2xl mx-auto p-4'>
