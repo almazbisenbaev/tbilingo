@@ -11,16 +11,11 @@ import { numbers } from '@/data/numbers';
 export default function App() {
   const {
     getCourseProgress,
-    initializeCourse,
-    resetAllProgress,
-    
+    initializeCourse
   } = useProgressStore();
 
-  // Initialize courses and migrate legacy data on mount
+  // Initialize courses with their total item counts
   useEffect(() => {
-    
-    
-    // Initialize courses with their total item counts
     initializeCourse('alphabet', alphabet.length);
     initializeCourse('numbers', numbers.length);
   }, [initializeCourse]);
@@ -28,23 +23,6 @@ export default function App() {
   // Get progress data for both courses
   const alphabetProgress = getCourseProgress('alphabet');
   const numbersProgress = getCourseProgress('numbers');
-  
-  // Debug logs
-  console.log('Alphabet progress:', {
-    learned: alphabetProgress.learnedItems.length,
-    total: alphabetProgress.totalItems,
-    percentage: alphabetProgress.completionPercentage
-  });
-  console.log('Numbers progress:', {
-    learned: numbersProgress.learnedItems.length,
-    total: numbersProgress.totalItems,
-    percentage: numbersProgress.completionPercentage
-  });
-  
-  // Debug function to reset progress
-  const handleResetAllProgress = () => {
-    resetAllProgress();
-  };
   return (
     <>
       <div className="welcome">
@@ -96,22 +74,6 @@ export default function App() {
         <div className="welcome-footer">
           <div className="credits">Made by <a target="_blank" href="//almazbisenbaev.github.io">Almaz Bisenbaev</a></div>
         </div>
-      </div>
-      <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000 }}>
-        <button 
-          onClick={handleResetAllProgress}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: '#ff4d4f',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '14px'
-          }}
-        >
-          Reset All Progress (Debug)
-        </button>
       </div>
       {/* Settings and interactive logic moved to client component */}
       <SettingsDrawer />
