@@ -1,153 +1,262 @@
-import { useState, useEffect, useCallback } from 'react';
+'use client';
+
+import { useState, useEffect, useCallback, useMemo } from 'react';
+
+const STORAGE_KEY = 'tbilingo-course-progress';
 
 type CourseType = 'alphabet' | 'numbers';
 
 interface ProgressData {
   learnedItems: number[];
   lastUpdated: string;
+  totalItems: number;
+  completionPercentage: number;
 }
 
 interface CourseProgress {
   [key: string]: ProgressData;
 }
 
-const STORAGE_KEY = 'courseProgress';
+// Helper function to calculate completion percentage
+const calculateCompletion = (learned: number, total: number): number => {
+  if (total === 0) return 0;
+  return Math.round((learned / total) * 100);
+};
+
+// Default progress data for a course
+const defaultCourseData: ProgressData = {
+  learnedItems: [],
+  lastUpdated: new Date().toISOString(),
+  totalItems: 0,
+  completionPercentage: 0
+};
 
 /**
  * Custom hook to manage progress for different courses
  * @param courseType The type of course ('alphabet' or 'numbers')
  * @returns An object containing progress data and methods to update it
+ * 
+ * @example
+ * const {
+ *   progress,          // Current progress data
+ *   isHydrated,        // Whether the data has been loaded from localStorage
+ *   isLoading,         // Whether the data is being loaded
+ *   addLearnedItem,    // Function to add a learned item
+ *   removeLearnedItem, // Function to remove a learned item
+ *   isItemLearned,     // Function to check if an item is learned
+ *   resetProgress,     // Function to reset progress
+ *   updateTotalItems,  // Function to update total items count
+ * } = useCourseProgress('alphabet');
  */
 export const useCourseProgress = (courseType: CourseType) => {
-  const [progress, setProgress] = useState<CourseProgress>({});
-  const [isLoading, setIsLoading] = useState(true);
+  const [state, setState] = useState<{
+    progress: CourseProgress;
+    isHydrated: boolean;
+    isLoading: boolean;
+  }>({
+    progress: { [courseType]: { ...defaultCourseData } },
+    isHydrated: false,
+    isLoading: true,
+  });
+
+  const { progress, isHydrated, isLoading } = state;
+  const isClient = typeof window !== 'undefined';
+  
+  const currentCourse = useMemo(
+    () => (isHydrated ? progress[courseType] : { ...defaultCourseData }),
+    [progress, courseType, isHydrated]
+  );
 
   // Load progress from localStorage when the component mounts
   useEffect(() => {
-    try {
-      
+    if (!isClient) return;
 
-      // Check for new format
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        // Ensure the course type exists in the progress object
-        if (!parsed[courseType]) {
-          parsed[courseType] = { learnedItems: [], lastUpdated: new Date().toISOString() };
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+    const loadProgress = () => {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored) as CourseProgress;
+          
+          // Ensure the course type exists in the progress object
+          if (!parsed[courseType]) {
+            parsed[courseType] = { ...defaultCourseData };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+          }
+          
+          setState(prev => ({
+            ...prev,
+            progress: parsed,
+            isHydrated: true,
+            isLoading: false,
+          }));
+        } else {
+          // Initialize with default progress
+          const initialProgress = {
+            [courseType]: { ...defaultCourseData }
+          };
+          
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(initialProgress));
+          
+          setState(prev => ({
+            ...prev,
+            progress: initialProgress,
+            isHydrated: true,
+            isLoading: false,
+          }));
         }
-        setProgress(parsed);
-      } else {
-        // Initialize with empty progress for the course type if nothing in storage
-        const initialProgress = {
-          [courseType]: { learnedItems: [], lastUpdated: new Date().toISOString() }
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(initialProgress));
-        setProgress(initialProgress);
+      } catch (error) {
+        console.error('Error loading progress:', error);
+        setState(prev => ({
+          ...prev,
+          isHydrated: true,
+          isLoading: false,
+        }));
       }
-    } catch (error) {
-      console.error('Failed to load progress:', error);
-      // Initialize with empty progress if there's an error
-      const initialProgress = {
-        [courseType]: { learnedItems: [], lastUpdated: new Date().toISOString() }
-      };
-      setProgress(initialProgress);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [courseType]);
+    };
+
+    loadProgress();
+  }, [courseType, isClient]);
 
   // Save progress to localStorage whenever it changes
   useEffect(() => {
-    if (isLoading) return;
-    
+    if (isLoading || !isHydrated || !isClient) return;
+
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
     } catch (error) {
       console.error('Failed to save progress:', error);
     }
-  }, [progress, isLoading]);
+  }, [progress, isLoading, isHydrated, isClient]);
 
-  // Get the current course's progress data
-  const getCourseProgress = useCallback((): ProgressData => {
-    if (!progress[courseType]) {
-      // Initialize if not exists
-      const newProgress = {
-        ...progress,
-        [courseType]: { learnedItems: [], lastUpdated: new Date().toISOString() }
-      };
-      setProgress(newProgress);
-      return newProgress[courseType];
-    }
-    return progress[courseType];
-  }, [progress, courseType]);
-
-  // Add an item to the learned items for the current course
+  // Add an item to the learned items list
   const addLearnedItem = useCallback((itemId: number) => {
-    setProgress(prev => {
-      const currentCourse = prev[courseType] || { learnedItems: [], lastUpdated: new Date().toISOString() };
+    if (!isClient) return;
+
+    setState(prev => {
+      const currentCourse = prev.progress[courseType] || { ...defaultCourseData };
       
-      // Don't add duplicate items
+      // Don't add if already learned
       if (currentCourse.learnedItems.includes(itemId)) {
         return prev;
       }
 
+      const newLearnedItems = [...currentCourse.learnedItems, itemId];
+      const updatedCourse = {
+        ...currentCourse,
+        learnedItems: newLearnedItems,
+        lastUpdated: new Date().toISOString(),
+        completionPercentage: calculateCompletion(
+          newLearnedItems.length, 
+          currentCourse.totalItems
+        )
+      };
+
       return {
         ...prev,
-        [courseType]: {
-          learnedItems: [...currentCourse.learnedItems, itemId],
-          lastUpdated: new Date().toISOString()
+        progress: {
+          ...prev.progress,
+          [courseType]: updatedCourse
         }
       };
     });
-  }, [courseType]);
+  }, [courseType, isClient]);
 
-  // Check if an item is learned in the current course
+  // Remove an item from the learned items list
+  const removeLearnedItem = useCallback((itemId: number) => {
+    if (!isClient) return;
+
+    setState(prev => {
+      const currentCourse = prev.progress[courseType];
+      if (!currentCourse) return prev;
+
+      const newLearnedItems = currentCourse.learnedItems.filter(id => id !== itemId);
+      const updatedCourse = {
+        ...currentCourse,
+        learnedItems: newLearnedItems,
+        lastUpdated: new Date().toISOString(),
+        completionPercentage: calculateCompletion(
+          newLearnedItems.length, 
+          currentCourse.totalItems
+        )
+      };
+
+      return {
+        ...prev,
+        progress: {
+          ...prev.progress,
+          [courseType]: updatedCourse
+        }
+      };
+    });
+  }, [courseType, isClient]);
+
+  // Check if an item is learned
   const isItemLearned = useCallback((itemId: number): boolean => {
-    return getCourseProgress().learnedItems.includes(itemId);
-  }, [getCourseProgress]);
+    if (!isHydrated) return false;
+    const course = progress[courseType];
+    return course ? course.learnedItems.includes(itemId) : false;
+  }, [progress, courseType, isHydrated]);
 
   // Reset progress for the current course
   const resetProgress = useCallback(() => {
-    setProgress(prev => ({
+    if (!isClient) return;
+
+    setState(prev => ({
       ...prev,
-      [courseType]: {
-        learnedItems: [],
-        lastUpdated: new Date().toISOString()
+      progress: {
+        ...prev.progress,
+        [courseType]: {
+          ...defaultCourseData,
+          totalItems: prev.progress[courseType]?.totalItems || 0,
+          completionPercentage: 0
+        }
       }
     }));
-  }, [courseType]);
+  }, [courseType, isClient]);
 
-  // Get the count of learned items for the current course
-  const getLearnedCount = useCallback((): number => {
-    return getCourseProgress().learnedItems.length;
-  }, [getCourseProgress]);
+  // Update the total number of items in the course
+  const updateTotalItems = useCallback((total: number) => {
+    if (!isClient) return;
+
+    setState(prev => {
+      const currentCourse = prev.progress[courseType] || { ...defaultCourseData };
+      
+      return {
+        ...prev,
+        progress: {
+          ...prev.progress,
+          [courseType]: {
+            ...currentCourse,
+            totalItems: total,
+            completionPercentage: calculateCompletion(
+              currentCourse.learnedItems.length, 
+              total
+            )
+          }
+        }
+      };
+    });
+  }, [courseType, isClient]);
+
+  // Get the current course's progress data
+  const getCourseProgress = useCallback((): ProgressData => {
+    return isHydrated 
+      ? progress[courseType] || { ...defaultCourseData }
+      : { ...defaultCourseData };
+  }, [progress, courseType, isHydrated]);
 
   return {
+    progress: currentCourse,
     isLoading,
-    learnedCount: getLearnedCount(),
-    isItemLearned,
+    isHydrated,
+    isClient,
     addLearnedItem,
+    removeLearnedItem,
+    isItemLearned,
     resetProgress,
-    getProgress: getCourseProgress
+    updateTotalItems,
+    getCourseProgress,
   };
 };
 
-// For backward compatibility
-export const useLearnedLetters = () => {
-  const {
-    learnedCount,
-    isItemLearned,
-    addLearnedItem,
-    resetProgress,
-    isLoading
-  } = useCourseProgress('alphabet');
-
-  return {
-    learnedCount,
-    isLetterLearned: isItemLearned,
-    addLearnedLetter: addLearnedItem,
-    resetProgress,
-    isLoading
-  };
-};
+// Note: The useLearnedLetters hook is now a separate hook in useLearnedLetters.ts
