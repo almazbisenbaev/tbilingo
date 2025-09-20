@@ -6,7 +6,7 @@ import { useProgressStore } from '@/stores/progressStore';
 import { useFontStore } from '@/stores/fontStore';
 import { alphabet } from '@/data/alphabet';
 import { shuffleArray } from '@/utils/shuffle-array';
-import Flashcard from '@/components/Flashcard';
+import FlashcardLetter from '@/components/FlashcardLetter';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import SuccessPopup from '@/components/SuccessPopup';
 
@@ -291,7 +291,7 @@ export default function AlphabetCourse() {
                                         >
                                             <div className='slider-slide-inner'>
 
-                                                <Flashcard 
+                                                <FlashcardLetter 
                                                     letter={item} 
                                                     onNext={() => markAsToReview(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
                                                     onLearned={() => markAsLearned(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}

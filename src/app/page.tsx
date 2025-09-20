@@ -72,11 +72,13 @@ export default function App() {
         </div>
         <PWAInstallPrompt />
         <div className="welcome-footer">
-          <div className="credits">Made by <a target="_blank" href="//almazbisenbaev.github.io">Almaz Bisenbaev</a></div>
+          <div className="credits">Made by <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
         </div>
       </div>
+
       {/* Settings and interactive logic moved to client component */}
       <SettingsDrawer />
+
     </>
   );
 }

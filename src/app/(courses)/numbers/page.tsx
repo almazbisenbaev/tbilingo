@@ -6,8 +6,8 @@ import { useProgressStore } from '@/stores/progressStore';
 import { useFontStore } from '@/stores/fontStore';
 import { numbers } from '@/data/numbers';
 import { shuffleArray } from '@/utils/shuffle-array';
-import Flashcard from '@/components/Flashcard';
-import ConfirmationDialog from '@/components/ConfirmationDialog';
+// import FlashcardNumber from '@/components/FlashcardNumber';
+// import ConfirmationDialog from '@/components/ConfirmationDialog';
 import SuccessPopup from '@/components/SuccessPopup';
 
 import Image from 'next/image';

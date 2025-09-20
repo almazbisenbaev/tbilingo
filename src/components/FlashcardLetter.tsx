@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FlashcardProps } from '@/types';
-import './Flashcard.css';
+import './FlashcardLetter.css';
 
 /**
  * Flashcard component for displaying Georgian alphabet characters

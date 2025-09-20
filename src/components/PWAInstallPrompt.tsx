@@ -85,7 +85,7 @@ export default function PWAInstallPrompt() {
         className="pwa-install-button"
       >
         <svg 
-          className="w-5 h-5" 
+          className="w-4 h-4" 
           fill="currentColor" 
           viewBox="0 0 20 20"
         >
