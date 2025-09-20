@@ -312,9 +312,10 @@ export default function AlphabetCourse() {
             <div className="screen-finish">
 
                 <div className="finish-message">
-                <h2 className='finish-message-title'>All cards reviewed 🙌</h2>
-                <div className='finish-message-text'>
-                    <p>You've looked through all the flashcards. You can go back to the homepage and start over.</p>
+                <div className='text-center text-4xl'>🙌</div>
+                <h2 className='font-semibold text-2xl'>That's it for today!</h2>
+                <div className='text-lg finish-message-text'>
+                    <p>You've looked through all the flashcards for this session. You can go back to the homepage and start again.</p>
                     <p>If you're not sure whether you memorized all the letters, you can reset your progress and start from 0.</p>
                 </div>
                 <div className='finish-message-actions'>

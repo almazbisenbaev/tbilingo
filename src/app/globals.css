@@ -234,10 +234,6 @@ input[type=submit]:focus {
   min-height: 90vh;
 }
 
-.finish-message-title {
-  text-align: center;
-}
-
 .finish-message-text {
   text-align: center;
 }
