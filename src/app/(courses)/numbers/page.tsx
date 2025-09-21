@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore } from '@/stores/progressStore';
 import { numbers } from '@/data/numbers';
-import { shuffleArray } from '@/utils/shuffle-array';
 import FlashcardNumber from '@/components/FlashcardNumber';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import SuccessPopup from '@/components/SuccessPopup';
@@ -74,10 +73,9 @@ export default function NumbersCourse() {
     setLearnedNumbers(learnedNumbersInLocal);
     setSlideWidth(0);
 
-    // Shuffle remaining numbers and select a subset for this session
-    const shuffledNumbersMissingInLocal = shuffleArray(numbersMissingInLocal);
+    // Select a subset of numbers for this session (without shuffling)
     // Limit to 10 numbers per session for better learning experience
-    const selectedNumbers = shuffledNumbersMissingInLocal.slice(0, 10);
+    const selectedNumbers = numbersMissingInLocal.slice(0, 10);
 
     // Update state to start the gameplay
     setNumbersToReview(selectedNumbers);
