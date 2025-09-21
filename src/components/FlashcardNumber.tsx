@@ -1,35 +1,32 @@
 import { useState } from 'react';
-import { ItemNumberProps } from '@/types';
+import { FlashcardNumberProps } from '@/types';
 import './FlashcardNumber.css';
 
 /**
  * Flashcard component for displaying Georgian numbers
- * Features a flip animation to show character details and pronunciation
+ * Features a flip animation to show number details and translation
  * 
  * The component has two sides:
  * 1. Front: Shows only the number
- * 2. Back: Shows the name and spelling
+ * 2. Back: Shows the Georgian translation and Latin transliteration
  */
 
-const Flashcard: React.FC<ItemNumberProps> = ({ number }) => {
-//   const [showAnswer, setShowAnswer] = useState<boolean>(false);
+const FlashcardNumber: React.FC<FlashcardNumberProps> = ({ number, onNext, onLearned }) => {
+  const [showAnswer, setShowAnswer] = useState<boolean>(false);
 
   /**
    * Handles the action when user clicks to reveal the answer
    * Triggers the card flip animation by setting showAnswer state to true
    */
-//   const handleShowAnswer = () => {
-//     setShowAnswer(true);
-//   };
+  const handleShowAnswer = () => {
+    setShowAnswer(true);
+  };
 
   return (
     <div className="flashcard">
-
-        <h1>Number: {number}</h1>
-
-      {/* <div className={`flashcard-inner ${showAnswer ? 'flipped' : ''}`}>
+      <div className={`flashcard-inner ${showAnswer ? 'flipped' : ''}`}>
         <div className="flashcard-front">
-          <div className='flashcard-character'>{letter.character}</div>
+          <div className='flashcard-character'>{number.number}</div>
           <button 
             className="btn btn-primary w-full"
             onClick={handleShowAnswer}
@@ -39,19 +36,9 @@ const Flashcard: React.FC<ItemNumberProps> = ({ number }) => {
         </div>
         <div className="flashcard-back">
           <div className='flashcard-back-content'>
-            <div className='flashcard-name'>{letter.name}</div>
+            <div className='flashcard-name'>{number.translation}</div>
             <div className='flashcard-pronunciation'>
-              Pronunciation: <b>{letter.pronunciation}</b>
-            </div>
-            <div>
-              <audio
-                controls
-                className="flashcard-audio"
-                src={letter.audioUrl}
-                preload="auto"
-              >
-                Your browser does not support the audio element.
-              </audio>
+              Transliteration: <b>{number.translationLatin}</b>
             </div>
           </div>
           <div className="flashcard-actions">
@@ -69,9 +56,9 @@ const Flashcard: React.FC<ItemNumberProps> = ({ number }) => {
             </button>
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };
 
-export default Flashcard;
+export default FlashcardNumber;

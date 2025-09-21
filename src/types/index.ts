@@ -6,6 +6,13 @@ export interface Letter {
   audioUrl: string;
 }
 
+export interface Number {
+  id: number;
+  number: string;
+  translation: string;
+  translationLatin: string;
+}
+
 export interface CourseLinkProps {
   href: string;
   title: string;
@@ -18,6 +25,12 @@ export interface CourseLinkProps {
 
 export interface FlashcardProps {
   letter: Letter;
+  onNext: () => void;
+  onLearned: () => void;
+}
+
+export interface FlashcardNumberProps {
+  number: Number;
   onNext: () => void;
   onLearned: () => void;
 }
