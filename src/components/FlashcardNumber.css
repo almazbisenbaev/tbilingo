@@ -94,3 +94,10 @@
   gap: 12px;
   margin-top: auto;
 }
+
+.flashcard-transliteration-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}

@@ -13,6 +13,7 @@ import './FlashcardNumber.css';
 
 const FlashcardNumber: React.FC<FlashcardNumberProps> = ({ number, onNext, onLearned }) => {
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
+  const [showTransliteration, setShowTransliteration] = useState<boolean>(false);
 
   /**
    * Handles the action when user clicks to reveal the answer
@@ -20,6 +21,14 @@ const FlashcardNumber: React.FC<FlashcardNumberProps> = ({ number, onNext, onLea
    */
   const handleShowAnswer = () => {
     setShowAnswer(true);
+  };
+
+  /**
+   * Handles showing the Latin transliteration
+   * Once shown, it stays visible and the button disappears
+   */
+  const handleShowTransliteration = () => {
+    setShowTransliteration(true);
   };
 
   return (
@@ -37,8 +46,20 @@ const FlashcardNumber: React.FC<FlashcardNumberProps> = ({ number, onNext, onLea
         <div className="flashcard-back">
           <div className='flashcard-back-content'>
             <div className='flashcard-name'>{number.translation}</div>
-            <div className='flashcard-pronunciation'>
-              Transliteration: <b>{number.translationLatin}</b>
+            <div className='flashcard-transliteration-section'>
+              {showTransliteration && (
+                <div className='flashcard-pronunciation'>
+                  Transliteration: <b>{number.translationLatin}</b>
+                </div>
+              )}
+              {!showTransliteration && (
+                <button 
+                  className="btn btn-small btn-secondary"
+                  onClick={handleShowTransliteration}
+                >
+                  Latin
+                </button>
+              )}
             </div>
           </div>
           <div className="flashcard-actions">
