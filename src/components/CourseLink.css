@@ -33,7 +33,7 @@
 }
 
 .course-link-content {
-
+    flex: 1;
 }
 
 .course-link-title {
@@ -52,7 +52,7 @@
 }
 
 .progress-bar {
-    height: 6px;
+    height: 4px;
     background-color: #F2482220;
     border-radius: 3px;
     overflow: hidden;
@@ -69,5 +69,4 @@
 .progress-text {
     font-size: 0.75rem;
     color: #555;
-    text-align: right;
 }
