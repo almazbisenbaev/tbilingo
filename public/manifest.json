@@ -1,7 +1,7 @@
 {
-  "name": "Tbilingo",
+  "name": "Tbilingo - Learn Georgian Alphabet",
   "short_name": "Tbilingo",
-  "description": "Learn the Georgian alphabet interactively!",
+  "description": "Learn the Georgian alphabet interactively with flashcards and audio pronunciation!",
   "version": "1.0.1",
   "start_url": "/",
   "display": "standalone",
@@ -9,18 +9,32 @@
   "theme_color": "#1a202c",
   "orientation": "portrait",
   "scope": "/",
+  "categories": ["education", "language"],
+  "lang": "en",
   "icons": [
     {
       "src": "/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

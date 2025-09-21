@@ -6,8 +6,13 @@ export default function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallButton, setShowInstallButton] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
+    // Detect iOS devices
+    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    setIsIOS(iOS);
+
     const handleBeforeInstallPrompt = (e: Event) => {
       // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
@@ -37,6 +42,11 @@ export default function PWAInstallPrompt() {
     // Check if the app is already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setShowInstallButton(false);
+    } else if (iOS) {
+      // Show iOS-specific install instructions if not installed
+      // and not running in standalone mode
+      setShowInstallButton(true);
+      setIsVisible(true);
     }
 
     return () => {
@@ -51,6 +61,17 @@ export default function PWAInstallPrompt() {
    * and manages UI state based on user's response
    */
   const handleInstallClick = async () => {
+    if (isIOS) {
+      // Show iOS-specific instructions
+      alert(
+        'To install this app on your iOS device:\n\n' +
+        '1. Tap the Share button (square with arrow)\n' +
+        '2. Scroll down and tap "Add to Home Screen"\n' +
+        '3. Tap "Add" to install the app'
+      );
+      return;
+    }
+
     if (!deferredPrompt) return; // Safety check if prompt isn't available
 
     // Show the browser's native install prompt
@@ -95,7 +116,7 @@ export default function PWAInstallPrompt() {
             clipRule="evenodd" 
           />
         </svg>
-        Install App
+        {isIOS ? 'Add to Home Screen' : 'Install App'}
       </button>
     </div>
   );
