@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics } from '@vercel/analytics/next';
+import { GoogleAnalytics } from '@next/third-parties/google'
 import { Inter } from 'next/font/google';
 import { Noto_Serif_Georgian } from 'next/font/google';
 import "./globals.css";
@@ -44,6 +45,7 @@ export default function RootLayout({
         {children}
 
         <Analytics />
+        <GoogleAnalytics gaId="G-F75W5FNJH2" />
         <ServiceWorkerRegistration />
       </body>
     </html>
