@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore } from '@/stores/progressStore';
-import { useFontStore } from '@/stores/fontStore';
 import { numbers } from '@/data/numbers';
 import { shuffleArray } from '@/utils/shuffle-array';
 import FlashcardNumber from '@/components/FlashcardNumber';
@@ -37,7 +36,6 @@ export default function NumbersCourse() {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [pendingLearnedAction, setPendingLearnedAction] = useState<{numberId: number, index: number, element: HTMLElement | null} | null>(null);
 
-  const { fontType } = useFontStore();
   const { 
     getCourseProgress, 
     addLearnedItem, 
@@ -254,7 +252,7 @@ export default function NumbersCourse() {
     <div className='h-svh flex flex-col justify-between py-4'>
 
         {!allCardsReviewed && (
-            <div className={`screen-gameplay font-type-${fontType}`}>
+            <div className={`screen-gameplay`}>
 
                 <div className='w-full max-w-2xl mx-auto p-4'>
                     <div className="navbar">

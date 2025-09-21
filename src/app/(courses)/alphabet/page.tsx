@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore } from '@/stores/progressStore';
-import { useFontStore } from '@/stores/fontStore';
+import { useFontTypeStore } from '@/stores/fontTypeStore';
 import { alphabet } from '@/data/alphabet';
 import { shuffleArray } from '@/utils/shuffle-array';
 import FlashcardLetter from '@/components/FlashcardLetter';
@@ -38,7 +38,7 @@ export default function AlphabetCourse() {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [pendingLearnedAction, setPendingLearnedAction] = useState<{characterId: number, index: number, element: HTMLElement | null} | null>(null);
 
-  const { fontType } = useFontStore();
+  const { fontType } = useFontTypeStore();
   const { 
     getCourseProgress, 
     addLearnedItem, 

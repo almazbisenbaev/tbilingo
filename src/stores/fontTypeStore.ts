@@ -2,12 +2,12 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { FontType } from '@/types';
 
-interface FontState {
+interface FontTypeState {
   fontType: FontType;
   setFontType: (fontType: FontType) => void;
 }
 
-export const useFontStore = create<FontState>()(
+export const useFontTypeStore = create<FontTypeState>()(
   persist(
     (set) => ({
       fontType: 'sans',

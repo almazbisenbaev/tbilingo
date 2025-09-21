@@ -65,10 +65,6 @@
   justify-content: center;
 }
 
-.font-type-serif .flashcard-character {
-  font-family: var(--font-noto-serif-georgian);
-}
-
 .flashcard-name {
   font-size: 28px;
   font-weight: normal;
