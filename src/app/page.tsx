@@ -4,16 +4,22 @@ import { useEffect } from 'react';
 import SettingsDrawer from '@/components/SettingsDrawer';
 import CourseLink from '@/components/CourseLink';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
-import { useProgressStore } from '@/stores/progressStore';
+import { useProgressStore, useSafeProgressStore, useStoreHydration } from '@/stores/progressStore';
 import { alphabet } from '@/data/alphabet';
 import { numbers } from '@/data/numbers';
 import { words } from '@/data/words';
 
 export default function App() {
   const {
-    getCourseProgress,
     initializeCourse
   } = useProgressStore();
+  
+  const isHydrated = useStoreHydration();
+
+  // Use safe progress store hooks that return undefined during SSR
+  const alphabetProgress = useSafeProgressStore(state => state.getCourseProgress('alphabet'));
+  const numbersProgress = useSafeProgressStore(state => state.getCourseProgress('numbers'));
+  const wordsProgress = useSafeProgressStore(state => state.getCourseProgress('words'));
 
   // Initialize courses with their total item counts
   useEffect(() => {
@@ -21,11 +27,6 @@ export default function App() {
     initializeCourse('numbers', numbers.length);
     initializeCourse('words', words.length);
   }, [initializeCourse]);
-
-  // Get progress data for all courses
-  const alphabetProgress = getCourseProgress('alphabet');
-  const numbersProgress = getCourseProgress('numbers');
-  const wordsProgress = getCourseProgress('words');
   return (
     <>
       <div className="welcome">
@@ -52,27 +53,27 @@ export default function App() {
               title="Learn Alphabet"
               icon="/images/icon-alphabet.svg"
               disabled={false}
-              progress={alphabetProgress.completionPercentage}
-              completedItems={alphabetProgress.learnedItems.length}
-              totalItems={alphabetProgress.totalItems}
+              progress={alphabetProgress?.completionPercentage ?? 0}
+              completedItems={alphabetProgress?.learnedItems.length ?? 0}
+              totalItems={alphabetProgress?.totalItems ?? 0}
             />
             <CourseLink 
               href="/numbers"
               title="Learn Numbers"
               icon="/images/icon-numbers.svg"
               disabled={false}
-              progress={numbersProgress.completionPercentage}
-              completedItems={numbersProgress.learnedItems.length}
-              totalItems={numbersProgress.totalItems}
+              progress={numbersProgress?.completionPercentage ?? 0}
+              completedItems={numbersProgress?.learnedItems.length ?? 0}
+              totalItems={numbersProgress?.totalItems ?? 0}
             />
             <CourseLink 
               href="/words"
               title="Words & Phrases - Basic"
               icon="/images/icon-phrases.svg"
               disabled={false}
-              progress={wordsProgress.completionPercentage}
-              completedItems={wordsProgress.learnedItems.length}
-              totalItems={wordsProgress.totalItems}
+              progress={wordsProgress?.completionPercentage ?? 0}
+              completedItems={wordsProgress?.learnedItems.length ?? 0}
+              totalItems={wordsProgress?.totalItems ?? 0}
             />
           </div>
         </div>

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { CourseLinkProps } from '@/types';
+import { useStoreHydration } from '@/stores/progressStore';
 
 import './CourseLink.css';
 
@@ -18,8 +19,13 @@ export default function CourseLink({
   totalItems = 0, 
   completedItems = 0 
 }: CourseLinkProps) {
+  const isHydrated = useStoreHydration();
+  
+  // Only show progress if hydrated AND we have actual data
+  const shouldShowProgress = isHydrated && !disabled && progress !== undefined && progress >= 0;
+  
   // Debug log to check the props being received
-  console.log(`CourseLink [${title}]:`, { progress, completedItems, totalItems });
+  console.log(`CourseLink [${title}]:`, { progress, completedItems, totalItems, isHydrated, shouldShowProgress });
     return (
         <>
             <Link 
@@ -37,7 +43,7 @@ export default function CourseLink({
                     {disabled && (
                         <div className='course-link-label'>Coming soon</div>
                     )}
-                    {!disabled && progress !== undefined && progress >= 0 && (
+                    {shouldShowProgress && (
                         <div className='course-link-progress'>
                             <div className='progress-bar'>
                                 <div 
