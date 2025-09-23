@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { IconPlayerPlay, IconPlayerPause } from '@tabler/icons-react';
+import { IconPlayerPause, IconVolume } from '@tabler/icons-react';
 import { FlashcardProps } from '@/types';
 import './FlashcardLetter.css';
 
@@ -84,7 +84,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ letter, onNext, onLearned }) => {
                 {isPlaying ? (
                   <IconPlayerPause size={20} />
                 ) : (
-                  <IconPlayerPlay size={20} />
+                  <IconVolume size={20} />
                 )}
               </button>
               {audioError && (
