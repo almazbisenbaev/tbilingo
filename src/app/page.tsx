@@ -46,7 +46,7 @@ export default function App() {
           <div className="welcome-actions">
             <CourseLink 
               href="/alphabet"
-              title="Learn alphabet"
+              title="Learn Alphabet"
               icon="/images/icon-alphabet.svg"
               disabled={false}
               progress={alphabetProgress.completionPercentage}
@@ -55,7 +55,7 @@ export default function App() {
             />
             <CourseLink 
               href="/numbers"
-              title="Learn numbers"
+              title="Learn Numbers"
               icon="/images/icon-numbers.svg"
               disabled={false}
               progress={numbersProgress.completionPercentage}
@@ -64,7 +64,7 @@ export default function App() {
             />
             <CourseLink 
               href="/"
-              title="Learn words & phrases"
+              title="Learn Words & Phrases"
               icon="/images/icon-phrases.svg"
               disabled={true}
             />
