@@ -1,4 +1,6 @@
-export const words = [
+import { WordItem } from '@/types';
+
+export const words: WordItem[] = [
     // Basic Greetings
     { english: 'Hello', georgian: 'გამარჯობა', latin: 'gamarjoba', id: 1 },
     { english: 'Goodbye', georgian: 'ნახვამდის', latin: 'nakhvamdis', id: 2 },

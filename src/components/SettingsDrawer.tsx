@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
+import Image from 'next/image';
 import { useFontTypeStore } from '@/stores/fontTypeStore';
 import { useProgressStore } from '@/stores/progressStore';
 import ConfirmationDialog from './ConfirmationDialog';
@@ -123,7 +124,12 @@ export default function SettingsDrawer() {
                               className='reset-button' 
                               onClick={onReset}
                             >
-                              <img src="/images/icon-reset-red.svg" alt="" />
+                              <Image 
+                                src="/images/icon-reset-red.svg" 
+                                alt="Reset" 
+                                width={16}
+                                height={16}
+                              />
                               <span>Reset progress</span>
                             </button>
                           </div>

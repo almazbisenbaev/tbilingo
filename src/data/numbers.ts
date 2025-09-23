@@ -1,4 +1,6 @@
-export const numbers = [
+import { NumberItem } from '@/types';
+
+export const numbers: NumberItem[] = [
   { id: 1, number: "0", translation: "ნული", translationLatin: "nuli" },
   { id: 2, number: "1", translation: "ერთი", translationLatin: "erti" },
   { id: 3, number: "2", translation: "ორი", translationLatin: "ori" },

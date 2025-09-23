@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore } from '@/stores/progressStore';
+import { WordItem, PendingWordAction } from '@/types';
 import { words } from '@/data/words';
 import { shuffleArray } from '@/utils/shuffle-array';
 import WordsComponent from '@/components/WordsComponent';
@@ -11,14 +12,6 @@ import ProgressBar from '@/components/ProgressBar';
 
 import Image from 'next/image';
 import Link from 'next/link';
-
-// Type for a single word/phrase item
-interface WordItem {
-  english: string;
-  georgian: string;
-  latin: string;
-  id: number;
-}
 
 export default function WordsCourse() {
   useBackToHomeNavigation();
@@ -35,7 +28,7 @@ export default function WordsCourse() {
 
   // Confirmation dialog state
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-  const [pendingLearnedAction, setPendingLearnedAction] = useState<{wordId: number, index: number, element: HTMLElement | null} | null>(null);
+  const [pendingLearnedAction, setPendingLearnedAction] = useState<PendingWordAction | null>(null);
 
   const { 
     getCourseProgress, 

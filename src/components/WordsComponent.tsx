@@ -1,16 +1,6 @@
 import { useState } from 'react';
+import { WordsComponentProps } from '@/types';
 import './WordsComponent.css';
-
-interface WordsComponentProps {
-  word: {
-    english: string;
-    georgian: string;
-    latin: string;
-    id: number;
-  };
-  onNext: () => void;
-  onLearned: () => void;
-}
 
 /**
  * Component for displaying Georgian words and phrases

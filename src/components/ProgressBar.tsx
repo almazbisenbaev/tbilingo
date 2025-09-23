@@ -1,12 +1,6 @@
 import React from 'react';
+import { ProgressBarProps } from '@/types';
 import './ProgressBar.css';
-
-interface ProgressBarProps {
-  current: number;
-  total: number;
-  showText?: boolean;
-  width?: string;
-}
 
 /**
  * Isolated progress bar component for showing completion progress
@@ -15,7 +9,7 @@ interface ProgressBarProps {
 const ProgressBar: React.FC<ProgressBarProps> = ({ 
   current, 
   total, 
-  showText = false,
+  showText = true,
   width = '200px' 
 }) => {
   const percentage = total > 0 ? Math.round((current / total) * 100) : 0;

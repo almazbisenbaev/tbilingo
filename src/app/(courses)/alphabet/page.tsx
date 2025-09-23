@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore } from '@/stores/progressStore';
 import { useFontTypeStore } from '@/stores/fontTypeStore';
+import { AlphabetItem, PendingLearnedAction } from '@/types';
 import { alphabet } from '@/data/alphabet';
 import { shuffleArray } from '@/utils/shuffle-array';
 import FlashcardLetter from '@/components/FlashcardLetter';
@@ -13,15 +14,6 @@ import SuccessPopup from '@/components/SuccessPopup';
 import Image from 'next/image';
 import Link from 'next/link';
 
-// Type for a single alphabet letter
-interface AlphabetLetter {
-  character: string;
-  name: string;
-  pronunciation: string;
-  id: number;
-  audioUrl: string;
-}
-
 export default function AlphabetCourse() {
   useBackToHomeNavigation();
 
@@ -30,7 +22,7 @@ export default function AlphabetCourse() {
   // Gameplay states
   const [isGameplayActive, setIsGameplayActive] = useState<boolean>(false);
   const [processedCharacters, setProcessedCharacters] = useState<number[]>([]); 
-  const [charactersToReview, setCharactersToReview] = useState<AlphabetLetter[]>([]);
+  const [charactersToReview, setCharactersToReview] = useState<AlphabetItem[]>([]);
   const [slideWidth, setSlideWidth] = useState<number>(0);
   const [allCardsReviewed, setAllCardsReviewed] = useState<boolean>(false);
 
@@ -70,7 +62,7 @@ export default function AlphabetCourse() {
     const learnedCharactersInLocal = alphabetProgress.learnedItems;
     
     // Filter out characters that have already been learned
-    const charactersMissingInLocal = alphabet.filter((letter: any) => !learnedCharactersInLocal.includes(letter.id)) as AlphabetLetter[];
+    const charactersMissingInLocal = alphabet.filter((letter: any) => !learnedCharactersInLocal.includes(letter.id)) as AlphabetItem[];
     
     // Reset session state
     setProcessedCharacters([]);

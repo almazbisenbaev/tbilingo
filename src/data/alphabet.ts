@@ -1,4 +1,6 @@
-export const alphabet = [
+import { AlphabetItem } from '@/types';
+
+export const alphabet: AlphabetItem[] = [
     { character: 'ა', name: 'ani', pronunciation: 'a', id: 1, audioUrl: '/audio/ani.mp3' },
     { character: 'ბ', name: 'bani', pronunciation: 'b', id: 2, audioUrl: '/audio/bani.mp3' },
     { character: 'გ', name: 'gani', pronunciation: 'g', id: 3, audioUrl: '/audio/gani.mp3' },

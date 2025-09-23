@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore } from '@/stores/progressStore';
+import { NumberItem, PendingNumberAction } from '@/types';
 import { numbers } from '@/data/numbers';
 import FlashcardNumber from '@/components/FlashcardNumber';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
@@ -10,14 +11,6 @@ import SuccessPopup from '@/components/SuccessPopup';
 
 import Image from 'next/image';
 import Link from 'next/link';
-
-// Type for a single number
-interface NumberItem {
-  id: number;
-  number: string;
-  translation: string;
-  translationLatin: string;
-}
 
 export default function NumbersCourse() {
   useBackToHomeNavigation();
@@ -33,7 +26,7 @@ export default function NumbersCourse() {
 
   // Confirmation dialog state
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-  const [pendingLearnedAction, setPendingLearnedAction] = useState<{numberId: number, index: number, element: HTMLElement | null} | null>(null);
+  const [pendingLearnedAction, setPendingLearnedAction] = useState<PendingNumberAction | null>(null);
 
   const { 
     getCourseProgress, 
