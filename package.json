@@ -12,6 +12,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.7",
     "@next/third-parties": "^15.5.3",
+    "@tabler/icons-react": "^3.35.0",
     "@vercel/analytics": "^1.5.0",
     "firebase": "^12.2.1",
     "next": "15.3.4",
