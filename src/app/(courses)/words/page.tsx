@@ -7,6 +7,7 @@ import { words } from '@/data/words';
 import { shuffleArray } from '@/utils/shuffle-array';
 import WordsComponent from '@/components/WordsComponent';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
+import ProgressBar from '@/components/ProgressBar';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -190,12 +191,6 @@ export default function WordsCourse() {
     setLearnedWords(wordsProgress.learnedItems);
   };
 
-  // Calculate progress percentage for the progress bar
-  const getProgressPercentage = () => {
-    if (wordsToReview.length === 0) return 0;
-    return Math.round((processedWords.length / wordsToReview.length) * 100);
-  };
-
   // Main words page
   if (!isGameplayActive) {
     return (
@@ -252,14 +247,11 @@ export default function WordsCourse() {
                             </div>
                             <div className="navbar-title">
                               {/* Progress bar */}
-                              <div className="progress-container" style={{ width: '200px' }}>
-                                <div className="progress-bar">
-                                  <div 
-                                    className="progress-fill" 
-                                    style={{ width: `${getProgressPercentage()}%` }}
-                                  ></div>
-                                </div>
-                              </div>
+                              <ProgressBar 
+                                current={processedWords.length} 
+                                total={wordsToReview.length}
+                                width="200px"
+                              />
                             </div>
                             <div className="navbar-aside"></div>
                         </div>
@@ -337,35 +329,6 @@ export default function WordsCourse() {
             </div>
         )}
 
-        {/* Progress bar styles */}
-        <style jsx>{`
-          .progress-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-          }
-          
-          .progress-bar {
-            width: 100%;
-            height: 4px;
-            background-color: #e5e7eb;
-            border-radius: 4px;
-            overflow: hidden;
-          }
-          
-          .progress-fill {
-            height: 100%;
-            background-color: #F24822;
-            transition: width 0.3s ease;
-          }
-          
-          .progress-text {
-            font-size: 12px;
-            color: #6b7280;
-            font-weight: 500;
-          }
-        `}</style>
     
     </div>
   )
