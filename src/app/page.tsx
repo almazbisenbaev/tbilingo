@@ -7,6 +7,7 @@ import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { useProgressStore } from '@/stores/progressStore';
 import { alphabet } from '@/data/alphabet';
 import { numbers } from '@/data/numbers';
+import { words } from '@/data/words';
 
 export default function App() {
   const {
@@ -18,11 +19,13 @@ export default function App() {
   useEffect(() => {
     initializeCourse('alphabet', alphabet.length);
     initializeCourse('numbers', numbers.length);
+    initializeCourse('words', words.length);
   }, [initializeCourse]);
 
-  // Get progress data for both courses
+  // Get progress data for all courses
   const alphabetProgress = getCourseProgress('alphabet');
   const numbersProgress = getCourseProgress('numbers');
+  const wordsProgress = getCourseProgress('words');
   return (
     <>
       <div className="welcome">
@@ -63,10 +66,13 @@ export default function App() {
               totalItems={numbersProgress.totalItems}
             />
             <CourseLink 
-              href="/"
-              title="Learn Words & Phrases"
+              href="/words"
+              title="Words & Phrases - Basic"
               icon="/images/icon-phrases.svg"
-              disabled={true}
+              disabled={false}
+              progress={wordsProgress.completionPercentage}
+              completedItems={wordsProgress.learnedItems.length}
+              totalItems={wordsProgress.totalItems}
             />
           </div>
         </div>

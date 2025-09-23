@@ -1,0 +1,114 @@
+.words-component {
+  width: 100%;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.words-content {
+  background-color: white;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.words-english {
+  text-align: center;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+}
+
+.words-show-answer-btn {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.words-answer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.words-georgian {
+  text-align: center;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #8A2008;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  padding: 1rem;
+}
+
+.words-answer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.words-latin-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.words-latin {
+  font-size: 1rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+.words-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.words-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.words-actions .btn {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .words-content {
+    padding: 1.5rem;
+  }
+  
+  .words-english,
+  .words-georgian {
+    font-size: 1.5rem;
+    min-height: 60px;
+  }
+  
+  .words-show-answer-btn {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    font-size: 1rem;
+  }
+}

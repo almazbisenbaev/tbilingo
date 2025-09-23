@@ -31,7 +31,7 @@ const createSafeStorage = (): StateStorage => {
 };
 
 // Define course types
-export type CourseType = 'alphabet' | 'numbers' | 'phrases' | 'vocabulary';
+export type CourseType = 'alphabet' | 'numbers' | 'words' | 'phrases' | 'vocabulary';
 
 // Define the structure for individual course progress
 export interface CourseProgress {
@@ -77,6 +77,7 @@ export const useProgressStore = create<ProgressState>()(
       courses: {
         alphabet: createDefaultCourseProgress(),
         numbers: createDefaultCourseProgress(),
+        words: createDefaultCourseProgress(),
         phrases: createDefaultCourseProgress(),
         vocabulary: createDefaultCourseProgress(),
       } as Record<CourseType, CourseProgress>,
@@ -162,6 +163,7 @@ export const useProgressStore = create<ProgressState>()(
         courses: {
           alphabet: createDefaultCourseProgress(),
           numbers: createDefaultCourseProgress(),
+          words: createDefaultCourseProgress(),
           phrases: createDefaultCourseProgress(),
           vocabulary: createDefaultCourseProgress(),
         },
@@ -210,6 +212,7 @@ export const useProgressStore = create<ProgressState>()(
           courses: {
             alphabet: persistedCourses.alphabet || createDefaultCourseProgress(),
             numbers: persistedCourses.numbers || createDefaultCourseProgress(),
+            words: persistedCourses.words || createDefaultCourseProgress(),
             phrases: persistedCourses.phrases || createDefaultCourseProgress(),
             vocabulary: persistedCourses.vocabulary || createDefaultCourseProgress(),
           }
