@@ -26,12 +26,12 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       <Dialog as="div" className="relative z-50" onClose={onCancel}>
         <Transition.Child
           as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+          enter="modal-backdrop-enter-active"
+          enterFrom="modal-backdrop-enter"
+          enterTo=""
+          leave="modal-backdrop-exit-active"
+          leaveFrom="modal-backdrop-exit"
+          leaveTo=""
         >
           <div className="fixed inset-0 bg-black/50" />
         </Transition.Child>
@@ -40,12 +40,12 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           <div className="flex min-h-full items-center justify-center p-4 text-center">
             <Transition.Child
               as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
+              enter="modal-panel-enter-active"
+              enterFrom="modal-panel-enter"
+              enterTo=""
+              leave="modal-panel-exit-active"
+              leaveFrom="modal-panel-exit"
+              leaveTo=""
             >
               <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all">
                 <Dialog.Title

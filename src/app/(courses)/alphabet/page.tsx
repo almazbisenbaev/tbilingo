@@ -8,8 +8,8 @@ import { AlphabetItem, PendingLearnedAction } from '@/types';
 import { alphabet } from '@/data/alphabet';
 import { shuffleArray } from '@/utils/shuffle-array';
 import FlashcardLetter from '@/components/FlashcardLetter';
-import ConfirmationDialog from '@/components/ConfirmationDialog';
-import SuccessPopup from '@/components/SuccessPopup';
+import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
+import SuccessModal from '@/components/ShadcnSuccessModal';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -319,27 +319,14 @@ export default function AlphabetCourse() {
         )}
 
         {/* Confirmation Dialog for Mark as Learned */}
-        {showConfirmation && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg p-6 mx-4 max-w-sm w-full">
-                    <h3 className="text-lg text-center font-semibold mb-6">Are you sure you want to mark this character as learned? </h3>
-                    <div className="flex gap-3">
-                        <button 
-                            onClick={cancelMarkAsLearned}
-                            className="btn btn-secondary flex-1"
-                        >
-                            Cancel
-                        </button>
-                        <button 
-                            onClick={confirmMarkAsLearned}
-                            className="btn btn-primary flex-1"
-                        >
-                            Confirm
-                        </button>
-                    </div>
-                </div>
-            </div>
-        )}
+        <ConfirmationDialog
+            isOpen={showConfirmation}
+            title="Are you sure you want to mark this character as learned?"
+            confirmText="Confirm"
+            cancelText="Cancel"
+            onConfirm={confirmMarkAsLearned}
+            onCancel={cancelMarkAsLearned}
+        />
 
     
     </div>

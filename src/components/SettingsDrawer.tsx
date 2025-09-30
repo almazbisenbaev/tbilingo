@@ -6,8 +6,8 @@ import { Fragment } from 'react';
 import Image from 'next/image';
 import { useFontTypeStore } from '@/stores/fontTypeStore';
 import { useProgressStore } from '@/stores/progressStore';
-import ConfirmationDialog from './ConfirmationDialog';
-import SuccessPopup from './SuccessPopup';
+import ConfirmationDialog from './ShadcnConfirmationDialog';
+import SuccessModal from './ShadcnSuccessModal';
 
 export default function SettingsDrawer() {
   const [showSettings, setShowSettings] = useState(false);
@@ -52,12 +52,12 @@ export default function SettingsDrawer() {
         <Dialog as="div" className="relative z-50" onClose={() => setShowSettings(false)}>
           <Transition.Child
             as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
+            enter="modal-backdrop-enter-active"
+            enterFrom="modal-backdrop-enter"
+            enterTo=""
+            leave="modal-backdrop-exit-active"
+            leaveFrom="modal-backdrop-exit"
+            leaveTo=""
           >
             <div className="fixed inset-0 bg-black/50" />
           </Transition.Child>
@@ -67,12 +67,12 @@ export default function SettingsDrawer() {
               <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
                 <Transition.Child
                   as={Fragment}
-                  enter="transform transition ease-in-out duration-300"
-                  enterFrom="translate-x-full"
-                  enterTo="translate-x-0"
-                  leave="transform transition ease-in-out duration-300"
-                  leaveFrom="translate-x-0"
-                  leaveTo="translate-x-full"
+                  enter="drawer-enter-active"
+                  enterFrom="drawer-enter"
+                  enterTo=""
+                  leave="drawer-exit-active"
+                  leaveFrom="drawer-exit"
+                  leaveTo=""
                 >
                   <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
                     <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
@@ -153,7 +153,7 @@ export default function SettingsDrawer() {
         onConfirm={confirmReset}
         onCancel={cancelReset}
       />
-      <SuccessPopup
+      <SuccessModal
         isOpen={showSuccessPopup}
         title="Progress Reset Successfully!"
         message="Your learning progress has been cleared."

@@ -4,8 +4,8 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { useFontTypeStore } from '@/stores/fontTypeStore';
 import { useProgressStore } from '@/stores/progressStore';
-import ConfirmationDialog from './ConfirmationDialog';
-import SuccessPopup from './SuccessPopup';
+import ConfirmationDialog from './ShadcnConfirmationDialog';
+import SuccessModal from './ShadcnSuccessModal';
 
 export default function SettingsTab() {
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
@@ -100,7 +100,7 @@ export default function SettingsTab() {
         onConfirm={confirmReset}
         onCancel={cancelReset}
       />
-      <SuccessPopup
+      <SuccessModal
         isOpen={showSuccessPopup}
         title="Progress Reset Successfully!"
         message="Your learning progress has been cleared."
