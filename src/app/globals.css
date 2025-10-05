@@ -376,22 +376,6 @@ input[type=submit]:focus {
   padding-bottom: 32px;
 }
 
-.welcome-logo svg {
-  display: block;
-  width: 120px;
-  height: auto;
-  margin: 0;
-  margin-bottom: 24px;
-}
-
-.welcome-descr {
-  font-size: 1.2rem;
-  line-height: 1.4;
-  font-weight: normal;
-
-  text-align: center;
-}
-
 .welcome-actions {
   display: flex;
   flex-direction: column;

@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 import { Noto_Serif_Georgian } from 'next/font/google';
 import "./globals.css";
 import ServiceWorkerRegistration from '../components/ServiceWorkerRegistration';
+import { AuthProvider } from '../contexts/AuthContext';
 
 const notoS_Georgian = Noto_Serif_Georgian({
   subsets: ['georgian'],
@@ -41,8 +42,9 @@ export default function RootLayout({
       <body
         className={`${notoS_Georgian.variable} ${inter.variable} antialiased`}
       >
-        
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
 
         <Analytics />
         <GoogleAnalytics gaId="G-F75W5FNJH2" />

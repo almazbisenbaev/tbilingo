@@ -1,0 +1,25 @@
+.brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.brand-logo {
+    margin-bottom: 12px;
+}
+
+.brand-logo svg {
+  display: block;
+  width: 120px;
+  height: auto;
+  margin: 0;
+}
+
+.brand-descr {
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: normal;
+
+  text-align: center;
+}
