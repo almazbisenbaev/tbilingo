@@ -2,7 +2,7 @@
   background-color: transparent;
   width: 360px;
   max-width: 80vw;
-  height: 440px;
+  height: 75vh;
   max-height: 75vh;
 }
 
@@ -65,7 +65,16 @@
   justify-content: center;
 }
 
+.flashcard-character-small {
+  font-size: 48px;
+  text-align: center;
+}
+
 .font-type-serif .flashcard-character {
+  font-family: var(--font-noto-serif-georgian);
+}
+
+.font-type-serif .flashcard-character-small {
   font-family: var(--font-noto-serif-georgian);
 }
 

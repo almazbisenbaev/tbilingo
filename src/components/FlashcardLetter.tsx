@@ -71,6 +71,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ letter, onNext, onLearned }) => {
         </div>
         <div className="flashcard-back">
           <div className='flashcard-back-content'>
+            <div className='flashcard-character-small'>{letter.character}</div>
             <div className='flashcard-name'>{letter.name}</div>
             <div className='flashcard-pronunciation'>
               Pronunciation: <b>{letter.pronunciation}</b>
