@@ -13,6 +13,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
+    },
+    {
+      url: 'https://tbilingo.vercel.app/numbers',
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: 'https://tbilingo.vercel.app/words',
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
     }
   ]
 }
