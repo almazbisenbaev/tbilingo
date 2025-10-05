@@ -26,9 +26,6 @@ export default function AuthWrapper() {
           onSwitchToSignup={() => setAuthMode('signup')}
           onClose={() => setAuthMode(null)}
         />
-        <div className="welcome-footer">
-          <div className="credits">Made by <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
-        </div>
       </div>
     );
   }
@@ -40,9 +37,6 @@ export default function AuthWrapper() {
           onSwitchToLogin={() => setAuthMode('login')}
           onClose={() => setAuthMode(null)}
         />
-        <div className="welcome-footer">
-          <div className="credits">Made by <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
-        </div>
       </div>
     );
   }
@@ -103,10 +97,6 @@ export default function AuthWrapper() {
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="welcome-footer">
-        <div className="credits">Made by <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
       </div>
 
       <style jsx>{`

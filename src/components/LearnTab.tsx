@@ -64,10 +64,9 @@ export default function LearnTab() {
           totalItems={wordsProgress?.totalItems ?? 0}
         />
       </div>
+      
       <PWAInstallPrompt />
-      <div className="welcome-footer">
-        <div className="credits">Made by <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
-      </div>
+
     </div>
   );
 }

@@ -1,6 +1,7 @@
 .course-link {
     color: #F24822;
-    border: 2px solid #F2482233;
+    /* border: 2px solid #F2482233; */
+    background: #fff;
     border-radius: 16px;
 
     display: flex;
@@ -9,7 +10,8 @@
 
     width: 100%;
     min-height: 96px;
-    padding: 20px 24px;
+    padding: 20px;
+    padding-right: 24px;
 }
 
 .course-link:hover {
@@ -37,7 +39,7 @@
 }
 
 .course-link-title {
-    font-size: 1.125rem;
+    font-size: 1.1rem;
     font-weight: 600;
 }
 

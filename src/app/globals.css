@@ -52,7 +52,8 @@ body {
 body {
   font-family: var(--font-sans);
   font-size: 1rem;  
-  transition: .3s cubic-bezier(0.76, 0, 0.24, 1)
+  transition: .3s cubic-bezier(0.76, 0, 0.24, 1);
+  background: linear-gradient(180deg, rgba(255, 118, 88, 0.03) 0%, rgba(255, 118, 88, 0.1) 100%), #FFFFFF;
 }
 
 a {
@@ -391,17 +392,16 @@ input[type=submit]:focus {
   padding-top: 16px;
 }
 
-.welcome-footer {
+.credits {
   font-size: 0.875rem;
   text-align: center;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: .3em;
 
-  padding-right: 32px;
-  padding-left: 32px;
+  padding-right: 24px;
+  padding-left: 24px;
   margin-top: 32px;
 }
 
@@ -654,6 +654,15 @@ input[type=submit]:focus {
   width: 480px;
   max-width: 100%;
   margin: auto;
+}
+
+@media (max-width: 375px){
+
+  .learn-content {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+
 }
 
 /* Settings tab content */

@@ -61,7 +61,7 @@ export default function SettingsTab() {
 
   return (
     <>
-      <div className="settings-content">
+      <div className="settings-content min-h-screen flex flex-col justify-between">
         <div className="settings-header">
           <h2 className="settings-title">Settings</h2>
           {currentUser && (
@@ -129,9 +129,7 @@ export default function SettingsTab() {
             </>
           )}
         </div>
-        <div className="welcome-footer">
-          <div className="credits">Made by <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
-        </div>
+        <div className="credits">Made by <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
       </div>
 
       <ConfirmationDialog
