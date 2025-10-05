@@ -382,8 +382,7 @@ input[type=submit]:focus {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 16px;
-  margin-top: 32px;
+  gap: 12px;
 }
 
 .welcome-progress {
