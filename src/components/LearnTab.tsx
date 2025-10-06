@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import CourseLink from '@/components/CourseLink';
+import CourseLinkSkeleton from '@/components/CourseLinkSkeleton';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { useProgressStore, useSafeProgressStore, useStoreHydration } from '@/stores/progressStore';
 import { useAlphabet, useNumbers, useWords } from '@/hooks/useEnhancedLearningContent';
@@ -63,41 +64,51 @@ export default function LearnTab() {
 
 
       <div className="welcome-actions">
-        <CourseLink 
-          href="/alphabet"
-          title="Learn Alphabet"
-          icon="/images/icon-alphabet.svg"
-          disabled={alphabetLoading || alphabetData.length === 0}
-          progress={alphabetProgress?.completionPercentage ?? 0}
-          completedItems={alphabetProgress?.learnedItems.length ?? 0}
-          totalItems={alphabetProgress?.totalItems ?? alphabetData.length}
-        />
-        <CourseLink 
-          href="/numbers"
-          title="Learn Numbers"
-          icon="/images/icon-numbers.svg"
-          disabled={numbersLoading || numbersData.length === 0}
-          progress={numbersProgress?.completionPercentage ?? 0}
-          completedItems={numbersProgress?.learnedItems.length ?? 0}
-          totalItems={numbersProgress?.totalItems ?? numbersData.length}
-        />
-        <CourseLink 
-          href="/words"
-          title="Words & Phrases - Basic"
-          icon="/images/icon-phrases.svg"
-          disabled={wordsLoading || wordsData.length === 0}
-          progress={wordsProgress?.completionPercentage ?? 0}
-          completedItems={wordsProgress?.learnedItems.length ?? 0}
-          totalItems={wordsProgress?.totalItems ?? wordsData.length}
-        />
+        {/* Alphabet Course */}
+        {alphabetLoading ? (
+          <CourseLinkSkeleton />
+        ) : (
+          <CourseLink 
+            href="/alphabet"
+            title="Learn Alphabet"
+            icon="/images/icon-alphabet.svg"
+            disabled={alphabetData.length === 0}
+            progress={alphabetProgress?.completionPercentage ?? 0}
+            completedItems={alphabetProgress?.learnedItems.length ?? 0}
+            totalItems={alphabetProgress?.totalItems ?? alphabetData.length}
+          />
+        )}
+        
+        {/* Numbers Course */}
+        {numbersLoading ? (
+          <CourseLinkSkeleton />
+        ) : (
+          <CourseLink 
+            href="/numbers"
+            title="Learn Numbers"
+            icon="/images/icon-numbers.svg"
+            disabled={numbersData.length === 0}
+            progress={numbersProgress?.completionPercentage ?? 0}
+            completedItems={numbersProgress?.learnedItems.length ?? 0}
+            totalItems={numbersProgress?.totalItems ?? numbersData.length}
+          />
+        )}
+        
+        {/* Words/Phrases Course */}
+        {wordsLoading ? (
+          <CourseLinkSkeleton />
+        ) : (
+          <CourseLink 
+            href="/words"
+            title="Words & Phrases - Basic"
+            icon="/images/icon-phrases.svg"
+            disabled={wordsData.length === 0}
+            progress={wordsProgress?.completionPercentage ?? 0}
+            completedItems={wordsProgress?.learnedItems.length ?? 0}
+            totalItems={wordsProgress?.totalItems ?? wordsData.length}
+          />
+        )}
       </div>
-      
-      {/* Loading indicator */}
-      {(alphabetLoading || numbersLoading || wordsLoading) && (
-        <div style={{ textAlign: 'center', padding: '20px' }}>
-          <p>Loading learning content...</p>
-        </div>
-      )}
       
       <PWAInstallPrompt />
 

@@ -10,6 +10,7 @@ import { shuffleArray } from '@/utils/shuffle-array';
 import FlashcardLetter from '@/components/FlashcardLetter';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 import SuccessModal from '@/components/ShadcnSuccessModal';
+import CoursePageLoading from '@/components/CoursePageLoading';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -66,15 +67,10 @@ export default function AlphabetCourse() {
   // Show loading state
   if (alphabetLoading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        minHeight: '100vh',
-        flexDirection: 'column'
-      }}>
-        <p>Loading alphabet...</p>
-      </div>
+      <CoursePageLoading 
+        courseTitle="Learn alphabet"
+        message="Loading Georgian alphabet..."
+      />
     );
   }
 

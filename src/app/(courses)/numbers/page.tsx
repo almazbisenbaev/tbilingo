@@ -8,6 +8,7 @@ import { NumberItem, PendingNumberAction } from '@/types';
 import FlashcardNumber from '@/components/FlashcardNumber';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 import SuccessModal from '@/components/ShadcnSuccessModal';
+import CoursePageLoading from '@/components/CoursePageLoading';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -62,15 +63,10 @@ export default function NumbersCourse() {
   // Show loading state
   if (numbersLoading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        minHeight: '100vh',
-        flexDirection: 'column'
-      }}>
-        <p>Loading numbers...</p>
-      </div>
+      <CoursePageLoading 
+        courseTitle="Learn numbers"
+        message="Loading Georgian numbers..."
+      />
     );
   }
 
