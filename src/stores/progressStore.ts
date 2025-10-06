@@ -40,7 +40,6 @@ export interface ProgressState {
   getCourseProgress: (courseType: CourseType) => CourseProgress;
   getLearnedCount: (courseType: CourseType) => number;
   getCompletionPercentage: (courseType: CourseType, totalItems: number) => number;
-  getTotalItems: (courseType: CourseType) => number;
   setUser: (user: User | null) => void;
   loadUserProgress: () => Promise<void>;
 }
@@ -214,17 +213,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       // Update Firebase if user is authenticated and this is a supported course
       const firebaseCourseId = mapCourseType(courseType);
       if (state.user && firebaseCourseId) {
-        // Get total items count for the course (we'll need to determine this based on course type)
-        const getTotalItems = (courseType: CourseType) => {
-          switch (courseType) {
-            case 'alphabet': return 33; // Georgian alphabet
-            case 'numbers': return 10; // Numbers 1-10
-            case 'words': return 50; // Estimated word count
-            default: return 0;
-          }
-        };
-        
-        await SimpleUserProgressService.addLearnedItem(firebaseCourseId, itemId, getTotalItems(courseType));
+        await SimpleUserProgressService.addLearnedItem(firebaseCourseId, itemId);
       }
 
       debugLog(`Successfully added learned item ${itemId} to ${courseType}`);
@@ -261,16 +250,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       // Update Firebase if user is authenticated and this is a supported course
       const firebaseCourseId = mapCourseType(courseType);
       if (state.user && firebaseCourseId) {
-        const getTotalItems = (courseType: CourseType) => {
-          switch (courseType) {
-            case 'alphabet': return 33;
-            case 'numbers': return 10;
-            case 'words': return 50;
-            default: return 0;
-          }
-        };
-        
-        await SimpleUserProgressService.removeLearnedItem(firebaseCourseId, itemId, getTotalItems(courseType));
+        await SimpleUserProgressService.removeLearnedItem(firebaseCourseId, itemId);
       }
 
       debugLog(`Successfully removed learned item ${itemId} from ${courseType}`);
@@ -376,18 +356,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     return percentage;
   },
 
-  // Get total items count for a course
-  getTotalItems: (courseType: CourseType) => {
-    // Static totals based on course type since Firebase structure doesn't store this
-    const totals = {
-      alphabet: 33, // Georgian alphabet
-      numbers: 10, // Numbers 1-10
-      words: 50, // Estimated word count
-      phrases: 50, // Estimated phrase count
-      vocabulary: 100 // Estimated vocabulary count
-    };
-    return totals[courseType] || 0;
-  },
+
 }));
 
 // Custom hook to ensure the store is hydrated before using it

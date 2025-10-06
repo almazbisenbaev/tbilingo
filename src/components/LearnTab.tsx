@@ -29,7 +29,6 @@ export default function LearnTab() {
   const wordsLearnedCount = useSafeProgressStore(state => state.getLearnedCount('words'));
   
   const getCompletionPercentage = useProgressStore(state => state.getCompletionPercentage);
-  const getTotalItems = useProgressStore(state => state.getTotalItems);
 
   // Initialize courses with their total item counts when data is loaded
   useEffect(() => {
