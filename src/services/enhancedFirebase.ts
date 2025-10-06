@@ -35,9 +35,6 @@ export const COLLECTIONS = {
 export interface BaseCourseItem {
   id: string;
   order: number;
-  createdAt: any;
-  updatedAt: any;
-  isActive: boolean;
   [key: string]: any; // Allow additional fields for different course types
 }
 
@@ -231,10 +228,7 @@ export class EnhancedFirebaseService {
         const itemData = {
           ...item,
           id: itemId,
-          order: item.order || index + 1,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-          isActive: item.isActive !== undefined ? item.isActive : true
+          order: item.order || index + 1
         };
         
         batch.set(itemRef, itemData);
@@ -267,7 +261,7 @@ export class EnhancedFirebaseService {
       })) as CourseItem[];
       
       debugLog(`Retrieved ${items.length} items for course: ${courseId}`, items);
-      return items.filter(item => item.isActive !== false);
+      return items;
     } catch (error) {
       console.error(`❌ Error getting items for course ${courseId}:`, error);
       throw error;

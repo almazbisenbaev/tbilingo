@@ -4,7 +4,19 @@ This document provides a comprehensive overview of the Tbilingo Firebase Firesto
 
 ## Overview
 
-Tbilingo uses **Firebase Firestore** as its primary database. The database is structured to support multiple Georgian language learning courses with flexible schemas that can accommodate different content types.
+Tbilingo uses **Firebase Firestore** as its primary database. The database is structured ### Development Guidelines
+
+### Naming Conventions
+
+- **Course IDs**: kebab-case (e.g., `georgian-alphabet`, `basic-phrases`)
+- **Item IDs**: Sequential numbers as strings (`"1"`, `"2"`, `"3"`)
+- **Field Names**: camelCase (e.g., `translationLatin`, `audioUrl`)
+
+### Data Validation
+
+- Always include required base fields (`id`, `order`)
+- Use proper TypeScript interfaces
+- Validate data before Firestore writestiple Georgian language learning courses with flexible schemas that can accommodate different content types.
 
 ## Database Architecture
 
@@ -73,9 +85,6 @@ All course items share these common fields:
 interface BaseCourseItem {
   id: string;                         // Item identifier (matches document ID)
   order: number;                      // Display/learning order (1, 2, 3...)
-  createdAt: Timestamp;               // Creation timestamp
-  updatedAt: Timestamp;               // Last modification timestamp
-  isActive: boolean;                  // Whether item appears in course
   [key: string]: any;                 // Additional type-specific fields
 }
 ```
@@ -102,10 +111,7 @@ interface AlphabetItem extends BaseCourseItem {
   "name": "ani", 
   "pronunciation": "/a/",
   "audioUrl": "/audio/ani.mp3",
-  "order": 1,
-  "isActive": true,
-  "createdAt": "2025-10-06T...",
-  "updatedAt": "2025-10-06T..."
+  "order": 1
 }
 ```
 
@@ -128,10 +134,7 @@ interface NumberItem extends BaseCourseItem {
   "number": 1,
   "translation": "ერთი",
   "translationLatin": "erti",
-  "order": 1,
-  "isActive": true,
-  "createdAt": "2025-10-06T...",
-  "updatedAt": "2025-10-06T..."
+  "order": 1
 }
 ```
 
@@ -157,10 +160,7 @@ interface PhraseItem extends BaseCourseItem {
   "georgian": "გამარჯობა",
   "latin": "gamarjoba",
   "category": "greetings",
-  "order": 1,
-  "isActive": true,
-  "createdAt": "2025-10-06T...",
-  "updatedAt": "2025-10-06T..."
+  "order": 1
 }
 ```
 
@@ -267,14 +267,14 @@ service cloud.firestore {
 
 2. **Add Items Subcollection** at `/courses/{newCourseId}/items/`:
    - Use sequential IDs: `1`, `2`, `3`...
-   - Include all base fields (`id`, `order`, `isActive`, etc.)
+   - Include required base fields (`id`, `order`)
    - Add course-specific fields based on `itemSchema`
 
 ### Adding Items to Existing Course
 
 1. **Navigate to** `/courses/{courseId}/items/`
 2. **Create new document** with next sequential ID
-3. **Include required fields** based on course type
+3. **Include required fields**: `id`, `order`, plus course-specific fields
 4. **Update course `totalItems`** count
 
 ## API Integration
@@ -351,7 +351,7 @@ When updating course schemas:
 - User profile: `/users/{userId}/profile/main`
 
 ### Required Fields by Type
-- **All items**: `id`, `order`, `isActive`, `createdAt`, `updatedAt`
+- **All items**: `id`, `order`
 - **Alphabet**: + `character`, `name`, `pronunciation`
 - **Numbers**: + `number`, `translation`, `translationLatin`
 - **Phrases**: + `english`, `georgian`, `latin`
