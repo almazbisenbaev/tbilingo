@@ -63,7 +63,6 @@ export default function SettingsTab() {
     <>
       <div className="settings-content min-h-screen flex flex-col justify-between">
         <div className="settings-header">
-          <h2 className="settings-title">Settings</h2>
           {currentUser && (
             <div className="user-info">
               <p>Welcome, {currentUser.displayName || currentUser.email}!</p>
@@ -160,10 +159,6 @@ export default function SettingsTab() {
       <style jsx>{`
         .user-info {
           margin-top: 0.5rem;
-          padding: 0.75rem;
-          background: #f8fafc;
-          border-radius: 8px;
-          border: 1px solid #e2e8f0;
         }
 
         .user-info p {
