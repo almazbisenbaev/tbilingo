@@ -7,6 +7,7 @@ import { useFontTypeStore } from '@/stores/fontTypeStore';
 import { useProgressStore } from '@/stores/progressStore';
 import ConfirmationDialog from './ShadcnConfirmationDialog';
 import SuccessModal from './ShadcnSuccessModal';
+import { Button } from '@/components/ui/button';
 
 export default function SettingsTab() {
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
@@ -64,8 +65,21 @@ export default function SettingsTab() {
       <div className="settings-content min-h-screen flex flex-col justify-between">
         <div className="settings-header">
           {currentUser && (
-            <div className="user-info">
+            <div className="user-info flex justify-between align-center">
               <p>Welcome, {currentUser.displayName || currentUser.email}!</p>
+
+              <div>
+                <Button 
+                  variant="link"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 p-0 h-auto"
+                  onClick={onLogout}
+                  disabled={logoutLoading}
+                >
+                  {logoutLoading ? 'Signing out...' : 'Sign Out'}
+                </Button>
+              </div>
+
             </div>
           )}
         </div>
@@ -113,20 +127,7 @@ export default function SettingsTab() {
               <span>Reset progress</span>
             </button>
           </div>
-          {currentUser && (
-            <>
-              <div className="divider"></div>
-              <div className="settings-item">
-                <button 
-                  className='logout-button' 
-                  onClick={onLogout}
-                  disabled={logoutLoading}
-                >
-                  <span>{logoutLoading ? 'Signing out...' : 'Sign Out'}</span>
-                </button>
-              </div>
-            </>
-          )}
+
         </div>
         <div className="credits">Made by <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
       </div>
@@ -156,43 +157,6 @@ export default function SettingsTab() {
         onCancel={cancelLogout}
       />
 
-      <style jsx>{`
-        .user-info {
-          margin-top: 0.5rem;
-        }
-
-        .user-info p {
-          margin: 0;
-          color: #475569;
-          font-size: 0.875rem;
-        }
-
-        .logout-button {
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          padding: 12px 16px;
-          background: transparent;
-          color: #dc2626;
-          border: 2px solid #dc2626;
-          border-radius: 8px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .logout-button:hover:not(:disabled) {
-          background: #dc2626;
-          color: white;
-        }
-
-        .logout-button:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-      `}</style>
     </>
   );
 }
