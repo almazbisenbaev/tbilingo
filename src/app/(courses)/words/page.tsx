@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
-import { useProgressStore } from '@/stores/progressStore';
+import { useProgressStore, useStoreHydration } from '@/stores/progressStore';
+import { useWords } from '@/hooks/useEnhancedLearningContent';
 import { WordItem, PendingWordAction } from '@/types';
-import { words } from '@/data/words';
 import { shuffleArray } from '@/utils/shuffle-array';
 import WordsComponent from '@/components/WordsComponent';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
@@ -31,6 +31,11 @@ export default function WordsCourse() {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [pendingLearnedAction, setPendingLearnedAction] = useState<PendingWordAction | null>(null);
 
+  const isHydrated = useStoreHydration();
+  
+  // Fetch words data from Firebase
+  const { items: words, loading: wordsLoading, error: wordsError } = useWords();
+  
   const { 
     getCourseProgress, 
     addLearnedItem, 
@@ -39,13 +44,69 @@ export default function WordsCourse() {
   } = useProgressStore();
 
   useEffect(() => {
-    // Initialize the words course
-    initializeCourse('words', words.length);
-    
-    // Load learned words from the store
-    const wordsProgress = getCourseProgress('words');
-    setLearnedWords(wordsProgress.learnedItems);
-  }, [initializeCourse, getCourseProgress]);
+    // Initialize course when words data is loaded
+    if (!wordsLoading && words.length > 0) {
+      initializeCourse('words', words.length);
+      
+      // Load learned words from the store
+      const wordsProgress = getCourseProgress('words');
+      setLearnedWords(wordsProgress.learnedItems);
+    }
+  }, [wordsLoading, words.length, initializeCourse, getCourseProgress]);
+
+  // Check if all cards have been reviewed - moved to top level to avoid hooks order issues
+  useEffect(() => {
+    if (wordsToReview.length > 0 && processedWords.length === wordsToReview.length) {
+        setAllCardsReviewed(true);
+    }
+  }, [processedWords, wordsToReview]);
+
+  // Show loading state
+  if (wordsLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        flexDirection: 'column'
+      }}>
+        <p>Loading words...</p>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (wordsError) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        flexDirection: 'column'
+      }}>
+        <p>Error loading words: {wordsError}</p>
+        <button onClick={() => window.location.reload()}>Retry</button>
+      </div>
+    );
+  }
+
+  // Show empty state
+  if (words.length === 0) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        flexDirection: 'column'
+      }}>
+        <p>No words data found. Please check the manual data entry guide.</p>
+        <Link href="/">Go back to home</Link>
+      </div>
+    );
+  }
 
   /**
    * Initializes the gameplay session with word/phrase items
@@ -83,13 +144,6 @@ export default function WordsCourse() {
         }
     }, 200); // Short delay to ensure DOM is ready
   };
-
-  // Check if all cards have been reviewed
-  useEffect(() => {
-    if (wordsToReview.length > 0 && processedWords.length === wordsToReview.length) {
-        setAllCardsReviewed(true);
-    }
-  }, [processedWords, wordsToReview]);
 
   /**
    * Handles the animation between word cards by sliding the track horizontally

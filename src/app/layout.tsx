@@ -42,13 +42,10 @@ export default function RootLayout({
       <body
         className={`${notoS_Georgian.variable} ${inter.variable} antialiased`}
       >
-        <AuthProvider>
-          {children}
-        </AuthProvider>
-
-        <Analytics />
-        <GoogleAnalytics gaId="G-F75W5FNJH2" />
-        <ServiceWorkerRegistration />
+                  <AuthProvider>
+            <ServiceWorkerRegistration />
+            {children}
+          </AuthProvider>
       </body>
     </html>
   );

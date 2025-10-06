@@ -1,0 +1,47 @@
+// Firestore Security Rules for Tbilingo
+// These rules allow read access to course content and authenticated write access to user progress
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Course content - readable by all, writable by authenticated users
+    // In production, you might want to restrict writes to admin users only
+    match /courses/{courseId} {
+      allow read: if true; // Anyone can read course definitions
+      allow write: if request.auth != null; // Authenticated users can write
+      
+      // Course items are readable by all
+      match /items/{itemId} {
+        allow read: if true; // Anyone can read course items
+        allow write: if request.auth != null; // Authenticated users can write
+      }
+    }
+    
+    // User-specific data - only accessible by the user themselves
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // User progress data
+      match /progress/{courseId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Detailed progress data
+      match /detailed-progress/{courseId}/items/{itemId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // User profile and stats
+      match /profile/{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // Global stats (optional - for leaderboards, etc.)
+    match /global-stats/{document=**} {
+      allow read: if true; // Anyone can read global stats
+      allow write: if false; // Only server-side functions should write global stats
+    }
+  }
+}

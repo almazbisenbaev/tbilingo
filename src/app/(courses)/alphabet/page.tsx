@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
-import { useProgressStore } from '@/stores/progressStore';
+import { useProgressStore, useStoreHydration } from '@/stores/progressStore';
 import { useFontTypeStore } from '@/stores/fontTypeStore';
+import { useAlphabet } from '@/hooks/useEnhancedLearningContent';
 import { AlphabetItem, PendingLearnedAction } from '@/types';
-import { alphabet } from '@/data/alphabet';
 import { shuffleArray } from '@/utils/shuffle-array';
 import FlashcardLetter from '@/components/FlashcardLetter';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
@@ -15,6 +15,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function AlphabetCourse() {
+  // All hooks must be at the top level and called in the same order every time
   useBackToHomeNavigation();
 
   const [learnedCharacters, setLearnedCharacters] = useState<number[]>([]); // Store characters that the viewers has seen during the gameplay
@@ -31,6 +32,11 @@ export default function AlphabetCourse() {
   const [pendingLearnedAction, setPendingLearnedAction] = useState<{characterId: number, index: number, element: HTMLElement | null} | null>(null);
 
   const { fontType } = useFontTypeStore();
+  const isHydrated = useStoreHydration();
+  
+  // Fetch alphabet data from Firebase
+  const { items: alphabet, loading: alphabetLoading, error: alphabetError } = useAlphabet();
+  
   const { 
     getCourseProgress, 
     addLearnedItem, 
@@ -39,14 +45,70 @@ export default function AlphabetCourse() {
 
   } = useProgressStore();
 
+  // Check if all cards have been reviewed
   useEffect(() => {
-    
-    initializeCourse('alphabet', alphabet.length);
-    
-    // Load learned characters from the store
-    const alphabetProgress = getCourseProgress('alphabet');
-    setLearnedCharacters(alphabetProgress.learnedItems);
-  }, [initializeCourse, getCourseProgress]);
+    if (charactersToReview.length > 0 && processedCharacters.length === charactersToReview.length) {
+        setAllCardsReviewed(true);
+    }
+  }, [processedCharacters, charactersToReview]);
+
+  useEffect(() => {
+    // Initialize course when alphabet data is loaded
+    if (!alphabetLoading && alphabet.length > 0) {
+      initializeCourse('alphabet', alphabet.length);
+      
+      // Load learned characters from the store
+      const alphabetProgress = getCourseProgress('alphabet');
+      setLearnedCharacters(alphabetProgress.learnedItems);
+    }
+  }, [alphabetLoading, alphabet.length, initializeCourse, getCourseProgress]);
+
+  // Show loading state
+  if (alphabetLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        flexDirection: 'column'
+      }}>
+        <p>Loading alphabet...</p>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (alphabetError) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        flexDirection: 'column'
+      }}>
+        <p>Error loading alphabet: {alphabetError}</p>
+        <button onClick={() => window.location.reload()}>Retry</button>
+      </div>
+    );
+  }
+
+  // Show empty state
+  if (alphabet.length === 0) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        flexDirection: 'column'
+      }}>
+        <p>No alphabet data found. Please check the manual data entry guide.</p>
+        <Link href="/">Go back to home</Link>
+      </div>
+    );
+  }
 
   /**
    * Initializes the gameplay session with flashcards
@@ -87,13 +149,6 @@ export default function AlphabetCourse() {
         }
     }, 200); // Short delay to ensure DOM is ready
   };
-
-  // Check if all cards have been reviewed
-  useEffect(() => {
-    if (charactersToReview.length > 0 && processedCharacters.length === charactersToReview.length) {
-        setAllCardsReviewed(true);
-    }
-  }, [processedCharacters, charactersToReview]);
 
   /**
    * Handles the animation between flashcards by sliding the track horizontally

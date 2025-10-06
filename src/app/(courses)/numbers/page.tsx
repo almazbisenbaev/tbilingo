@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
-import { useProgressStore } from '@/stores/progressStore';
+import { useProgressStore, useStoreHydration } from '@/stores/progressStore';
+import { useNumbers } from '@/hooks/useEnhancedLearningContent';
 import { NumberItem, PendingNumberAction } from '@/types';
-import { numbers } from '@/data/numbers';
 import FlashcardNumber from '@/components/FlashcardNumber';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 import SuccessModal from '@/components/ShadcnSuccessModal';
@@ -28,6 +28,11 @@ export default function NumbersCourse() {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [pendingLearnedAction, setPendingLearnedAction] = useState<PendingNumberAction | null>(null);
 
+  const isHydrated = useStoreHydration();
+  
+  // Fetch numbers data from Firebase
+  const { items: numbers, loading: numbersLoading, error: numbersError } = useNumbers();
+  
   const { 
     getCourseProgress, 
     addLearnedItem, 
@@ -37,13 +42,69 @@ export default function NumbersCourse() {
   } = useProgressStore();
 
   useEffect(() => {
-    
-    initializeCourse('numbers', numbers.length);
-    
-    // Load learned numbers from the store
-    const numbersProgress = getCourseProgress('numbers');
-    setLearnedNumbers(numbersProgress.learnedItems);
-  }, [initializeCourse, getCourseProgress]);
+    // Initialize course when numbers data is loaded
+    if (!numbersLoading && numbers.length > 0) {
+      initializeCourse('numbers', numbers.length);
+      
+      // Load learned numbers from the store
+      const numbersProgress = getCourseProgress('numbers');
+      setLearnedNumbers(numbersProgress.learnedItems);
+    }
+  }, [numbersLoading, numbers.length, initializeCourse, getCourseProgress]);
+
+  // Check if all cards have been reviewed - moved to top level to avoid hooks order issues
+  useEffect(() => {
+    if (numbersToReview.length > 0 && processedNumbers.length === numbersToReview.length) {
+        setAllCardsReviewed(true);
+    }
+  }, [processedNumbers, numbersToReview]);
+
+  // Show loading state
+  if (numbersLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        flexDirection: 'column'
+      }}>
+        <p>Loading numbers...</p>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (numbersError) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        flexDirection: 'column'
+      }}>
+        <p>Error loading numbers: {numbersError}</p>
+        <button onClick={() => window.location.reload()}>Retry</button>
+      </div>
+    );
+  }
+
+  // Show empty state
+  if (numbers.length === 0) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        flexDirection: 'column'
+      }}>
+        <p>No numbers data found. Please check the manual data entry guide.</p>
+        <Link href="/">Go back to home</Link>
+      </div>
+    );
+  }
 
   /**
    * Initializes the gameplay session with flashcards
@@ -83,13 +144,6 @@ export default function NumbersCourse() {
         }
     }, 200); // Short delay to ensure DOM is ready
   };
-
-  // Check if all cards have been reviewed
-  useEffect(() => {
-    if (numbersToReview.length > 0 && processedNumbers.length === numbersToReview.length) {
-        setAllCardsReviewed(true);
-    }
-  }, [processedNumbers, numbersToReview]);
 
   /**
    * Handles the animation between flashcards by sliding the track horizontally

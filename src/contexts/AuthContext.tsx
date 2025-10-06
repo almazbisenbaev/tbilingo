@@ -11,6 +11,7 @@ import {
   updateProfile
 } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
+import { useAuthStateListener } from '@/stores/progressStore';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -38,6 +39,9 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Initialize auth state listener for progress store
+  useAuthStateListener();
 
   const signup = async (email: string, password: string, displayName?: string) => {
     const result = await createUserWithEmailAndPassword(auth, email, password);
