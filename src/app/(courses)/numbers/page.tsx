@@ -49,7 +49,7 @@ export default function NumbersCourse() {
       
       // Load learned numbers from the store
       const numbersProgress = getCourseProgress('numbers');
-      setLearnedNumbers(numbersProgress.learnedItems);
+      setLearnedNumbers(Array.from(numbersProgress.learnedItems).map(Number));
     }
   }, [numbersLoading, numbers.length, initializeCourse, getCourseProgress]);
 
@@ -113,7 +113,7 @@ export default function NumbersCourse() {
   const startGameplay = () => {
     // Get previously learned numbers from progress store
     const numbersProgress = getCourseProgress('numbers');
-    const learnedNumbersInLocal = numbersProgress.learnedItems;
+    const learnedNumbersInLocal = Array.from(numbersProgress.learnedItems).map(Number);
     
     // Filter out numbers that have already been learned
     const numbersMissingInLocal = numbers.filter((number: any) => !learnedNumbersInLocal.includes(number.id)) as NumberItem[];
@@ -175,7 +175,7 @@ export default function NumbersCourse() {
    */
   const saveNumberToLocal = (numberId: number) => {
     // Add the learned number to the progress store
-    addLearnedItem('numbers', numberId);
+    addLearnedItem('numbers', String(numberId));
   };
 
   /**
@@ -249,7 +249,7 @@ export default function NumbersCourse() {
     setNumbersToReview([]);
     // Reload learned numbers count
     const numbersProgress = getCourseProgress('numbers');
-    setLearnedNumbers(numbersProgress.learnedItems);
+    setLearnedNumbers(Array.from(numbersProgress.learnedItems).map(Number));
   };
 
   // Main numbers page

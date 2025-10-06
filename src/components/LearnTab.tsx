@@ -23,10 +23,13 @@ export default function LearnTab() {
   
 
 
-  // Use safe progress store hooks that return undefined during SSR
-  const alphabetProgress = useSafeProgressStore(state => state.getCourseProgress('alphabet'));
-  const numbersProgress = useSafeProgressStore(state => state.getCourseProgress('numbers'));
-  const wordsProgress = useSafeProgressStore(state => state.getCourseProgress('words'));
+  // Use safe progress store hooks that return undefined during SSR  
+  const alphabetLearnedCount = useSafeProgressStore(state => state.getLearnedCount('alphabet'));
+  const numbersLearnedCount = useSafeProgressStore(state => state.getLearnedCount('numbers'));
+  const wordsLearnedCount = useSafeProgressStore(state => state.getLearnedCount('words'));
+  
+  const getCompletionPercentage = useProgressStore(state => state.getCompletionPercentage);
+  const getTotalItems = useProgressStore(state => state.getTotalItems);
 
   // Initialize courses with their total item counts when data is loaded
   useEffect(() => {
@@ -73,9 +76,9 @@ export default function LearnTab() {
             title="Learn Alphabet"
             icon="/images/icon-alphabet.svg"
             disabled={alphabetData.length === 0}
-            progress={alphabetProgress?.completionPercentage ?? 0}
-            completedItems={alphabetProgress?.learnedItems.length ?? 0}
-            totalItems={alphabetProgress?.totalItems ?? alphabetData.length}
+            progress={getCompletionPercentage('alphabet', alphabetData.length)}
+            completedItems={alphabetLearnedCount ?? 0}
+            totalItems={alphabetData.length}
           />
         )}
         
@@ -88,9 +91,9 @@ export default function LearnTab() {
             title="Learn Numbers"
             icon="/images/icon-numbers.svg"
             disabled={numbersData.length === 0}
-            progress={numbersProgress?.completionPercentage ?? 0}
-            completedItems={numbersProgress?.learnedItems.length ?? 0}
-            totalItems={numbersProgress?.totalItems ?? numbersData.length}
+            progress={getCompletionPercentage('numbers', numbersData.length)}
+            completedItems={numbersLearnedCount ?? 0}
+            totalItems={numbersData.length}
           />
         )}
         
@@ -103,9 +106,9 @@ export default function LearnTab() {
             title="Words & Phrases - Basic"
             icon="/images/icon-phrases.svg"
             disabled={wordsData.length === 0}
-            progress={wordsProgress?.completionPercentage ?? 0}
-            completedItems={wordsProgress?.learnedItems.length ?? 0}
-            totalItems={wordsProgress?.totalItems ?? wordsData.length}
+            progress={getCompletionPercentage('words', wordsData.length)}
+            completedItems={wordsLearnedCount ?? 0}
+            totalItems={wordsData.length}
           />
         )}
       </div>

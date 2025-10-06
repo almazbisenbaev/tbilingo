@@ -60,7 +60,7 @@ export default function AlphabetCourse() {
       
       // Load learned characters from the store
       const alphabetProgress = getCourseProgress('alphabet');
-      setLearnedCharacters(alphabetProgress.learnedItems);
+      setLearnedCharacters(Array.from(alphabetProgress.learnedItems).map(Number));
     }
   }, [alphabetLoading, alphabet.length, initializeCourse, getCourseProgress]);
 
@@ -117,7 +117,7 @@ export default function AlphabetCourse() {
   const startGameplay = () => {
     // Get previously learned characters from progress store
     const alphabetProgress = getCourseProgress('alphabet');
-    const learnedCharactersInLocal = alphabetProgress.learnedItems;
+    const learnedCharactersInLocal = Array.from(alphabetProgress.learnedItems).map(Number);
     
     // Filter out characters that have already been learned
     const charactersMissingInLocal = alphabet.filter((letter: any) => !learnedCharactersInLocal.includes(letter.id)) as AlphabetItem[];
@@ -180,7 +180,7 @@ export default function AlphabetCourse() {
    */
   const saveLetterToLocal = (characterId: number) => {
     // Add the learned character to the progress store
-    addLearnedItem('alphabet', characterId);
+    addLearnedItem('alphabet', String(characterId));
   };
 
   /**
@@ -254,7 +254,7 @@ export default function AlphabetCourse() {
     setCharactersToReview([]);
     // Reload learned characters count
     const alphabetProgress = getCourseProgress('alphabet');
-    setLearnedCharacters(alphabetProgress.learnedItems);
+    setLearnedCharacters(Array.from(alphabetProgress.learnedItems).map(Number));
   };
 
   // Main alphabet page

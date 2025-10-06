@@ -23,10 +23,8 @@ export interface WordItem {
 
 // Progress tracking interfaces
 export interface CourseProgress {
-  learnedItems: number[];
-  lastUpdated: string;
-  totalItems: number;
-  completionPercentage: number;
+  learnedItems: Set<string>;  // Changed to Set of strings to match new structure
+  completedLessons: Set<string>;
 }
 
 export interface ProgressData {

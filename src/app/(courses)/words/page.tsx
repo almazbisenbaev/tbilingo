@@ -51,7 +51,7 @@ export default function WordsCourse() {
       
       // Load learned words from the store
       const wordsProgress = getCourseProgress('words');
-      setLearnedWords(wordsProgress.learnedItems);
+      setLearnedWords(Array.from(wordsProgress.learnedItems).map(Number));
     }
   }, [wordsLoading, words.length, initializeCourse, getCourseProgress]);
 
@@ -111,7 +111,7 @@ export default function WordsCourse() {
   const startGameplay = () => {
     // Get previously learned words from progress store
     const wordsProgress = getCourseProgress('words');
-    const learnedWordsInLocal = wordsProgress.learnedItems;
+    const learnedWordsInLocal = Array.from(wordsProgress.learnedItems).map(Number);
     
     // Filter out words that have already been learned
     const wordsMissingInLocal = words.filter((word: any) => !learnedWordsInLocal.includes(word.id)) as WordItem[];
@@ -169,7 +169,7 @@ export default function WordsCourse() {
    * @param wordId - The ID of the word to save as learned
    */
   const saveWordToLocal = (wordId: number) => {
-    addLearnedItem('words', wordId);
+    addLearnedItem('words', String(wordId));
   };
 
   /**
@@ -232,7 +232,7 @@ export default function WordsCourse() {
     setCurrentWordIndex(0);
     // Reload learned words count
     const wordsProgress = getCourseProgress('words');
-    setLearnedWords(wordsProgress.learnedItems);
+    setLearnedWords(Array.from(wordsProgress.learnedItems).map(Number));
   };
 
   // Main words page

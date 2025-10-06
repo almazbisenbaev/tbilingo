@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { create } from 'zustand';
-import { UserProgressService, CourseType as FirebaseCourseType, UserProgress } from '@/services/firebase';
+import { SimpleUserProgressService, SimpleUserProgress } from '@/services/simpleUserProgress';
 import { auth } from '../../firebaseConfig';
 import { onAuthStateChanged, User } from 'firebase/auth';
 
@@ -18,10 +18,8 @@ export type CourseType = 'alphabet' | 'numbers' | 'words' | 'phrases' | 'vocabul
 
 // Course progress interface
 export interface CourseProgress {
-  learnedItems: number[];
-  lastUpdated: string;
-  totalItems: number;
-  completionPercentage: number;
+  learnedItems: Set<string>;
+  completedLessons: Set<string>;
 }
 
 // Progress state interface
@@ -34,52 +32,48 @@ export interface ProgressState {
   
   // Actions
   initializeCourse: (courseType: CourseType, totalItems: number) => Promise<void>;
-  addLearnedItem: (courseType: CourseType, itemId: number) => Promise<void>;
-  removeLearnedItem: (courseType: CourseType, itemId: number) => Promise<void>;
-  isItemLearned: (courseType: CourseType, itemId: number) => boolean;
+  addLearnedItem: (courseType: CourseType, itemId: string) => Promise<void>;
+  removeLearnedItem: (courseType: CourseType, itemId: string) => Promise<void>;
+  isItemLearned: (courseType: CourseType, itemId: string) => boolean;
   resetCourseProgress: (courseType: CourseType) => Promise<void>;
   resetAllProgress: () => Promise<void>;
   getCourseProgress: (courseType: CourseType) => CourseProgress;
   getLearnedCount: (courseType: CourseType) => number;
+  getCompletionPercentage: (courseType: CourseType, totalItems: number) => number;
+  getTotalItems: (courseType: CourseType) => number;
   setUser: (user: User | null) => void;
   loadUserProgress: () => Promise<void>;
 }
 
 // Helper function to calculate completion percentage
-const calculateCompletionPercentage = (learnedItems: number[], totalItems: number): number => {
-  if (totalItems === 0) return 0;
-  return Math.round((learnedItems.length / totalItems) * 100);
-};
-
 // Helper function to create default course progress
-const createDefaultCourseProgress = (totalItems: number = 0): CourseProgress => ({
-  learnedItems: [],
-  lastUpdated: new Date().toISOString(),
-  totalItems,
-  completionPercentage: 0,
-});
+    const createDefaultCourseProgress = (): CourseProgress => ({
+      learnedItems: new Set<string>(),
+      completedLessons: new Set<string>(),
+    });
 
-// Convert Firebase course type to local course type
-const mapCourseType = (courseType: CourseType): FirebaseCourseType | null => {
-  const validTypes: FirebaseCourseType[] = ['alphabet', 'numbers', 'words'];
-  return validTypes.includes(courseType as FirebaseCourseType) ? courseType as FirebaseCourseType : null;
-};
-
-// Convert Firebase UserProgress to local CourseProgress
-const convertFirebaseProgress = (firebaseProgress: UserProgress | null): CourseProgress => {
-  if (!firebaseProgress) {
-    return createDefaultCourseProgress();
-  }
-  
-  return {
-    learnedItems: firebaseProgress.learnedItems || [],
-    lastUpdated: firebaseProgress.lastUpdated ? new Date(firebaseProgress.lastUpdated.toDate()).toISOString() : new Date().toISOString(),
-    totalItems: firebaseProgress.totalItems || 0,
-    completionPercentage: firebaseProgress.completionPercentage || 0,
+// Convert local course type to Firebase course ID
+const mapCourseType = (courseType: CourseType): string | null => {
+  const courseMapping: Record<CourseType, string> = {
+    'alphabet': 'alphabet',
+    'numbers': 'numbers', 
+    'words': 'phrases-1',  // Note: words course uses phrases-1 ID
+    'phrases': 'phrases-1',
+    'vocabulary': 'vocabulary'
   };
+  
+  return courseMapping[courseType] || null;
 };
 
-// Create the Zustand store
+    // Convert Firebase progress to our internal format
+    const convertFirebaseProgress = (firebaseProgress: SimpleUserProgress | null): CourseProgress => {
+      if (!firebaseProgress) return createDefaultCourseProgress();
+      
+      return {
+        learnedItems: new Set(firebaseProgress.learnedItemIds || []),
+        completedLessons: new Set(), // New structure doesn't track lessons yet
+      };
+    };// Create the Zustand store
 export const useProgressStore = create<ProgressState>((set, get) => ({
   // Initial state
   courses: {
@@ -131,9 +125,9 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       // Load progress for all supported courses
       const supportedCourses: CourseType[] = ['alphabet', 'numbers', 'words'];
       const progressPromises = supportedCourses.map(async (courseType) => {
-        const firebaseCourseType = mapCourseType(courseType);
-        if (firebaseCourseType) {
-          const firebaseProgress = await UserProgressService.getUserProgress(firebaseCourseType);
+        const firebaseCourseId = mapCourseType(courseType);
+        if (firebaseCourseId) {
+          const firebaseProgress = await SimpleUserProgressService.getUserProgress(firebaseCourseId);
           return { courseType, progress: convertFirebaseProgress(firebaseProgress) };
         }
         return { courseType, progress: createDefaultCourseProgress() };
@@ -170,8 +164,6 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       
       const updatedCourse = {
         ...currentCourse,
-        totalItems,
-        completionPercentage: calculateCompletionPercentage(currentCourse.learnedItems, totalItems),
       };
 
       set({
@@ -181,14 +173,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         },
       });
 
-      // Update Firebase if user is authenticated and this is a supported course
-      const firebaseCourseType = mapCourseType(courseType);
-      if (state.user && firebaseCourseType) {
-        await UserProgressService.updateUserProgress(firebaseCourseType, {
-          totalItems,
-          completionPercentage: updatedCourse.completionPercentage
-        });
-      }
+      // No Firebase update needed - will be handled by individual item operations
 
       debugLog(`Course ${courseType} initialized successfully`);
 
@@ -198,7 +183,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   },
 
   // Add learned item
-  addLearnedItem: async (courseType: CourseType, itemId: number) => {
+  addLearnedItem: async (courseType: CourseType, itemId: string) => {
     try {
       debugLog(`Adding learned item ${itemId} to ${courseType}`);
 
@@ -206,17 +191,16 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       const currentCourse = state.courses[courseType] || createDefaultCourseProgress();
       
       // Don't add if already learned
-      if (currentCourse.learnedItems.includes(itemId)) {
+      if (currentCourse.learnedItems.has(itemId)) {
         debugLog(`Item ${itemId} already learned for ${courseType}`);
         return;
       }
 
-      const learnedItems = [...currentCourse.learnedItems, itemId];
+      const newLearnedItems = new Set(currentCourse.learnedItems);
+      newLearnedItems.add(itemId);
       const updatedCourse = {
         ...currentCourse,
-        learnedItems,
-        lastUpdated: new Date().toISOString(),
-        completionPercentage: calculateCompletionPercentage(learnedItems, currentCourse.totalItems),
+        learnedItems: newLearnedItems,
       };
 
       // Update local state
@@ -228,9 +212,19 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       });
 
       // Update Firebase if user is authenticated and this is a supported course
-      const firebaseCourseType = mapCourseType(courseType);
-      if (state.user && firebaseCourseType) {
-        await UserProgressService.addLearnedItem(firebaseCourseType, itemId);
+      const firebaseCourseId = mapCourseType(courseType);
+      if (state.user && firebaseCourseId) {
+        // Get total items count for the course (we'll need to determine this based on course type)
+        const getTotalItems = (courseType: CourseType) => {
+          switch (courseType) {
+            case 'alphabet': return 33; // Georgian alphabet
+            case 'numbers': return 10; // Numbers 1-10
+            case 'words': return 50; // Estimated word count
+            default: return 0;
+          }
+        };
+        
+        await SimpleUserProgressService.addLearnedItem(firebaseCourseId, itemId, getTotalItems(courseType));
       }
 
       debugLog(`Successfully added learned item ${itemId} to ${courseType}`);
@@ -241,7 +235,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   },
 
   // Remove learned item
-  removeLearnedItem: async (courseType: CourseType, itemId: number) => {
+  removeLearnedItem: async (courseType: CourseType, itemId: string) => {
     try {
       debugLog(`Removing learned item ${itemId} from ${courseType}`);
 
@@ -249,12 +243,11 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       const currentCourse = state.courses[courseType];
       if (!currentCourse) return;
 
-      const learnedItems = currentCourse.learnedItems.filter((id) => id !== itemId);
+      const newLearnedItems = new Set(currentCourse.learnedItems);
+      newLearnedItems.delete(itemId);
       const updatedCourse = {
         ...currentCourse,
-        learnedItems,
-        lastUpdated: new Date().toISOString(),
-        completionPercentage: calculateCompletionPercentage(learnedItems, currentCourse.totalItems),
+        learnedItems: newLearnedItems,
       };
 
       // Update local state
@@ -266,9 +259,18 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       });
 
       // Update Firebase if user is authenticated and this is a supported course
-      const firebaseCourseType = mapCourseType(courseType);
-      if (state.user && firebaseCourseType) {
-        await UserProgressService.removeLearnedItem(firebaseCourseType, itemId);
+      const firebaseCourseId = mapCourseType(courseType);
+      if (state.user && firebaseCourseId) {
+        const getTotalItems = (courseType: CourseType) => {
+          switch (courseType) {
+            case 'alphabet': return 33;
+            case 'numbers': return 10;
+            case 'words': return 50;
+            default: return 0;
+          }
+        };
+        
+        await SimpleUserProgressService.removeLearnedItem(firebaseCourseId, itemId, getTotalItems(courseType));
       }
 
       debugLog(`Successfully removed learned item ${itemId} from ${courseType}`);
@@ -279,10 +281,10 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   },
 
   // Check if item is learned
-  isItemLearned: (courseType: CourseType, itemId: number) => {
+  isItemLearned: (courseType: CourseType, itemId: string) => {
     const state = get();
     const course = state.courses[courseType];
-    const isLearned = course ? course.learnedItems.includes(itemId) : false;
+    const isLearned = course ? course.learnedItems.has(itemId) : false;
     debugLog(`Item ${itemId} learned status for ${courseType}:`, isLearned);
     return isLearned;
   },
@@ -293,11 +295,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       debugLog(`Resetting progress for ${courseType}`);
 
       const state = get();
-      const totalItems = state.courses[courseType]?.totalItems || 0;
-      
-      const resetCourse = createDefaultCourseProgress(totalItems);
-
-      set({
+      const resetCourse = createDefaultCourseProgress();      set({
         courses: {
           ...state.courses,
           [courseType]: resetCourse,
@@ -305,9 +303,9 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       });
 
       // Update Firebase if user is authenticated and this is a supported course
-      const firebaseCourseType = mapCourseType(courseType);
-      if (state.user && firebaseCourseType) {
-        await UserProgressService.resetCourseProgress(firebaseCourseType);
+      const firebaseCourseId = mapCourseType(courseType);
+      if (state.user && firebaseCourseId) {
+        await SimpleUserProgressService.resetCourseProgress(firebaseCourseId);
       }
 
       debugLog(`Successfully reset progress for ${courseType}`);
@@ -335,10 +333,10 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       // Reset Firebase progress for supported courses
       const state = get();
       if (state.user) {
-        const supportedCourses: FirebaseCourseType[] = ['alphabet', 'numbers', 'words'];
+        const supportedCourses: string[] = ['alphabet', 'numbers', 'words'];
         await Promise.all(
-          supportedCourses.map(courseType => 
-            UserProgressService.resetCourseProgress(courseType)
+          supportedCourses.map(courseId => 
+            SimpleUserProgressService.resetCourseProgress(courseId)
           )
         );
       }
@@ -362,9 +360,33 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   getLearnedCount: (courseType: CourseType) => {
     const state = get();
     const course = state.courses[courseType];
-    const count = course ? course.learnedItems.length : 0;
+    const count = course ? course.learnedItems.size : 0;
     debugLog(`Learned count for ${courseType}:`, count);
     return count;
+  },
+
+  // Get completion percentage for a course
+  getCompletionPercentage: (courseType: CourseType, totalItems: number) => {
+    const state = get();
+    const course = state.courses[courseType];
+    if (!course || totalItems === 0) return 0;
+    const learnedCount = course.learnedItems.size;
+    const percentage = Math.round((learnedCount / totalItems) * 100);
+    debugLog(`Completion percentage for ${courseType}:`, percentage);
+    return percentage;
+  },
+
+  // Get total items count for a course
+  getTotalItems: (courseType: CourseType) => {
+    // Static totals based on course type since Firebase structure doesn't store this
+    const totals = {
+      alphabet: 33, // Georgian alphabet
+      numbers: 10, // Numbers 1-10
+      words: 50, // Estimated word count
+      phrases: 50, // Estimated phrase count
+      vocabulary: 100 // Estimated vocabulary count
+    };
+    return totals[courseType] || 0;
   },
 }));
 
