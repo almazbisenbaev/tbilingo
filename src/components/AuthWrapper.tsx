@@ -23,10 +23,12 @@ export default function AuthWrapper() {
   if (authMode === 'login') {
     return (
       <div className="welcome">
-        <LoginPage 
-          onSwitchToSignup={() => setAuthMode('signup')}
-          onClose={() => setAuthMode(null)}
-        />
+        <div className="welcome-inner">
+          <LoginPage 
+            onSwitchToSignup={() => setAuthMode('signup')}
+            onClose={() => setAuthMode(null)}
+          />
+        </div>
       </div>
     );
   }
@@ -34,10 +36,12 @@ export default function AuthWrapper() {
   if (authMode === 'signup') {
     return (
       <div className="welcome">
-        <SignupPage 
-          onSwitchToLogin={() => setAuthMode('login')}
-          onClose={() => setAuthMode(null)}
-        />
+        <div className="welcome-inner">
+          <SignupPage 
+            onSwitchToLogin={() => setAuthMode('login')}
+            onClose={() => setAuthMode(null)}
+          />
+        </div>
       </div>
     );
   }
@@ -45,28 +49,30 @@ export default function AuthWrapper() {
   // Default state: show welcome screen with auth buttons
   return (
     <div className="welcome">
+        <div className="welcome-inner">
 
-      <div className="welcome-header">
-        <Brand />
-      </div>
+          <div className="welcome-header">
+            <Brand />
+          </div>
 
-      <div className="welcome-actions">
-        <button 
-          onClick={() => setAuthMode('signup')}
-          className="btn btn-primary btn-block"
-        >
-          Sign Up (free)
-        </button>
-        <button 
-          onClick={() => setAuthMode('login')}
-          className="btn btn-block"
-        >
-          Sign In
-        </button>
-      </div>
+          <div className="welcome-actions">
+            <button 
+              onClick={() => setAuthMode('signup')}
+              className="btn btn-primary btn-block"
+            >
+              Sign Up (free)
+            </button>
+            <button 
+              onClick={() => setAuthMode('login')}
+              className="btn btn-block"
+            >
+              Sign In
+            </button>
+          </div>
 
-      <ScopePreview />
+          <ScopePreview />
 
+        </div>
     </div>
   );
 }

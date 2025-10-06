@@ -16,6 +16,14 @@
   margin: 0;
 }
 
+.brand-logo img {
+  filter: drop-shadow(0px 2px 1px rgba(0,0,0,0.2));
+  display: block;
+  margin: 0;
+  width: 130px;
+  height: auto;
+}
+
 .brand-descr {
   font-size: 1rem;
   line-height: 1.4;
