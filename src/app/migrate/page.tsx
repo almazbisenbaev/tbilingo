@@ -1,7 +1,7 @@
 'use client';
 
-import AlphabetMigration from '@/components/AlphabetMigration';
+import CourseMigration from '@/components/CourseMigration';
 
 export default function MigrationPage() {
-    return <AlphabetMigration />;
+    return <CourseMigration />;
 }
