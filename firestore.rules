@@ -5,16 +5,16 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Course content - readable by all, writable by authenticated users
-    // In production, you might want to restrict writes to admin users only
+    // Course content - readable by all, writable only by admins
+    // Course definitions and learning content should be read-only for regular users
     match /courses/{courseId} {
       allow read: if true; // Anyone can read course definitions
-      allow write: if request.auth != null; // Authenticated users can write
+      allow write: if false; // Only server-side operations should modify courses
       
-      // Course items are readable by all
+      // Course items are readable by all, not writable by users
       match /items/{itemId} {
         allow read: if true; // Anyone can read course items
-        allow write: if request.auth != null; // Authenticated users can write
+        allow write: if false; // Only server-side operations should modify course items
       }
     }
     
