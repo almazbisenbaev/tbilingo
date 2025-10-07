@@ -10,6 +10,7 @@ import { shuffleArray } from '@/utils/shuffle-array';
 import FlashcardLetter from '@/components/FlashcardLetter';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 import SuccessModal from '@/components/ShadcnSuccessModal';
+import ProgressBar from '@/components/ProgressBar';
 import CoursePageLoading from '@/components/CoursePageLoading';
 
 import Image from 'next/image';
@@ -313,7 +314,14 @@ export default function AlphabetCourse() {
                                 />
                             </button>
                             </div>
-                            <div className="navbar-title"></div>
+                            <div className="navbar-title">
+                              {/* Progress bar */}
+                              <ProgressBar 
+                                current={processedCharacters.length} 
+                                total={charactersToReview.length}
+                                width="200px"
+                              />
+                            </div>
                             <div className="navbar-aside"></div>
                         </div>
                     </div>
