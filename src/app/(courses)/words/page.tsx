@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore, useStoreHydration } from '@/stores/progressStore';
+import { useFontTypeStore } from '@/stores/fontTypeStore';
 import { useWords } from '@/hooks/useEnhancedLearningContent';
 import { WordItem, PendingWordAction } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
@@ -11,6 +12,7 @@ import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 import SuccessModal from '@/components/ShadcnSuccessModal';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
 import CoursePageLoading from '@/components/CoursePageLoading';
+import PageTransition from '@/components/PageTransition';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -65,42 +67,48 @@ export default function WordsCourse() {
   // Show loading state
   if (wordsLoading) {
     return (
-      <CoursePageLoading 
-        courseTitle="Words & phrases"
-        message="Loading Georgian words and phrases..."
-      />
+      <PageTransition>
+        <CoursePageLoading 
+          courseTitle="Words & phrases"
+          message="Loading Georgian words and phrases..."
+        />
+      </PageTransition>
     );
   }
 
   // Show error state
   if (wordsError) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        minHeight: '100vh',
-        flexDirection: 'column'
-      }}>
-        <p>Error loading words: {wordsError}</p>
-        <button onClick={() => window.location.reload()}>Retry</button>
-      </div>
+      <PageTransition>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          minHeight: '100vh',
+          flexDirection: 'column'
+        }}>
+          <p>Error loading words: {wordsError}</p>
+          <button onClick={() => window.location.reload()}>Retry</button>
+        </div>
+      </PageTransition>
     );
   }
 
   // Show empty state
   if (words.length === 0) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        minHeight: '100vh',
-        flexDirection: 'column'
-      }}>
-        <p>No words data found. Please check the manual data entry guide.</p>
-        <Link href="/">Go back to home</Link>
-      </div>
+      <PageTransition>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          minHeight: '100vh',
+          flexDirection: 'column'
+        }}>
+          <p>No words data found. Please check the manual data entry guide.</p>
+          <Link href="/">Go back to home</Link>
+        </div>
+      </PageTransition>
     );
   }
 
@@ -238,7 +246,8 @@ export default function WordsCourse() {
   // Main words page
   if (!isGameplayActive) {
     return (
-      <div className='h-svh flex flex-col justify-between py-4'>
+      <PageTransition>
+        <div className='h-svh flex flex-col justify-between py-4'>
         <div className='w-full max-w-2xl mx-auto p-4'>
           <div className="navbar">
               <div className="navbar-row">
@@ -265,12 +274,14 @@ export default function WordsCourse() {
         <div className='w-full max-w-2xl mx-auto p-4'>
           <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>
         </div>
-      </div>
+        </div>
+      </PageTransition>
     )
   }
 
   // Gameplay component
   return (
+    <PageTransition>
     <div className='h-svh flex flex-col justify-between py-4'>
 
         {!allCardsReviewed && (
@@ -362,5 +373,6 @@ export default function WordsCourse() {
 
     
     </div>
+    </PageTransition>
   )
 }

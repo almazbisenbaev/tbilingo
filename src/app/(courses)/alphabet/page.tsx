@@ -12,6 +12,7 @@ import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 import SuccessModal from '@/components/ShadcnSuccessModal';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
 import CoursePageLoading from '@/components/CoursePageLoading';
+import PageTransition from '@/components/PageTransition';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -68,42 +69,48 @@ export default function AlphabetCourse() {
   // Show loading state
   if (alphabetLoading) {
     return (
-      <CoursePageLoading 
-        courseTitle="Learn alphabet"
-        message="Loading Georgian alphabet..."
-      />
+      <PageTransition>
+        <CoursePageLoading 
+          courseTitle="Learn alphabet"
+          message="Loading Georgian alphabet..."
+        />
+      </PageTransition>
     );
   }
 
   // Show error state
   if (alphabetError) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        minHeight: '100vh',
-        flexDirection: 'column'
-      }}>
-        <p>Error loading alphabet: {alphabetError}</p>
-        <button onClick={() => window.location.reload()}>Retry</button>
-      </div>
+      <PageTransition>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          minHeight: '100vh',
+          flexDirection: 'column'
+        }}>
+          <p>Error loading alphabet: {alphabetError}</p>
+          <button onClick={() => window.location.reload()}>Retry</button>
+        </div>
+      </PageTransition>
     );
   }
 
   // Show empty state
   if (alphabet.length === 0) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        minHeight: '100vh',
-        flexDirection: 'column'
-      }}>
-        <p>No alphabet data found. Please check the manual data entry guide.</p>
-        <Link href="/">Go back to home</Link>
-      </div>
+      <PageTransition>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          minHeight: '100vh',
+          flexDirection: 'column'
+        }}>
+          <p>No alphabet data found. Please check the manual data entry guide.</p>
+          <Link href="/">Go back to home</Link>
+        </div>
+      </PageTransition>
     );
   }
 
@@ -261,7 +268,8 @@ export default function AlphabetCourse() {
   // Main alphabet page
   if (!isGameplayActive) {
     return (
-      <div className='h-svh flex flex-col justify-between py-4'>
+      <PageTransition>
+        <div className='h-svh flex flex-col justify-between py-4'>
 
         <div className='w-full max-w-2xl mx-auto p-4'>
           <div className="navbar">
@@ -290,13 +298,15 @@ export default function AlphabetCourse() {
           <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>
         </div>
 
-      </div>
+        </div>
+      </PageTransition>
     )
   }
 
   // Gameplay component
   return (
-    <div className='h-svh flex flex-col justify-between py-4'>
+    <PageTransition>
+      <div className='h-svh flex flex-col justify-between py-4'>
 
         {!allCardsReviewed && (
             <div className={`screen-gameplay font-type-${fontType}`}>
@@ -388,6 +398,7 @@ export default function AlphabetCourse() {
         />
 
     
-    </div>
+      </div>
+    </PageTransition>
   )
 }

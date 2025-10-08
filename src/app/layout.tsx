@@ -6,6 +6,7 @@ import { Noto_Serif_Georgian } from 'next/font/google';
 import "./globals.css";
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import { AuthProvider } from '@/contexts/AuthContext';
+import AnimationProvider from '@/components/AnimationProvider';
 
 const notoS_Georgian = Noto_Serif_Georgian({
   subsets: ['georgian'],
@@ -42,10 +43,12 @@ export default function RootLayout({
       <body
         className={`${notoS_Georgian.variable} ${inter.variable} antialiased`}
       >
-                  <AuthProvider>
-            <ServiceWorkerRegistration />
+        <AuthProvider>
+          <ServiceWorkerRegistration />
+          <AnimationProvider>
             {children}
-          </AuthProvider>
+          </AnimationProvider>
+        </AuthProvider>
       </body>
     </html>
   );
