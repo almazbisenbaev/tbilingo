@@ -6,10 +6,10 @@ import { useProgressStore, useStoreHydration } from '@/stores/progressStore';
 import { useWords } from '@/hooks/useEnhancedLearningContent';
 import { WordItem, PendingWordAction } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
-import WordsComponent from '@/components/WordsComponent';
+import WordsComponent from '@/components/WordsComponent/WordsComponent';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 import SuccessModal from '@/components/ShadcnSuccessModal';
-import ProgressBar from '@/components/ProgressBar';
+import ProgressBar from '@/components/ProgressBar/ProgressBar';
 import CoursePageLoading from '@/components/CoursePageLoading';
 
 import Image from 'next/image';

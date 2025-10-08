@@ -10,7 +10,7 @@ import {
   updateDoc, 
   serverTimestamp
 } from 'firebase/firestore';
-import { db, auth } from '../../firebaseConfig';
+import { db, auth } from '@root/firebaseConfig';
 
 // Debug logging helper
 const debugLog = (operation: string, data?: any) => {

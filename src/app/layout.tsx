@@ -4,8 +4,8 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 import { Inter } from 'next/font/google';
 import { Noto_Serif_Georgian } from 'next/font/google';
 import "./globals.css";
-import ServiceWorkerRegistration from '../components/ServiceWorkerRegistration';
-import { AuthProvider } from '../contexts/AuthContext';
+import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 const notoS_Georgian = Noto_Serif_Georgian({
   subsets: ['georgian'],

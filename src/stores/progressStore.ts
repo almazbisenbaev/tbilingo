@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { create } from 'zustand';
 import { SimpleUserProgressService, SimpleUserProgress } from '@/services/simpleUserProgress';
-import { auth } from '../../firebaseConfig';
+import { auth } from '@root/firebaseConfig';
 import { onAuthStateChanged, User } from 'firebase/auth';
 
 // Debug logging helper

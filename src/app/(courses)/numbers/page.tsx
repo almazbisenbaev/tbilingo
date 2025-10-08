@@ -5,7 +5,7 @@ import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore, useStoreHydration } from '@/stores/progressStore';
 import { useNumbers } from '@/hooks/useEnhancedLearningContent';
 import { NumberItem, PendingNumberAction } from '@/types';
-import FlashcardNumber from '@/components/FlashcardNumber';
+import FlashcardNumber from '@/components/FlashcardNumber/FlashcardNumber';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 import SuccessModal from '@/components/ShadcnSuccessModal';
 import CoursePageLoading from '@/components/CoursePageLoading';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { checkForUpdates, applyUpdate } from '../utils/pwa-utils';
+import { checkForUpdates, applyUpdate } from '@/utils/pwa-utils';
 
 export default function ServiceWorkerRegistration() {
   const [updateAvailable, setUpdateAvailable] = useState(false);

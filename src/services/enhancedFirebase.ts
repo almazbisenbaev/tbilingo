@@ -18,7 +18,7 @@ import {
   getDoc,
   addDoc
 } from 'firebase/firestore';
-import { db } from '../../firebaseConfig';
+import { db } from '@root/firebaseConfig';
 
 // Debug logging helper
 const debugLog = (operation: string, data?: any) => {

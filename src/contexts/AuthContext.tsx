@@ -10,7 +10,7 @@ import {
   sendPasswordResetEmail,
   updateProfile
 } from 'firebase/auth';
-import { auth } from '../../firebaseConfig';
+import { auth } from '@root/firebaseConfig';
 import { useAuthStateListener } from '@/stores/progressStore';
 
 interface AuthContextType {

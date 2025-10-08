@@ -7,10 +7,10 @@ import { useFontTypeStore } from '@/stores/fontTypeStore';
 import { useAlphabet } from '@/hooks/useEnhancedLearningContent';
 import { AlphabetItem, PendingLearnedAction } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
-import FlashcardLetter from '@/components/FlashcardLetter';
+import FlashcardLetter from '@/components/FlashcardLetter/FlashcardLetter';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 import SuccessModal from '@/components/ShadcnSuccessModal';
-import ProgressBar from '@/components/ProgressBar';
+import ProgressBar from '@/components/ProgressBar/ProgressBar';
 import CoursePageLoading from '@/components/CoursePageLoading';
 
 import Image from 'next/image';

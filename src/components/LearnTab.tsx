@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import CourseLink from '@/components/CourseLink';
+import CourseLink from '@/components/CourseLink/CourseLink';
 import CourseLinkSkeleton from '@/components/CourseLinkSkeleton';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { useProgressStore, useSafeProgressStore, useStoreHydration } from '@/stores/progressStore';
