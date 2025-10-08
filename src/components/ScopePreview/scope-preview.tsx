@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import "./scope-preview.css";
 
 export default function ScopePreview() {
@@ -11,7 +12,7 @@ export default function ScopePreview() {
 
           <div className="course-preview-item">
             <div className="course-preview-icon">
-              <img src="/images/icon-alphabet.svg" alt="Georgian Alphabet" width={38} height={38} />
+              <Image src="/images/icon-alphabet.svg" alt="Georgian Alphabet" width={38} height={38} />
             </div>
             <div className="course-preview-content">
               <div className="course-preview-name">Alphabet</div>
@@ -20,7 +21,7 @@ export default function ScopePreview() {
           
           <div className="course-preview-item">
             <div className="course-preview-icon">
-              <img src="/images/icon-numbers.svg" alt="Georgian Numbers" width={38} height={38} />
+              <Image src="/images/icon-numbers.svg" alt="Georgian Numbers" width={38} height={38} />
             </div>
             <div className="course-preview-content">
               <div className="course-preview-name">Numbers</div>
@@ -29,7 +30,7 @@ export default function ScopePreview() {
           
           <div className="course-preview-item">
             <div className="course-preview-icon">
-              <img src="/images/icon-phrases.svg" alt="Georgian Words" width={38} height={38} />
+              <Image src="/images/icon-phrases.svg" alt="Georgian Words" width={38} height={38} />
             </div>
             <div className="course-preview-content">
               <div className="course-preview-name">Words</div>
@@ -38,7 +39,7 @@ export default function ScopePreview() {
           
           <div className="course-preview-item">
             <div className="course-preview-icon">
-              <img src="/images/icon-phrases.svg" alt="Georgian Sentences" width={38} height={38} />
+              <Image src="/images/icon-phrases.svg" alt="Georgian Sentences" width={38} height={38} />
             </div>
             <div className="course-preview-content">
               <div className="course-preview-name">Sentences</div>

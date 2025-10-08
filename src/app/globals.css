@@ -597,6 +597,18 @@ input[type=submit]:focus {
   padding-bottom: 80px; /* Space for tab bar */
 }
 
+/* Animated tab content transitions */
+.animated-tab-content {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.animated-tab-content.transitioning {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
 .tab-bar {
   border-top: 1px solid #ffffff55;
   border-radius: 16px;
@@ -628,6 +640,19 @@ input[type=submit]:focus {
   font-weight: 500;
   gap: 4px;
   min-height: 64px;
+  position: relative;
+}
+
+.tab-button::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #F24822;
+  transform: translateX(-50%);
+  transition: width 0.2s ease;
 }
 
 .tab-button:active {
@@ -636,6 +661,18 @@ input[type=submit]:focus {
 
 .tab-button-active {
   color: #F24822;
+}
+
+.tab-button-active::before {
+  width: 30px;
+}
+
+.tab-button-icon {
+  transition: transform 0.2s ease;
+}
+
+.tab-button:active .tab-button-icon {
+  transform: scale(0.95);
 }
 
 .tab-button-icon {

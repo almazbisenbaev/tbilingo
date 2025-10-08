@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import TabBar, { TabType } from '@/components/TabBar';
 import AuthWrapper from '@/components/AuthWrapper';
 import SettingsTab from '@/components/SettingsTab';
+import AnimatedTabContent from '@/components/AnimatedTabContent';
 
 export default function App() {
   const { currentUser } = useAuth();
@@ -29,8 +30,13 @@ export default function App() {
     <>
       <div className="app-with-tabs">
         <div className="tab-content">
-          {activeTab === 'learn' && <AuthWrapper />}
-          {activeTab === 'settings' && <SettingsTab />}
+          <AnimatedTabContent 
+            activeTab={activeTab}
+            tabs={{
+              learn: <AuthWrapper />,
+              settings: <SettingsTab />
+            }}
+          />
         </div>
         <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
       </div>

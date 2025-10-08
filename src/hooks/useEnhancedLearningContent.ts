@@ -4,7 +4,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { EnhancedFirebaseService, CourseDefinition, CourseItem } from '@/services/enhancedFirebase';
 import { AlphabetItem, NumberItem, WordItem } from '@/types';
 
@@ -36,7 +36,7 @@ function useCourseData<T>(courseId: string): CourseDataState<T> {
     refetch: async () => {}
   });
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       debugLog(`Fetching course data for ${courseId}`);
       setState(prev => ({ ...prev, loading: true, error: null }));
@@ -70,11 +70,11 @@ function useCourseData<T>(courseId: string): CourseDataState<T> {
         error: errorMessage
       }));
     }
-  };
+  }, [courseId]);
 
   useEffect(() => {
     fetchData();
-  }, [courseId]);
+  }, [fetchData]);
 
   // Update refetch function
   useEffect(() => {
@@ -82,7 +82,7 @@ function useCourseData<T>(courseId: string): CourseDataState<T> {
       ...prev,
       refetch: fetchData
     }));
-  }, []);
+  }, [fetchData]);
 
   return state;
 }
