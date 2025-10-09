@@ -5,7 +5,7 @@ import CourseLink from '@/components/CourseLink/CourseLink';
 import CourseLinkSkeleton from '@/components/CourseLinkSkeleton';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { useProgressStore, useSafeProgressStore, useStoreHydration } from '@/stores/progressStore';
-import { useAlphabet, useNumbers, useWords } from '@/hooks/useEnhancedLearningContent';
+import { useAlphabet, useNumbers, useWords, usePhrasesAdvanced } from '@/hooks/useEnhancedLearningContent';
 import { FirebaseErrorBoundary } from '@/components/FirebaseErrorBoundary';
 import Brand from './Brand/Brand';
 
@@ -20,6 +20,7 @@ export default function LearnTab() {
   const { items: alphabetData, loading: alphabetLoading } = useAlphabet();
   const { items: numbersData, loading: numbersLoading } = useNumbers();
   const { items: wordsData, loading: wordsLoading } = useWords();
+  const { items: phrasesAdvancedData, loading: phrasesAdvancedLoading } = usePhrasesAdvanced();
   
 
 
@@ -27,6 +28,7 @@ export default function LearnTab() {
   const alphabetLearnedCount = useSafeProgressStore(state => state.getLearnedCount('alphabet'));
   const numbersLearnedCount = useSafeProgressStore(state => state.getLearnedCount('numbers'));
   const wordsLearnedCount = useSafeProgressStore(state => state.getLearnedCount('words'));
+  const phrasesAdvancedLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-2'));
   
   const getCompletionPercentage = useProgressStore(state => state.getCompletionPercentage);
 
@@ -48,6 +50,12 @@ export default function LearnTab() {
       initializeCourse('words', wordsData.length);
     }
   }, [wordsLoading, wordsData.length, initializeCourse]);
+  
+  useEffect(() => {
+    if (!phrasesAdvancedLoading && phrasesAdvancedData.length > 0) {
+      initializeCourse('phrases-2', phrasesAdvancedData.length);
+    }
+  }, [phrasesAdvancedLoading, phrasesAdvancedData.length, initializeCourse]);
 
 
   
@@ -108,6 +116,21 @@ export default function LearnTab() {
             progress={getCompletionPercentage('words', wordsData.length)}
             completedItems={wordsLearnedCount ?? 0}
             totalItems={wordsData.length}
+          />
+        )}
+        
+        {/* Phrases Advanced Course */}
+        {phrasesAdvancedLoading ? (
+          <CourseLinkSkeleton />
+        ) : (
+          <CourseLink 
+            href="/phrases-2"
+            title="Phrases Advanced"
+            icon="/images/icon-phrases.svg"
+            disabled={phrasesAdvancedData.length === 0}
+            progress={getCompletionPercentage('phrases-2', phrasesAdvancedData.length)}
+            completedItems={phrasesAdvancedLearnedCount ?? 0}
+            totalItems={phrasesAdvancedData.length}
           />
         )}
       </div>

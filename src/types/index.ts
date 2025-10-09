@@ -21,6 +21,17 @@ export interface WordItem {
   latin: string;
 }
 
+export interface PhraseAdvancedItem {
+  id: number;
+  english: string;
+  georgian: string;
+}
+
+export interface PhraseAdvancedMemory {
+  correctAnswers: number;
+  isLearned: boolean;
+}
+
 // Progress tracking interfaces
 export interface CourseProgress {
   learnedItems: Set<string>;  // Changed to Set of strings to match new structure
@@ -34,7 +45,7 @@ export interface ProgressData {
 }
 
 // Course type definitions
-export type CourseType = 'alphabet' | 'numbers' | 'words' | 'phrases' | 'vocabulary';
+export type CourseType = 'alphabet' | 'numbers' | 'words' | 'phrases' | 'phrases-2' | 'vocabulary';
 
 // Component prop interfaces
 export interface CourseLinkProps {
@@ -85,6 +96,12 @@ export interface PendingLearnedAction {
 
 export interface PendingWordAction {
   wordId: number;
+  index: number;
+  element: HTMLElement | null;
+}
+
+export interface PendingPhraseAdvancedAction {
+  phraseId: number;
   index: number;
   element: HTMLElement | null;
 }

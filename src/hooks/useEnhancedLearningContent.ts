@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { EnhancedFirebaseService, CourseDefinition, CourseItem } from '@/services/enhancedFirebase';
-import { AlphabetItem, NumberItem, WordItem } from '@/types';
+import { AlphabetItem, NumberItem, WordItem, PhraseAdvancedItem } from '@/types';
 
 // Debug logging helper
 const debugLog = (operation: string, data?: any) => {
@@ -146,6 +146,27 @@ export function useWords(): CourseDataState<WordItem> {
     english: (item as any).english,
     georgian: (item as any).georgian,
     latin: (item as any).latin
+  }));
+
+  return {
+    ...result,
+    items: transformedItems
+  };
+}
+
+/**
+ * Hook for Advanced Phrases course
+ */
+export function usePhrasesAdvanced(): CourseDataState<PhraseAdvancedItem> {
+  debugLog('Using enhanced phrases-advanced hook');
+  
+  const result = useCourseData<PhraseAdvancedItem>('phrases-2');
+  
+  // Transform the data to match the expected PhraseAdvancedItem interface
+  const transformedItems = result.items.map(item => ({
+    id: typeof item.id === 'string' ? parseInt(item.id) : item.id,
+    english: (item as any).english,
+    georgian: (item as any).georgian
   }));
 
   return {
