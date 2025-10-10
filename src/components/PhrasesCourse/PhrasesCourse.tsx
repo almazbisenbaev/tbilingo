@@ -18,6 +18,14 @@ import { MemoryProgressService } from '@/services/memoryProgressService';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePhrasesCourse } from '@/hooks/useEnhancedLearningContent';
 
+// New organized imports
+import AppHeader from '@/components/layout/AppHeader';
+import PageLayout from '@/components/layout/PageLayout';
+import ContentContainer from '@/components/layout/ContentContainer';
+import ErrorState from '@/components/common/ErrorState';
+import CourseIntro from '@/components/course/CourseIntro';
+import CourseCompletion from '@/components/course/CourseCompletion';
+
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -149,37 +157,26 @@ export default function PhrasesCourse({
   // Show error state
   if (phrasesError) {
     return (
-      <PageTransition>
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          minHeight: '100vh',
-          flexDirection: 'column'
-        }}>
-          <p>Error loading phrases: {phrasesError}</p>
-          <button onClick={() => window.location.reload()}>Retry</button>
-        </div>
-      </PageTransition>
+      <ErrorState 
+        title="Loading Error"
+        message={`Error loading phrases: ${phrasesError}`}
+        actionText="Go Home"
+        actionHref="/"
+        showRetry={true}
+      />
     );
   }
 
   // Show empty state
   if (phrases.length === 0) {
     return (
-      <PageTransition>
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          minHeight: '100vh',
-          flexDirection: 'column'
-        }}>
-          <p>No phrases data found. Please use the migration page to add sample data.</p>
-          <Link href="/migrate">Go to migration page</Link>
-          <Link href="/">Go back to home</Link>
-        </div>
-      </PageTransition>
+      <ErrorState 
+        title="No Data Found"
+        message="No phrases data found. Please use the migration page to add sample data."
+        actionText="Go to Migration"
+        actionHref="/migrate"
+        showRetry={false}
+      />
     );
   }
 
@@ -361,76 +358,38 @@ export default function PhrasesCourse({
   // Main phrases page
   if (!isGameplayActive) {
     return (
-      <PageTransition>
-        <div className='phrases-advanced-course h-svh flex flex-col justify-between py-4'>
-          <div className='w-full max-w-2xl mx-auto p-4'>
-            <div className="navbar">
-              <div className="navbar-row">
-                <div className="navbar-aside">
-                  <Link href="/" className='navbar-button'>
-                    <Image
-                      src="/images/icon-back.svg"
-                      alt="Back"
-                      width={24}
-                      height={24}
-                    />
-                  </Link>
-                </div>
-                <h1 className="navbar-title">{courseTitle}</h1>
-                <div className="navbar-aside"></div>
-              </div>
-            </div>
-          </div>
-
-          <div className='w-full max-w-2xl mx-auto p-4'>
-            <div className='text-center'>
-              Learned <b>{learnedPhrases.length}</b> out of <b>{phrases.length}</b> phrases
-            </div>
-          </div>
-
-          <div className='w-full max-w-2xl mx-auto p-4'>
-            <button onClick={startGameplay} className='btn btn-block btn-primary'>
-              Start learning
-            </button>
-          </div>
-        </div>
-      </PageTransition>
-    )
+      <CourseIntro 
+        title={courseTitle}
+        description={courseDescription}
+        completed={learnedPhrases.length}
+        total={phrases.length}
+        onStartLearning={startGameplay}
+        backHref="/"
+      />
+    );
   }
 
   // Gameplay component
   return (
     <PageTransition>
-      <div className='phrases-advanced-course h-svh flex flex-col justify-between py-4'>
-
+      <PageLayout className="phrases-advanced-course">
         {!allCardsReviewed && phrasesToReview.length > 0 && (
           <>
-            <div className='w-full max-w-2xl mx-auto p-4'>
-              <div className="navbar">
-                <div className="navbar-row">
-                  <div className="navbar-aside">
-                    <button onClick={resetGameplay} className='navbar-button'>
-                      <Image
-                        src="/images/icon-back.svg"
-                        alt="Back"
-                        width={24}
-                        height={24}
-                      />
-                    </button>
-                  </div>
-                  <div className="navbar-title">
-                    <ProgressBar 
-                      current={processedPhrases.length} 
-                      total={phrasesToReview.length}
-                      width="200px"
-                    />
-                  </div>
-                  <div className="navbar-aside"></div>
-                </div>
-              </div>
-            </div>
+            <ContentContainer>
+              <AppHeader 
+                title={
+                  <ProgressBar 
+                    current={processedPhrases.length} 
+                    total={phrasesToReview.length}
+                    width="200px"
+                  />
+                }
+                showBackButton
+                onBackClick={resetGameplay}
+              />
+            </ContentContainer>
 
-            <div className='w-full max-w-2xl mx-auto p-4'>
+            <ContentContainer>
               {phrasesToReview.map((item, index) => {
                 // Only show the current unprocessed phrase
                 if (index === processedPhrases.length) {
@@ -447,27 +406,20 @@ export default function PhrasesCourse({
                 }
                 return null;
               })}
-            </div>
+            </ContentContainer>
           </>
         )}
 
         {allCardsReviewed && (
-          <div className="screen-finish">
-            <div className="finish-message">
-              <div className='text-center text-4xl'>🎉</div>
-              <h2 className='font-semibold text-2xl'>Great work!</h2>
-              <div className='text-lg finish-message-text'>
-                <p>You've reviewed all the phrases for this session. You learned <b>{learnedPhrases.filter(id => phrasesToReview.some(phrase => phrase.id === id)).length}</b> new items!</p>
-                <p>Total progress: <b>{learnedPhrases.length}</b> out of <b>{phrases.length}</b> phrases learned.</p>
-              </div>
-              <div className='finish-message-actions'>
-                <button onClick={resetGameplay} className='btn btn-small btn-secondary'>Go back</button>
-              </div>
-            </div>
-          </div>
+          <CourseCompletion 
+            learnedCount={learnedPhrases.length}
+            totalCount={phrases.length}
+            sessionLearnedCount={learnedPhrases.filter(id => phrasesToReview.some(phrase => phrase.id === id)).length}
+            onContinue={startGameplay}
+            onGoBack={resetGameplay}
+          />
         )}
-
-      </div>
+      </PageLayout>
     </PageTransition>
-  )
+  );
 }

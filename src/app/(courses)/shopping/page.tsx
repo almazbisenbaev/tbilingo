@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import PhrasesCourse from '@/components/PhrasesCourse/PhrasesCourse';
+import GenericCourse from '@/features/course/components/GenericCourse';
 
 export default function ShoppingPage() {
   return (
-    <PhrasesCourse 
+    <GenericCourse 
       courseId="phrases-shopping"
       courseTitle="Shopping & Markets"
       courseDescription="Essential phrases for shopping, bargaining, and market visits"

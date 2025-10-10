@@ -9,41 +9,9 @@ import { useAlphabet, useNumbers, useWords, usePhrasesAdvanced, usePhrasesCourse
 import { FirebaseErrorBoundary } from '@/components/FirebaseErrorBoundary';
 import { PHRASE_COURSES, CourseConfig } from '@/constants/courseData';
 import Brand from './Brand/Brand';
+import PhraseCourseItem from '@/components/course/PhraseCourseItem';
 
-// Component for individual phrase courses
-interface PhraseCourseProps {
-  course: CourseConfig;
-  getCompletionPercentage: (courseType: string, totalItems: number) => number;
-  initializeCourse: (courseType: string, totalItems: number) => Promise<void>;
-}
 
-function PhraseCourseLink({ course, getCompletionPercentage, initializeCourse }: PhraseCourseProps) {
-  const { items: courseData, loading: courseLoading } = usePhrasesCourse(course.id);
-  const learnedCount = useSafeProgressStore(state => state.getLearnedCount(course.id));
-  
-  // Initialize course when data is loaded
-  useEffect(() => {
-    if (!courseLoading && courseData.length > 0) {
-      initializeCourse(course.id, courseData.length);
-    }
-  }, [courseLoading, courseData.length, initializeCourse, course.id]);
-
-  if (courseLoading) {
-    return <CourseLinkSkeleton />;
-  }
-
-  return (
-    <CourseLink 
-      href={course.route}
-      title={course.title}
-      icon={course.icon}
-      disabled={courseData.length === 0}
-      progress={getCompletionPercentage(course.id, courseData.length)}
-      completedItems={learnedCount ?? 0}
-      totalItems={courseData.length}
-    />
-  );
-}
 
 export default function LearnTab() {
   const {
@@ -154,7 +122,7 @@ export default function LearnTab() {
         
         {/* Dynamic Phrase Courses */}
         {sortedPhraseCourses.map(course => (
-          <PhraseCourseLink 
+          <PhraseCourseItem 
             key={course.id}
             course={course}
             getCompletionPercentage={getCompletionPercentage}

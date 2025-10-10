@@ -5,8 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import LoginPage from '@/components/LoginPage';
 import SignupPage from '@/components/SignupPage';
 import LearnTab from '@/components/LearnTab';
-import Brand from './Brand/Brand';
-import ScopePreview from './ScopePreview/scope-preview';
+import WelcomeScreen from '@/components/auth/WelcomeScreen';
 
 type AuthMode = 'login' | 'signup' | null;
 
@@ -48,31 +47,9 @@ export default function AuthWrapper() {
 
   // Default state: show welcome screen with auth buttons
   return (
-    <div className="welcome">
-        <div className="welcome-inner">
-
-          <div className="welcome-header">
-            <Brand />
-          </div>
-
-          <div className="welcome-actions">
-            <button 
-              onClick={() => setAuthMode('signup')}
-              className="btn btn-primary btn-block"
-            >
-              Sign Up (free)
-            </button>
-            <button 
-              onClick={() => setAuthMode('login')}
-              className="btn btn-block"
-            >
-              Sign In
-            </button>
-          </div>
-
-          <ScopePreview />
-
-        </div>
-    </div>
+    <WelcomeScreen 
+      onSignUp={() => setAuthMode('signup')}
+      onSignIn={() => setAuthMode('login')}
+    />
   );
 }

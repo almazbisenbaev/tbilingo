@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import PhrasesCourse from '@/components/PhrasesCourse/PhrasesCourse';
+import GenericCourse from '@/features/course/components/GenericCourse';
 
 export default function RestaurantPage() {
   return (
-    <PhrasesCourse 
+    <GenericCourse 
       courseId="phrases-restaurant"
       courseTitle="Restaurant & Food"
       courseDescription="Georgian phrases for dining, ordering food, and restaurants"
