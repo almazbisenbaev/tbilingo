@@ -14,7 +14,7 @@ const debugLog = (operation: string, data?: any) => {
 };
 
 // Local course types (keeping for backward compatibility)
-export type CourseType = 'alphabet' | 'numbers' | 'words' | 'phrases' | 'phrases-2' | 'vocabulary';
+export type CourseType = 'alphabet' | 'numbers' | 'words' | 'phrases' | 'phrases-2' | 'vocabulary' | string;
 
 // Course progress interface
 export interface CourseProgress {
@@ -25,7 +25,7 @@ export interface CourseProgress {
 // Progress state interface
 export interface ProgressState {
   // Data
-  courses: Record<CourseType, CourseProgress>;
+  courses: Record<string, CourseProgress>;
   user: User | null;
   isLoading: boolean;
   isHydrated: boolean;
@@ -53,7 +53,7 @@ export interface ProgressState {
 
 // Convert local course type to Firebase course ID
 const mapCourseType = (courseType: CourseType): string | null => {
-  const courseMapping: Record<CourseType, string> = {
+  const courseMapping: Record<string, string> = {
     'alphabet': 'alphabet',
     'numbers': 'numbers', 
     'words': 'phrases-1',  // Note: words course uses phrases-1 ID
@@ -62,7 +62,8 @@ const mapCourseType = (courseType: CourseType): string | null => {
     'vocabulary': 'vocabulary'
   };
   
-  return courseMapping[courseType] || null;
+  // If it's a known mapping, use it, otherwise use the courseType as-is
+  return courseMapping[courseType] || courseType;
 };
 
     // Convert Firebase progress to our internal format
@@ -75,7 +76,7 @@ const mapCourseType = (courseType: CourseType): string | null => {
       };
     };// Create the Zustand store
 export const useProgressStore = create<ProgressState>((set, get) => ({
-  // Initial state
+  // Initial state - start with base courses, will be extended dynamically
   courses: {
     alphabet: createDefaultCourseProgress(),
     numbers: createDefaultCourseProgress(),

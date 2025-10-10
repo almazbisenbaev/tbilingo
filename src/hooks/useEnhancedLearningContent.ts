@@ -176,6 +176,27 @@ export function usePhrasesAdvanced(): CourseDataState<PhraseAdvancedItem> {
 }
 
 /**
+ * Generic hook for any phrase course by courseId
+ */
+export function usePhrasesCourse(courseId: string): CourseDataState<PhraseAdvancedItem> {
+  debugLog(`Using generic phrases course hook for ${courseId}`);
+  
+  const result = useCourseData<PhraseAdvancedItem>(courseId);
+  
+  // Transform the data to match the expected PhraseAdvancedItem interface
+  const transformedItems = result.items.map(item => ({
+    id: typeof item.id === 'string' ? parseInt(item.id) : item.id,
+    english: (item as any).english,
+    georgian: (item as any).georgian
+  }));
+
+  return {
+    ...result,
+    items: transformedItems
+  };
+}
+
+/**
  * Hook for all available courses
  */
 export function useAllCourses() {

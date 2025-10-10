@@ -88,10 +88,7 @@ const PhraseAdvancedComponent: React.FC<PhraseAdvancedComponentProps> = ({
   return (
     <div className="phrase-advanced-component">
       <div className="phrase-content">
-        {/* English phrase to translate */}
-        <div className="phrase-english">
-          {phrase.english}
-        </div>
+
 
         {/* Memory progress indicator */}
         <div className="phrase-memory-indicator">
@@ -107,6 +104,14 @@ const PhraseAdvancedComponent: React.FC<PhraseAdvancedComponentProps> = ({
             {memory.correctAnswers}/3 correct
           </span>
         </div>
+
+
+        {/* English phrase to translate */}
+        <div className="phrase-english">
+          {phrase.english}
+        </div>
+
+
 
         {/* Available Georgian words */}
         <div className="phrase-word-bank">

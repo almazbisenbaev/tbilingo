@@ -5,9 +5,45 @@ import CourseLink from '@/components/CourseLink/CourseLink';
 import CourseLinkSkeleton from '@/components/CourseLinkSkeleton';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { useProgressStore, useSafeProgressStore, useStoreHydration } from '@/stores/progressStore';
-import { useAlphabet, useNumbers, useWords, usePhrasesAdvanced } from '@/hooks/useEnhancedLearningContent';
+import { useAlphabet, useNumbers, useWords, usePhrasesAdvanced, usePhrasesCourse } from '@/hooks/useEnhancedLearningContent';
 import { FirebaseErrorBoundary } from '@/components/FirebaseErrorBoundary';
+import { PHRASE_COURSES, CourseConfig } from '@/constants/courseData';
 import Brand from './Brand/Brand';
+
+// Component for individual phrase courses
+interface PhraseCourseProps {
+  course: CourseConfig;
+  getCompletionPercentage: (courseType: string, totalItems: number) => number;
+  initializeCourse: (courseType: string, totalItems: number) => Promise<void>;
+}
+
+function PhraseCourseLink({ course, getCompletionPercentage, initializeCourse }: PhraseCourseProps) {
+  const { items: courseData, loading: courseLoading } = usePhrasesCourse(course.id);
+  const learnedCount = useSafeProgressStore(state => state.getLearnedCount(course.id));
+  
+  // Initialize course when data is loaded
+  useEffect(() => {
+    if (!courseLoading && courseData.length > 0) {
+      initializeCourse(course.id, courseData.length);
+    }
+  }, [courseLoading, courseData.length, initializeCourse, course.id]);
+
+  if (courseLoading) {
+    return <CourseLinkSkeleton />;
+  }
+
+  return (
+    <CourseLink 
+      href={course.route}
+      title={course.title}
+      icon={course.icon}
+      disabled={courseData.length === 0}
+      progress={getCompletionPercentage(course.id, courseData.length)}
+      completedItems={learnedCount ?? 0}
+      totalItems={courseData.length}
+    />
+  );
+}
 
 export default function LearnTab() {
   const {
@@ -20,17 +56,18 @@ export default function LearnTab() {
   const { items: alphabetData, loading: alphabetLoading } = useAlphabet();
   const { items: numbersData, loading: numbersLoading } = useNumbers();
   const { items: wordsData, loading: wordsLoading } = useWords();
-  const { items: phrasesAdvancedData, loading: phrasesAdvancedLoading } = usePhrasesAdvanced();
+  
+  // Get all phrase courses sorted by order
+  const sortedPhraseCourses = PHRASE_COURSES.sort((a, b) => a.order - b.order);
   
 
+
+  
 
   // Use safe progress store hooks that return undefined during SSR  
   const alphabetLearnedCount = useSafeProgressStore(state => state.getLearnedCount('alphabet'));
   const numbersLearnedCount = useSafeProgressStore(state => state.getLearnedCount('numbers'));
-  const wordsLearnedCount = useSafeProgressStore(state => state.getLearnedCount('words'));
-  const phrasesAdvancedLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-2'));
-  
-  const getCompletionPercentage = useProgressStore(state => state.getCompletionPercentage);
+  const wordsLearnedCount = useSafeProgressStore(state => state.getLearnedCount('words'));  const getCompletionPercentage = useProgressStore(state => state.getCompletionPercentage);
 
   // Initialize courses with their total item counts when data is loaded
   useEffect(() => {
@@ -51,11 +88,7 @@ export default function LearnTab() {
     }
   }, [wordsLoading, wordsData.length, initializeCourse]);
   
-  useEffect(() => {
-    if (!phrasesAdvancedLoading && phrasesAdvancedData.length > 0) {
-      initializeCourse('phrases-2', phrasesAdvancedData.length);
-    }
-  }, [phrasesAdvancedLoading, phrasesAdvancedData.length, initializeCourse]);
+  // Dynamic course initialization will be handled per course
 
 
   
@@ -119,20 +152,15 @@ export default function LearnTab() {
           />
         )}
         
-        {/* Phrases Advanced Course */}
-        {phrasesAdvancedLoading ? (
-          <CourseLinkSkeleton />
-        ) : (
-          <CourseLink 
-            href="/phrases-2"
-            title="Phrases Advanced"
-            icon="/images/icon-phrases.svg"
-            disabled={phrasesAdvancedData.length === 0}
-            progress={getCompletionPercentage('phrases-2', phrasesAdvancedData.length)}
-            completedItems={phrasesAdvancedLearnedCount ?? 0}
-            totalItems={phrasesAdvancedData.length}
+        {/* Dynamic Phrase Courses */}
+        {sortedPhraseCourses.map(course => (
+          <PhraseCourseLink 
+            key={course.id}
+            course={course}
+            getCompletionPercentage={getCompletionPercentage}
+            initializeCourse={initializeCourse}
           />
-        )}
+        ))}
       </div>
       
       <PWAInstallPrompt />

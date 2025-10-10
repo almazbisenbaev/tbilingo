@@ -2,62 +2,9 @@
 
 import { useState } from 'react';
 import { EnhancedFirebaseService } from '@/services/enhancedFirebase';
+import { PHRASE_COURSES, COURSE_SAMPLE_DATA } from '@/constants/courseData';
 import Link from 'next/link';
 import Image from 'next/image';
-
-// Sample data for phrases-2 course
-const samplePhrasesData = [
-  {
-    id: "1",
-    english: "I am hungry",
-    georgian: "მე მშია"
-  },
-  {
-    id: "2", 
-    english: "Where is the bathroom?",
-    georgian: "სად არის ტუალეტი?"
-  },
-  {
-    id: "3",
-    english: "How much does this cost?",
-    georgian: "რა ღირს ეს?"
-  },
-  {
-    id: "4",
-    english: "I don't understand",
-    georgian: "არ მესმის"
-  },
-  {
-    id: "5",
-    english: "Can you help me?",
-    georgian: "შეგიძლია დამეხმარო?"
-  },
-  {
-    id: "6",
-    english: "What time is it?",
-    georgian: "რომელი საათია?"
-  },
-  {
-    id: "7",
-    english: "I am lost",
-    georgian: "გზა დამიკარგავს"
-  },
-  {
-    id: "8",
-    english: "The weather is nice",
-    georgian: "ამინდი კარგია"
-  },
-  {
-    id: "9",
-    english: "I need a doctor",
-    georgian: "ექიმი მჭირდება"
-  },
-  {
-    id: "10",
-    english: "See you tomorrow",
-    georgian: "ხვალ ნახვამდის"
-  }
-];
 
 export default function MigratePage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -70,48 +17,62 @@ export default function MigratePage() {
       setMessage('');
       setError('');
 
-      // First, create the course definition
-      const courseDefinition = {
-        id: 'phrases-2',
-        title: 'Phrases Advanced',
-        description: 'Advanced Georgian phrases with sentence construction gameplay',
-        type: 'phrases' as const,
-        difficulty: 'intermediate' as const,
-        isActive: true,
-        totalItems: samplePhrasesData.length,
-        estimatedTime: 45,
-        prerequisites: ['phrases-1'],
-        tags: ['intermediate', 'phrases', 'sentences'],
-        icon: '/images/icon-phrases.svg',
-        version: 1,
-        itemSchema: {
-          english: {
-            type: 'string' as const,
-            required: true,
-            description: 'English sentence'
-          },
-          georgian: {
-            type: 'string' as const, 
-            required: true,
-            description: 'Georgian translation'
+      let createdCourses = 0;
+      let totalItems = 0;
+
+      // Migrate all phrase courses
+      for (const course of PHRASE_COURSES) {
+        setMessage(`Creating course: ${course.title}...`);
+        
+        const sampleData = COURSE_SAMPLE_DATA[course.id] || [];
+        
+        // Create course definition
+        const courseDefinition = {
+          id: course.id,
+          title: course.title,
+          description: course.description,
+          type: 'phrases' as const,
+          difficulty: course.difficulty as 'beginner' | 'intermediate' | 'advanced',
+          isActive: true,
+          totalItems: sampleData.length,
+          estimatedTime: course.estimatedTime,
+          prerequisites: course.prerequisites,
+          tags: course.tags,
+          icon: course.icon,
+          version: 1,
+          itemSchema: {
+            english: {
+              type: 'string' as const,
+              required: true,
+              description: 'English sentence'
+            },
+            georgian: {
+              type: 'string' as const, 
+              required: true,
+              description: 'Georgian translation'
+            }
           }
+        };
+
+        await EnhancedFirebaseService.createCourse(courseDefinition);
+
+        if (sampleData.length > 0) {
+          setMessage(`Adding ${sampleData.length} items to ${course.title}...`);
+          
+          const courseItems = sampleData.map(phrase => ({
+            id: phrase.id,
+            english: phrase.english,
+            georgian: phrase.georgian
+          }));
+
+          await EnhancedFirebaseService.addCourseItems(course.id, courseItems);
+          totalItems += sampleData.length;
         }
-      };
+        
+        createdCourses++;
+      }
 
-      setMessage('Creating course definition...');
-      await EnhancedFirebaseService.createCourse(courseDefinition);
-
-      setMessage('Adding course items...');
-      // Transform sample data to course items format
-      const courseItems = samplePhrasesData.map(phrase => ({
-        id: phrase.id,
-        english: phrase.english,
-        georgian: phrase.georgian
-      }));
-
-      await EnhancedFirebaseService.addCourseItems('phrases-2', courseItems);
-
-      setMessage('✅ Successfully migrated 10 sample phrases to the database!');
+      setMessage(`✅ Successfully migrated ${createdCourses} phrase courses with ${totalItems} total phrases to the database!`);
       setIsLoading(false);
 
     } catch (error) {
@@ -149,16 +110,16 @@ export default function MigratePage() {
 
         {/* Migration Section */}
         <div className="bg-white rounded-lg shadow-sm border p-6">
-          <h2 className="text-xl font-semibold mb-4">Phrases Advanced Course</h2>
+          <h2 className="text-xl font-semibold mb-4">All Phrase Courses Migration</h2>
           
           <div className="mb-6">
             <p className="text-gray-600 mb-4">
-              This will create the "Phrases Advanced" course with 10 sample Georgian phrases. 
-              Each phrase includes:
+              This will create {PHRASE_COURSES.length} phrase courses with sample Georgian phrases:
             </p>
             <ul className="list-disc list-inside text-gray-600 space-y-1 mb-4">
-              <li>English sentence</li>
-              <li>Georgian translation (words are extracted automatically in the app)</li>
+              {PHRASE_COURSES.map(course => (
+                <li key={course.id}>{course.title} - {COURSE_SAMPLE_DATA[course.id]?.length || 0} phrases</li>
+              ))}
             </ul>
             
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
@@ -179,7 +140,7 @@ export default function MigratePage() {
                 : 'bg-blue-600 hover:bg-blue-700 text-white'
             }`}
           >
-            {isLoading ? 'Migrating...' : 'Migrate Learning Data'}
+            {isLoading ? 'Migrating...' : 'Migrate All Phrase Courses'}
           </button>
 
           {/* Status Messages */}
@@ -198,13 +159,19 @@ export default function MigratePage() {
 
         {/* Links */}
         {message.includes('Successfully') && (
-          <div className="mt-6 flex gap-4">
-            <Link 
-              href="/phrases-2"
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white text-center py-3 px-4 rounded-lg font-medium transition-colors"
-            >
-              Try Phrases Advanced Course
-            </Link>
+          <div className="mt-6 space-y-2">
+            <p className="text-gray-600 text-sm">Try the new phrase courses:</p>
+            <div className="grid grid-cols-2 gap-2">
+              {PHRASE_COURSES.slice(0, 6).map(course => (
+                <Link 
+                  key={course.id}
+                  href={course.route}
+                  className="bg-green-600 hover:bg-green-700 text-white text-center py-2 px-3 rounded text-sm font-medium transition-colors"
+                >
+                  {course.title}
+                </Link>
+              ))}
+            </div>
           </div>
         )}
       </div>
