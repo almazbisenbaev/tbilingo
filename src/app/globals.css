@@ -53,7 +53,8 @@ body {
   font-family: var(--font-sans);
   font-size: 1rem;  
   transition: .3s cubic-bezier(0.76, 0, 0.24, 1);
-  background: linear-gradient(180deg, rgba(255, 118, 88, 0.03) 0%, rgba(255, 118, 88, 0.1) 100%), #FFFFFF;
+  /* background: linear-gradient(180deg, rgba(255, 118, 88, 0.03) 0%, rgba(255, 118, 88, 0.1) 100%), #FFFFFF; */
+  background: #fff;
 }
 
 a {
@@ -170,7 +171,6 @@ input[type=submit]:focus {
   align-items: center;
   text-align: center;
   width: 100%;
-  margin: 0.5rem 0;
 }
 
 .auth-divider::before,
@@ -384,11 +384,11 @@ input[type=submit]:focus {
 }
 
 .welcome {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.812382) 37.02%, #FFFFFF 52.89%), url(/images/background.webp), #FFFFFF;
-  background-size: cover;
-  background-position: bottom center;
+  /* background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.812382) 37.02%, #FFFFFF 52.89%), url(/images/background.webp), #FFFFFF; */
+  /* background-size: cover;
+  background-position: bottom center; */
+  /* background: #fff; */
 
-  background-size: cover;
   position: relative;
 }
 
@@ -425,6 +425,8 @@ input[type=submit]:focus {
   justify-content: center;
   align-items: center;
   gap: 12px;
+  padding-top: 24px;
+  padding-bottom: 24px;
 }
 
 .welcome-progress {
