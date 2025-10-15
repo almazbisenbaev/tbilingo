@@ -165,35 +165,6 @@ input[type=submit]:focus {
   color: #fff;
 }
 
-.btn-google {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  background: white;
-  color: #1f2937;
-  border: 2px solid #e5e7eb;
-  padding: 0.75rem 1rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.btn-google:hover:not(:disabled) {
-  background: #f9fafb;
-  border-color: #d1d5db;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.btn-google:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.google-icon {
-  flex-shrink: 0;
-}
-
 .auth-divider {
   display: flex;
   align-items: center;
