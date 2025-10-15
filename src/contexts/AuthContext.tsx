@@ -8,7 +8,9 @@ import {
   signOut, 
   onAuthStateChanged,
   sendPasswordResetEmail,
-  updateProfile
+  updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup
 } from 'firebase/auth';
 import { auth } from '@root/firebaseConfig';
 import { useAuthStateListener } from '@/stores/progressStore';
@@ -17,6 +19,7 @@ interface AuthContextType {
   currentUser: User | null;
   signup: (email: string, password: string, displayName?: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   loading: boolean;
@@ -56,6 +59,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     await signInWithEmailAndPassword(auth, email, password);
   };
 
+  const loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  };
+
   const logout = async () => {
     await signOut(auth);
   };
@@ -77,6 +85,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     currentUser,
     signup,
     login,
+    loginWithGoogle,
     logout,
     resetPassword,
     loading
