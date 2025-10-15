@@ -870,6 +870,19 @@ import '@/components/PhraseAdvancedComponent/PhraseAdvancedComponent.css';
 - Encourages sequential learning progression
 - No changes to existing progress tracking or data structure
 
+**Testing Mode**:
+For development and testing purposes, you can bypass the unlock system:
+
+1. Open `src/components/LearnTab.tsx`
+2. Change `UNLOCK_ALL_COURSES_FOR_TESTING` from `false` to `true`
+3. All courses will be immediately available regardless of completion status
+4. **Remember to set back to `false` before deploying to production!**
+
+```typescript
+// In LearnTab.tsx
+const UNLOCK_ALL_COURSES_FOR_TESTING = true; // ⚠️ Testing only!
+```
+
 ---
 
 This documentation covers the core systems. For specific implementation details, refer to the source code and inline comments.

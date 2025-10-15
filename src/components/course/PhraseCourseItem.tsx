@@ -16,6 +16,7 @@ interface PhraseCourseItemProps {
   previousCourseUnlocked?: boolean;
   previousCourse?: CourseConfig;
   onLockedClick?: () => void;
+  unlockAllForTesting?: boolean;
 }
 
 export default function PhraseCourseItem({ 
@@ -25,7 +26,8 @@ export default function PhraseCourseItem({
   isFirstPhraseCourse = false,
   previousCourseUnlocked,
   previousCourse,
-  onLockedClick
+  onLockedClick,
+  unlockAllForTesting = false
 }: PhraseCourseItemProps) {
   const { items: courseData, loading: courseLoading } = usePhrasesCourse(course.id);
   const learnedCount = useSafeProgressStore(state => state.getLearnedCount(course.id));
@@ -40,16 +42,18 @@ export default function PhraseCourseItem({
     }
   }, [courseLoading, courseData.length, initializeCourse, course.id]);
 
-  // Calculate if this course is locked
+  // Calculate if this course is locked (bypass if testing flag is enabled)
   let isLocked = false;
   
-  if (isFirstPhraseCourse) {
-    // First phrase course uses previousCourseUnlocked (words course completion)
-    isLocked = !previousCourseUnlocked;
-  } else if (previousCourse) {
-    // Other phrase courses check if previous phrase course is completed
-    const previousCourseProgress = getCompletionPercentage(previousCourse.id, previousCourseData.length);
-    isLocked = !previousCourseLoading && !isCourseCompleted(previousCourseProgress);
+  if (!unlockAllForTesting) {
+    if (isFirstPhraseCourse) {
+      // First phrase course uses previousCourseUnlocked (words course completion)
+      isLocked = !previousCourseUnlocked;
+    } else if (previousCourse) {
+      // Other phrase courses check if previous phrase course is completed
+      const previousCourseProgress = getCompletionPercentage(previousCourse.id, previousCourseData.length);
+      isLocked = !previousCourseLoading && !isCourseCompleted(previousCourseProgress);
+    }
   }
 
   if (courseLoading) {

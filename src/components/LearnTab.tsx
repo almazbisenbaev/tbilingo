@@ -13,7 +13,8 @@ import PhraseCourseItem from '@/components/course/PhraseCourseItem';
 import { ConfirmationDialog } from '@/components/ShadcnConfirmationDialog';
 import { isCourseCompleted } from '@/utils/course-unlock-utils';
 
-
+// Unlocks all courses for testing
+const UNLOCK_ALL_COURSES_FOR_TESTING = false;
 
 export default function LearnTab() {
   const {
@@ -46,10 +47,10 @@ export default function LearnTab() {
   const numbersProgress = getCompletionPercentage('numbers', numbersData.length);
   const wordsProgress = getCompletionPercentage('words', wordsData.length);
   
-  // Check if each course is completed
-  const isAlphabetCompleted = isCourseCompleted(alphabetProgress);
-  const isNumbersCompleted = isCourseCompleted(numbersProgress);
-  const isWordsCompleted = isCourseCompleted(wordsProgress);
+  // Check if each course is completed (or bypass if testing flag is enabled)
+  const isAlphabetCompleted = UNLOCK_ALL_COURSES_FOR_TESTING || isCourseCompleted(alphabetProgress);
+  const isNumbersCompleted = UNLOCK_ALL_COURSES_FOR_TESTING || isCourseCompleted(numbersProgress);
+  const isWordsCompleted = UNLOCK_ALL_COURSES_FOR_TESTING || isCourseCompleted(wordsProgress);
   
   // Handler for locked course click
   const handleLockedClick = (courseTitle: string) => {
@@ -166,6 +167,7 @@ export default function LearnTab() {
               previousCourseUnlocked={isFirstPhraseCourse ? isWordsCompleted : undefined}
               previousCourse={isFirstPhraseCourse ? undefined : sortedPhraseCourses[index - 1]}
               onLockedClick={() => handleLockedClick(previousCourseTitle || '')}
+              unlockAllForTesting={UNLOCK_ALL_COURSES_FOR_TESTING}
             />
           );
         })}
