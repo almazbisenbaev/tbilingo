@@ -3,7 +3,9 @@
 2. [Authentication System](#authentication-system)
 3. [Database Structure](#database-structure)
 4. [Course System](#course-system)
-5. [Development Guide](#development-guide)
+5. [Course Architecture & Isolation](#course-architecture--isolation)
+6. [Development Guide](#development-guide)
+7. [Maintenance & Fixes](#maintenance--fixes)
 
 ---
 
@@ -329,14 +331,245 @@ interface ProgressState {
 
 ### Course Flow
 1. User selects course from `LearnTab`
-2. `CourseIntro` shows progress and description
+2. Course intro page shows progress and description
 3. User clicks "Start Learning"
-4. `GenericCourse` component handles learning session
-5. User interacts with flashcards
-6. `useCourseMemory` hook tracks answers and memory
+4. Course gameplay begins with interactive components
+5. User interacts with flashcards or phrase construction
+6. Memory system tracks answers
 7. Progress updates in Zustand store
 8. Progress syncs to Firebase
-9. Session ends with `CourseCompletion` screen
+9. Session ends with completion screen
+
+---
+
+## Course Architecture & Isolation
+
+### Overview
+**All courses in the application are completely isolated from each other.** Each course has its own dedicated `page.tsx` file containing all course-specific logic, state management, and gameplay mechanics. This architecture allows each course to evolve independently without affecting others.
+
+### Design Philosophy
+- **Independence**: Modify one course without affecting others
+- **Clarity**: All course logic in one file
+- **Flexibility**: Different courses can have completely different mechanics
+- **No shared course logic**: Only UI components and utilities are shared
+
+### Course Categories
+
+#### 1. Flashcard-based Courses (3 courses)
+- **Alphabet** (`/app/(courses)/alphabet/page.tsx`)
+- **Numbers** (`/app/(courses)/numbers/page.tsx`)
+- **Words** (`/app/(courses)/words/page.tsx`)
+- **Gameplay**: Flip cards to learn individual items with "Mark as Learned" confirmation
+
+#### 2. Phrase Construction Courses (11 courses)
+All phrase courses use sentence construction gameplay where users build Georgian sentences by selecting words in correct order:
+
+- **Restaurant** (`/restaurant`) - `phrases-restaurant`
+- **Travel** (`/travel`) - `phrases-travel`
+- **Medical** (`/medical`) - `phrases-medical`
+- **Emergency** (`/emergency`) - `phrases-emergency`
+- **Family** (`/family`) - `phrases-family`
+- **Business** (`/business`) - `phrases-business`
+- **Directions** (`/directions`) - `phrases-directions`
+- **Shopping** (`/shopping`) - `phrases-shopping`
+- **Culture** (`/culture`) - `phrases-culture`
+- **Weather** (`/weather`) - `phrases-weather`
+- **Phrases Advanced** (`/phrases-2`) - `phrases-2`
+
+### Course File Structure
+
+Every course's `page.tsx` contains:
+
+#### 1. Configuration Constants
+```typescript
+const COURSE_ID = 'phrases-restaurant';      // Unique identifier for Firebase
+const COURSE_TITLE = 'Restaurant & Food';    // Display name
+const COURSE_DESCRIPTION = 'Georgian phrases for dining...'; // Intro description
+```
+
+#### 2. Inline Gameplay Component
+Each course defines its own gameplay component (e.g., `PhraseComponent`, `FlashcardLetter`). For phrase courses, this includes:
+- Word selection and sentence construction logic
+- Answer validation
+- Memory progress display (3-dot system)
+- Correct/incorrect feedback
+
+#### 3. State Management
+```typescript
+// Progress tracking
+const [learnedItems, setLearnedItems] = useState<number[]>([]);
+const [itemsMemory, setItemsMemory] = useState<Record<number, Memory>>({});
+const [isInitialized, setIsInitialized] = useState(false);
+
+// Gameplay flow
+const [isGameplayActive, setIsGameplayActive] = useState(false);
+const [processedItems, setProcessedItems] = useState<number[]>([]);
+const [itemsToReview, setItemsToReview] = useState<Item[]>([]);
+const [allCardsReviewed, setAllCardsReviewed] = useState(false);
+```
+
+#### 4. Business Logic Functions
+Each course implements its own:
+- `startGameplay()` - Initialize learning session
+- `resetGameplay()` - Return to intro screen  
+- `handleCorrectAnswer()` - Process correct answers (phrase courses)
+- `handleWrongAnswer()` - Process incorrect answers (phrase courses)
+- `markAsLearned()` - Mark item as learned (flashcard courses)
+- `markAsToReview()` - Mark item as reviewed
+
+#### 5. Three-Screen Flow
+All courses follow this pattern:
+1. **Intro Screen** - Progress stats, description, "Start learning" button
+2. **Gameplay Screen** - Active learning experience
+3. **Completion Screen** - Session summary with options to continue or go back
+
+### What's Shared vs Isolated
+
+#### ✅ Shared (Acceptable)
+
+**UI Components:**
+- `PageTransition` - Animation wrapper
+- `CoursePageLoading` - Loading state
+- `ErrorState` - Error display
+- `AppHeader` - Navigation header
+- `PageLayout` - Page structure
+- `ContentContainer` - Content wrapper
+- `ProgressBar` - Progress indicator
+- `ConfirmationDialog` - Confirmation dialogs
+- `SuccessModal` - Success messages
+- Standard Next.js components (`Image`, `Link`)
+
+**Utilities & Services:**
+- `useBackToHomeNavigation()` - Navigation hook
+- `useProgressStore()` - Progress state management
+- `useAuth()` - Authentication state
+- `usePhrasesCourse(id)` / `useAlphabet()` / `useNumbers()` / `useWords()` - Data fetching
+- `MemoryProgressService` - Firebase progress sync
+- `shuffleArray()` - Array randomization
+- `processGeorgianSentence()` - Text processing for phrases
+- `normalizeForComparison()` - Text normalization for validation
+
+**Styles:**
+- Shared CSS files like `PhraseAdvancedComponent.css` (imported in each phrase course)
+- Global Tailwind styles
+
+#### ❌ NOT Shared (Isolated)
+
+- Course-specific components (each course has its own inline components)
+- Course gameplay logic (each course manages its own gameplay)
+- Course state management (embedded in each course)
+- Course business logic functions
+
+### Refactoring History
+
+**October 15, 2025**: All courses were refactored to be completely isolated.
+
+**Before:**
+- Most phrase courses used shared `GenericCourse` component
+- Shared hooks: `useCourseMemory`, `useCourseGameplay`
+- Shared component: `PhrasesCourse`
+
+**After:**
+- Each course has complete logic in its `page.tsx`
+- No shared course-specific logic
+- ✅ Maintains same functionality and user experience
+- ✅ Same data structure (no migration needed)
+
+**Deprecated (no longer used):**
+- `/src/features/course/components/GenericCourse.tsx`
+- `/src/hooks/course/useCourseMemory.tsx`
+- `/src/components/PhrasesCourse/PhrasesCourse.tsx`
+
+These files remain in the codebase but are not imported by any courses.
+
+### Adding a New Isolated Course
+
+1. **Create course folder**: `src/app/(courses)/your-course/`
+
+2. **Copy an existing course's `page.tsx`** (choose similar gameplay type):
+   - For flashcard-style: copy from `alphabet` or `numbers`
+   - For phrase construction: copy from `restaurant` or any phrase course
+
+3. **Update constants**:
+```typescript
+const COURSE_ID = 'phrases-your-course';
+const COURSE_TITLE = 'Your Course Title';
+const COURSE_DESCRIPTION = 'Your course description';
+```
+
+4. **Customize gameplay component** if needed (optional)
+
+5. **Add course data** to Firebase/Firestore (see Database Structure section)
+
+6. **Add course configuration** to `src/constants/courseData.ts`
+
+7. **Add course link** to `LearnTab.tsx` or let it auto-populate from course data
+
+### Modifying an Existing Course
+
+To modify a course's behavior:
+
+1. Navigate to the specific course's `page.tsx` (e.g., `/app/(courses)/restaurant/page.tsx`)
+2. Make your changes - all logic is in this single file
+3. Test only this course
+4. Other courses remain unaffected
+
+**Examples of what you can customize per course:**
+- Gameplay mechanics (different interaction patterns)
+- Session length (number of items per session)
+- Memory thresholds (how many correct answers = learned)
+- UI layout and styling
+- Validation logic
+- Completion criteria
+
+### Course Data Flow
+
+```
+Firebase/Firestore (Course Data)
+        ↓
+useEnhancedLearningContent Hook (usePhrasesCourse, useAlphabet, etc.)
+        ↓
+Course Page Component (page.tsx)
+        ↓
+Local State Management (useState hooks)
+        ↓
+User Interactions (gameplay)
+        ↓
+Memory Updates (handleCorrectAnswer/handleWrongAnswer)
+        ↓
+MemoryProgressService (Progress Sync)
+        ↓
+Firebase/Firestore (User Progress Storage)
+        ↓
+useProgressStore (Local Progress State)
+```
+
+### Best Practices
+
+1. **Keep courses self-contained** - All course-specific logic should be in the course's `page.tsx`
+2. **Use shared UI components** - Reuse UI components but not course-specific logic
+3. **Maintain consistent patterns** - Use similar structure across courses for maintainability
+4. **Test independently** - Each course should work independently
+5. **Document unique features** - If a course has unique mechanics, document them in the course file
+6. **Import required styles** - For phrase courses, import `PhraseAdvancedComponent.css`
+
+### CSS Organization for Phrase Courses
+
+All phrase construction courses must import the shared CSS file:
+
+```typescript
+// Styles
+import '@/components/PhraseAdvancedComponent/PhraseAdvancedComponent.css';
+```
+
+This CSS file contains styles for:
+- `.phrase-advanced-component` - Main container
+- `.phrase-english` - English prompt
+- `.phrase-memory-indicator` - 3-dot progress indicator
+- `.word-button` - Clickable Georgian word buttons
+- `.constructed-word` - Selected words in answer area
+- `.result-message` - Correct/incorrect feedback
+- All other phrase gameplay styling
 
 ---
 
@@ -549,6 +782,57 @@ function CoursePage() {
 - Check if route matches course configuration
 - Ensure course items have proper structure (id, order fields)
 
+### Missing Styles in Phrase Courses
+If phrase construction gameplay appears unstyled:
+- Verify `import '@/components/PhraseAdvancedComponent/PhraseAdvancedComponent.css';` is present
+- CSS import should be after UI component imports
+- Check browser console for CSS loading errors
+
+---
+
+## Maintenance & Fixes
+
+### Course Refactoring (October 15, 2025)
+
+**Objective**: Isolated all courses so each can evolve independently.
+
+**What Changed**:
+- Eliminated shared `GenericCourse` component
+- Each course now has complete logic in its own `page.tsx`
+- All 11 phrase courses refactored from shared to isolated implementations
+- Alphabet, Numbers, and Words courses were already isolated
+
+**Impact**:
+- ✅ No user-facing changes
+- ✅ Same functionality and UX
+- ✅ No data migration needed
+- ✅ Backward compatible
+
+**Benefits**:
+- Courses can be modified independently
+- No hidden dependencies between courses
+- Easier to experiment with different gameplay mechanics
+- Simpler debugging (all code in one place)
+- Better for future course diversity
+
+### CSS Import Fix (October 15, 2025)
+
+**Issue**: After refactoring, phrase construction components lost styling while functionality continued to work.
+
+**Root Cause**: During refactoring, the inline `PhraseComponent` was copied into each course but the CSS import was forgotten.
+
+**Solution**: Added CSS import to all 11 phrase courses:
+```typescript
+import '@/components/PhraseAdvancedComponent/PhraseAdvancedComponent.css';
+```
+
+**Files Updated**:
+- All 11 phrase course files in `/app/(courses)/*/page.tsx`
+
+**Prevention**: When creating new phrase courses, always include this CSS import.
+
 ---
 
 This documentation covers the core systems. For specific implementation details, refer to the source code and inline comments.
+
+**Last Updated**: October 15, 2025
