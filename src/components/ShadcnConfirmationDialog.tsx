@@ -45,16 +45,18 @@ export function ConfirmationDialog({
         </DialogHeader>
         
         <DialogFooter className="gap-3 mt-6">
-          <Button 
-            variant="outline" 
-            onClick={onCancel}
-            className="flex-1"
-          >
-            {cancelText}
-          </Button>
+          {cancelText && (
+            <Button 
+              variant="outline" 
+              onClick={onCancel}
+              className="flex-1"
+            >
+              {cancelText}
+            </Button>
+          )}
           <Button 
             onClick={onConfirm}
-            className="flex-1 bg-red-600 hover:bg-red-700"
+            className={cancelText ? "flex-1 bg-red-600 hover:bg-red-700" : "w-full"}
           >
             {confirmText}
           </Button>

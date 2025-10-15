@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import CourseLink from '@/components/CourseLink/CourseLink';
 import CourseLinkSkeleton from '@/components/CourseLinkSkeleton';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
@@ -10,6 +10,8 @@ import { FirebaseErrorBoundary } from '@/components/FirebaseErrorBoundary';
 import { PHRASE_COURSES, CourseConfig } from '@/constants/courseData';
 import Brand from './Brand/Brand';
 import PhraseCourseItem from '@/components/course/PhraseCourseItem';
+import { ConfirmationDialog } from '@/components/ShadcnConfirmationDialog';
+import { isCourseCompleted } from '@/utils/course-unlock-utils';
 
 
 
@@ -28,7 +30,9 @@ export default function LearnTab() {
   // Get all phrase courses sorted by order
   const sortedPhraseCourses = PHRASE_COURSES.sort((a, b) => a.order - b.order);
   
-
+  // State for locked course dialog
+  const [showLockedDialog, setShowLockedDialog] = useState(false);
+  const [requiredCourseTitle, setRequiredCourseTitle] = useState<string>('');
 
   
 
@@ -36,6 +40,22 @@ export default function LearnTab() {
   const alphabetLearnedCount = useSafeProgressStore(state => state.getLearnedCount('alphabet'));
   const numbersLearnedCount = useSafeProgressStore(state => state.getLearnedCount('numbers'));
   const wordsLearnedCount = useSafeProgressStore(state => state.getLearnedCount('words'));  const getCompletionPercentage = useProgressStore(state => state.getCompletionPercentage);
+  
+  // Calculate completion percentages for the main courses
+  const alphabetProgress = getCompletionPercentage('alphabet', alphabetData.length);
+  const numbersProgress = getCompletionPercentage('numbers', numbersData.length);
+  const wordsProgress = getCompletionPercentage('words', wordsData.length);
+  
+  // Check if each course is completed
+  const isAlphabetCompleted = isCourseCompleted(alphabetProgress);
+  const isNumbersCompleted = isCourseCompleted(numbersProgress);
+  const isWordsCompleted = isCourseCompleted(wordsProgress);
+  
+  // Handler for locked course click
+  const handleLockedClick = (courseTitle: string) => {
+    setRequiredCourseTitle(courseTitle);
+    setShowLockedDialog(true);
+  };
 
   // Initialize courses with their total item counts when data is loaded
   useEffect(() => {
@@ -75,7 +95,7 @@ export default function LearnTab() {
 
 
       <div className="welcome-actions">
-        {/* Alphabet Course */}
+        {/* Alphabet Course - Always unlocked */}
         {alphabetLoading ? (
           <CourseLinkSkeleton />
         ) : (
@@ -84,13 +104,13 @@ export default function LearnTab() {
             title="Learn Alphabet"
             icon="/images/icon-alphabet.svg"
             disabled={alphabetData.length === 0}
-            progress={getCompletionPercentage('alphabet', alphabetData.length)}
+            progress={alphabetProgress}
             completedItems={alphabetLearnedCount ?? 0}
             totalItems={alphabetData.length}
           />
         )}
         
-        {/* Numbers Course */}
+        {/* Numbers Course - Unlocked after alphabet */}
         {numbersLoading ? (
           <CourseLinkSkeleton />
         ) : (
@@ -99,13 +119,15 @@ export default function LearnTab() {
             title="Learn Numbers"
             icon="/images/icon-numbers.svg"
             disabled={numbersData.length === 0}
-            progress={getCompletionPercentage('numbers', numbersData.length)}
+            locked={!isAlphabetCompleted}
+            progress={numbersProgress}
             completedItems={numbersLearnedCount ?? 0}
             totalItems={numbersData.length}
+            onLockedClick={() => handleLockedClick("Learn Alphabet")}
           />
         )}
         
-        {/* Words/Phrases Course */}
+        {/* Words/Phrases Course - Unlocked after numbers */}
         {wordsLoading ? (
           <CourseLinkSkeleton />
         ) : (
@@ -114,22 +136,50 @@ export default function LearnTab() {
             title="Words & Phrases - Basic"
             icon="/images/icon-phrases.svg"
             disabled={wordsData.length === 0}
-            progress={getCompletionPercentage('words', wordsData.length)}
+            locked={!isNumbersCompleted}
+            progress={wordsProgress}
             completedItems={wordsLearnedCount ?? 0}
             totalItems={wordsData.length}
+            onLockedClick={() => handleLockedClick("Learn Numbers")}
           />
         )}
         
-        {/* Dynamic Phrase Courses */}
-        {sortedPhraseCourses.map(course => (
-          <PhraseCourseItem 
-            key={course.id}
-            course={course}
-            getCompletionPercentage={getCompletionPercentage}
-            initializeCourse={initializeCourse}
-          />
-        ))}
+        {/* Dynamic Phrase Courses - Each unlocked after previous */}
+        {sortedPhraseCourses.map((course, index) => {
+          // First phrase course unlocks after words course
+          const isFirstPhraseCourse = index === 0;
+          const isUnlocked = isFirstPhraseCourse 
+            ? isWordsCompleted 
+            : true; // Will be calculated in PhraseCourseItem based on previous phrase course
+          
+          const previousCourseTitle = isFirstPhraseCourse 
+            ? "Words & Phrases - Basic" 
+            : sortedPhraseCourses[index - 1]?.title;
+          
+          return (
+            <PhraseCourseItem 
+              key={course.id}
+              course={course}
+              getCompletionPercentage={getCompletionPercentage}
+              initializeCourse={initializeCourse}
+              isFirstPhraseCourse={isFirstPhraseCourse}
+              previousCourseUnlocked={isFirstPhraseCourse ? isWordsCompleted : undefined}
+              previousCourse={isFirstPhraseCourse ? undefined : sortedPhraseCourses[index - 1]}
+              onLockedClick={() => handleLockedClick(previousCourseTitle || '')}
+            />
+          );
+        })}
       </div>
+      
+      {/* Locked Course Dialog */}
+      <ConfirmationDialog
+        isOpen={showLockedDialog}
+        title={`Complete "${requiredCourseTitle}" first to unlock this course.`}
+        confirmText="OK"
+        cancelText=""
+        onConfirm={() => setShowLockedDialog(false)}
+        onCancel={() => setShowLockedDialog(false)}
+      />
       
       <PWAInstallPrompt />
 

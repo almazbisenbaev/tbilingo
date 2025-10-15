@@ -831,6 +831,45 @@ import '@/components/PhraseAdvancedComponent/PhraseAdvancedComponent.css';
 
 **Prevention**: When creating new phrase courses, always include this CSS import.
 
+### Progressive Course Unlocking (October 15, 2025)
+
+**Objective**: Implement a linear progression system where courses unlock sequentially.
+
+**How It Works**:
+- Each course is locked until the previous one is completed (100% progress)
+- Locked courses display with 50% opacity
+- Clicking a locked course shows a dialog explaining which course must be completed first
+- All logic is client-side (no database changes required)
+
+**Course Unlock Sequence**:
+1. **Alphabet** - Always unlocked (entry point)
+2. **Numbers** - Unlocks after completing Alphabet
+3. **Words & Phrases - Basic** - Unlocks after completing Numbers
+4. **Phrases Advanced** - Unlocks after completing Words
+5. **Business Georgian** through **Emergency Situations** - Each unlocks after previous course
+
+**Implementation Details**:
+
+*Files Modified*:
+- `src/utils/course-unlock-utils.ts` - Utility functions for checking unlock status
+- `src/types/index.ts` - Added `locked` and `onLockedClick` to `CourseLinkProps`
+- `src/components/CourseLink/CourseLink.tsx` - Added locked state handling with reduced opacity
+- `src/components/course/PhraseCourseItem.tsx` - Added unlock logic for phrase courses
+- `src/components/LearnTab.tsx` - Main unlock logic and locked course dialog
+- `src/components/ShadcnConfirmationDialog.tsx` - Support for single-button dialogs
+
+*Key Functions*:
+- `isCourseCompleted(percentage)` - Returns true if progress >= 100%
+- `checkCourseUnlocked(index, previousCompleted, previousTitle)` - Checks if course should be unlocked
+- CourseLink with `locked={true}` prop shows at 50% opacity and prevents navigation
+- Dialog message: "Complete [Previous Course] first to unlock this course."
+
+**User Experience**:
+- Visual feedback via opacity reduction (no text labels needed)
+- Clear messaging when attempting to access locked courses
+- Encourages sequential learning progression
+- No changes to existing progress tracking or data structure
+
 ---
 
 This documentation covers the core systems. For specific implementation details, refer to the source code and inline comments.

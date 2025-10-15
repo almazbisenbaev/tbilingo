@@ -37,6 +37,18 @@ function useCourseData<T>(courseId: string): CourseDataState<T> {
   });
 
   const fetchData = useCallback(async () => {
+    // Don't fetch if courseId is empty or invalid
+    if (!courseId || courseId.trim() === '') {
+      setState(prev => ({
+        ...prev,
+        course: null,
+        items: [],
+        loading: false,
+        error: null
+      }));
+      return;
+    }
+    
     try {
       debugLog(`Fetching course data for ${courseId}`);
       setState(prev => ({ ...prev, loading: true, error: null }));

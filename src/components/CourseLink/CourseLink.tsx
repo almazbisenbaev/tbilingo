@@ -15,9 +15,11 @@ export default function CourseLink({
   title, 
   icon, 
   disabled = false, 
+  locked = false,
   progress = 0, 
   totalItems = 0, 
-  completedItems = 0 
+  completedItems = 0,
+  onLockedClick
 }: CourseLinkProps) {
   const isHydrated = useStoreHydration();
   
@@ -25,7 +27,16 @@ export default function CourseLink({
   const shouldShowProgress = isHydrated && !disabled && progress !== undefined && progress >= 0;
   
   // Debug log to check the props being received
-  console.log(`CourseLink [${title}]:`, { progress, completedItems, totalItems, isHydrated, shouldShowProgress });
+  console.log(`CourseLink [${title}]:`, { progress, completedItems, totalItems, isHydrated, shouldShowProgress, locked });
+  
+  // Handle locked course click
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (locked) {
+      e.preventDefault();
+      onLockedClick?.();
+    }
+  };
+  
     return (
         <>
             <Link 
@@ -33,7 +44,10 @@ export default function CourseLink({
                 className={`course-link ${disabled ? 'course-link-disabled' : ''}`}
                 style={{
                     pointerEvents: (disabled) ? "none" : "auto",
+                    opacity: locked ? 0.5 : 1,
+                    cursor: locked ? 'pointer' : 'default'
                 }}
+                onClick={handleClick}
             >
                 <div className='course-link-icon'>
                     <Image src={icon} alt={title} width={38} height={38} />

@@ -53,9 +53,11 @@ export interface CourseLinkProps {
   title: string;
   icon: string;
   disabled: boolean;
+  locked?: boolean; // Whether the course is locked (not yet unlocked)
   progress?: number; // Percentage of completion (0-100)
   totalItems?: number; // Total number of items in the course
   completedItems?: number; // Number of completed items
+  onLockedClick?: () => void; // Callback when locked course is clicked
 }
 
 export interface FlashcardProps {
