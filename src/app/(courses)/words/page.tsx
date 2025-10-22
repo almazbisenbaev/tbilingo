@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore, useStoreHydration } from '@/stores/progressStore';
 import { useFontTypeStore } from '@/stores/fontTypeStore';
@@ -345,8 +346,18 @@ export default function WordsCourse() {
             </div>
         )}
 
-        {allCardsReviewed && (
-            <div className="screen-finish">
+        <AnimatePresence mode="wait">
+          {allCardsReviewed && (
+            <motion.div 
+              className="screen-finish"
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: -20 }}
+              transition={{ 
+                duration: 0.5,
+                ease: [0.34, 1.56, 0.64, 1]
+              }}
+            >
                 <div className="finish-message">
                 <div className='text-center text-4xl'>🎉</div>
                 <h2 className='font-semibold text-2xl'>Great work!</h2>
@@ -358,8 +369,9 @@ export default function WordsCourse() {
                     <button onClick={resetGameplay} className='btn btn-small btn-secondary'>Go back</button>
                 </div>
                 </div>
-            </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Confirmation Dialog for Mark as Learned */}
         <ConfirmationDialog

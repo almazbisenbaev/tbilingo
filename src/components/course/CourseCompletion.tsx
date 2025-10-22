@@ -1,6 +1,6 @@
 'use client';
 
-import PageTransition from '@/components/PageTransition';
+import { motion } from 'framer-motion';
 import PageLayout from '@/components/layout/PageLayout';
 import ContentContainer from '@/components/layout/ContentContainer';
 
@@ -20,7 +20,14 @@ export default function CourseCompletion({
   onGoBack
 }: CourseCompletionProps) {
   return (
-    <PageTransition>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ 
+        duration: 0.5,
+        ease: [0.34, 1.56, 0.64, 1] // Spring-like easing
+      }}
+    >
       <PageLayout>
         <ContentContainer className="flex-1 flex items-center justify-center">
           <div className="screen-finish">
@@ -48,6 +55,6 @@ export default function CourseCompletion({
           </div>
         </ContentContainer>
       </PageLayout>
-    </PageTransition>
+    </motion.div>
   );
 }

@@ -5,6 +5,7 @@
 
 "use client";
 
+import { AnimatePresence } from 'framer-motion';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { usePhrasesCourse } from '@/hooks/useEnhancedLearningContent';
 import { useCourseMemory, useCourseGameplay } from '@/hooks/course/useCourseMemory';
@@ -111,55 +112,56 @@ export default function GenericCourse({
     );
   }
 
-  // Course completion page
-  if (allCardsReviewed) {
-    return (
-      <CourseCompletion 
-        learnedCount={learnedPhrases.length}
-        totalCount={phrases.length}
-        sessionLearnedCount={learnedPhrases.filter(id => phrasesToReview.some(phrase => phrase.id === id)).length}
-        onContinue={startGameplay}
-        onGoBack={resetGameplay}
-      />
-    );
-  }
-
-  // Active gameplay
+  // Active gameplay and completion
   return (
     <PageTransition>
       <PageLayout className="phrases-advanced-course">
-        <ContentContainer>
-          <AppHeader 
-            title={
-              <ProgressBar 
-                current={processedPhrases.length} 
-                total={phrasesToReview.length}
-                width="200px"
-              />
-            }
-            showBackButton
-            onBackClick={resetGameplay}
-          />
-        </ContentContainer>
-
-        <ContentContainer>
-          {phrasesToReview.map((item, index) => {
-            // Only show the current unprocessed phrase
-            if (index === processedPhrases.length) {
-              return (
-                <PhraseAdvancedComponent 
-                  key={item.id}
-                  phrase={item}
-                  memory={phrasesMemory[item.id] || { correctAnswers: 0, isLearned: false }}
-                  onNext={() => markAsToReview(item.id, index, null)}
-                  onCorrectAnswer={() => handleCorrectAnswer(item.id)}
-                  onWrongAnswer={() => handleWrongAnswer(item.id)}
+        <AnimatePresence mode="wait">
+          {!allCardsReviewed ? (
+            <>
+              <ContentContainer>
+                <AppHeader 
+                  title={
+                    <ProgressBar 
+                      current={processedPhrases.length} 
+                      total={phrasesToReview.length}
+                      width="200px"
+                    />
+                  }
+                  showBackButton
+                  onBackClick={resetGameplay}
                 />
-              );
-            }
-            return null;
-          })}
-        </ContentContainer>
+              </ContentContainer>
+
+              <ContentContainer>
+                {phrasesToReview.map((item, index) => {
+                  // Only show the current unprocessed phrase
+                  if (index === processedPhrases.length) {
+                    return (
+                      <PhraseAdvancedComponent 
+                        key={item.id}
+                        phrase={item}
+                        memory={phrasesMemory[item.id] || { correctAnswers: 0, isLearned: false }}
+                        onNext={() => markAsToReview(item.id, index, null)}
+                        onCorrectAnswer={() => handleCorrectAnswer(item.id)}
+                        onWrongAnswer={() => handleWrongAnswer(item.id)}
+                      />
+                    );
+                  }
+                  return null;
+                })}
+              </ContentContainer>
+            </>
+          ) : (
+            <CourseCompletion 
+              learnedCount={learnedPhrases.length}
+              totalCount={phrases.length}
+              sessionLearnedCount={learnedPhrases.filter(id => phrasesToReview.some(phrase => phrase.id === id)).length}
+              onContinue={startGameplay}
+              onGoBack={resetGameplay}
+            />
+          )}
+        </AnimatePresence>
       </PageLayout>
     </PageTransition>
   );

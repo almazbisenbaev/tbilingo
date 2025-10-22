@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore } from '@/stores/progressStore';
 import { PhraseAdvancedItem, PhraseAdvancedMemory } from '@/types';
@@ -407,7 +408,15 @@ export default function DirectionsNavigationPage() {
     
     return (
       <PageTransition>
-        <div className='h-svh flex flex-col justify-between py-4'>
+        <motion.div 
+          className='h-svh flex flex-col justify-between py-4'
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ 
+            duration: 0.5,
+            ease: [0.34, 1.56, 0.64, 1]
+          }}
+        >
           <div className='w-full max-w-2xl mx-auto p-4'>
             <div className="navbar">
               <div className="navbar-row">
@@ -442,7 +451,7 @@ export default function DirectionsNavigationPage() {
               Go Back
             </button>
           </div>
-        </div>
+        </motion.div>
       </PageTransition>
     );
   }

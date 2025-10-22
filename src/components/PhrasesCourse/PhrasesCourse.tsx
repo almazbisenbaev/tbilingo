@@ -6,6 +6,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore } from '@/stores/progressStore';
 import { PhraseAdvancedItem, PhraseAdvancedMemory } from '@/types';
@@ -373,52 +374,54 @@ export default function PhrasesCourse({
   return (
     <PageTransition>
       <PageLayout className="phrases-advanced-course">
-        {!allCardsReviewed && phrasesToReview.length > 0 && (
-          <>
-            <ContentContainer>
-              <AppHeader 
-                title={
-                  <ProgressBar 
-                    current={processedPhrases.length} 
-                    total={phrasesToReview.length}
-                    width="200px"
-                  />
-                }
-                showBackButton
-                onBackClick={resetGameplay}
-              />
-            </ContentContainer>
-
-            <ContentContainer>
-              {phrasesToReview.map((item, index) => {
-                // Only show the current unprocessed phrase
-                if (index === processedPhrases.length) {
-                  return (
-                    <PhraseAdvancedComponent 
-                      key={item.id}
-                      phrase={item}
-                      memory={phrasesMemory[item.id] || { correctAnswers: 0, isLearned: false }}
-                      onNext={() => markAsToReview(item.id, index, null)}
-                      onCorrectAnswer={() => handleCorrectAnswer(item.id)}
-                      onWrongAnswer={() => handleWrongAnswer(item.id)}
+        <AnimatePresence mode="wait">
+          {!allCardsReviewed && phrasesToReview.length > 0 && (
+            <>
+              <ContentContainer>
+                <AppHeader 
+                  title={
+                    <ProgressBar 
+                      current={processedPhrases.length} 
+                      total={phrasesToReview.length}
+                      width="200px"
                     />
-                  );
-                }
-                return null;
-              })}
-            </ContentContainer>
-          </>
-        )}
+                  }
+                  showBackButton
+                  onBackClick={resetGameplay}
+                />
+              </ContentContainer>
 
-        {allCardsReviewed && (
-          <CourseCompletion 
-            learnedCount={learnedPhrases.length}
-            totalCount={phrases.length}
-            sessionLearnedCount={learnedPhrases.filter(id => phrasesToReview.some(phrase => phrase.id === id)).length}
-            onContinue={startGameplay}
-            onGoBack={resetGameplay}
-          />
-        )}
+              <ContentContainer>
+                {phrasesToReview.map((item, index) => {
+                  // Only show the current unprocessed phrase
+                  if (index === processedPhrases.length) {
+                    return (
+                      <PhraseAdvancedComponent 
+                        key={item.id}
+                        phrase={item}
+                        memory={phrasesMemory[item.id] || { correctAnswers: 0, isLearned: false }}
+                        onNext={() => markAsToReview(item.id, index, null)}
+                        onCorrectAnswer={() => handleCorrectAnswer(item.id)}
+                        onWrongAnswer={() => handleWrongAnswer(item.id)}
+                      />
+                    );
+                  }
+                  return null;
+                })}
+              </ContentContainer>
+            </>
+          )}
+
+          {allCardsReviewed && (
+            <CourseCompletion 
+              learnedCount={learnedPhrases.length}
+              totalCount={phrases.length}
+              sessionLearnedCount={learnedPhrases.filter(id => phrasesToReview.some(phrase => phrase.id === id)).length}
+              onContinue={startGameplay}
+              onGoBack={resetGameplay}
+            />
+          )}
+        </AnimatePresence>
       </PageLayout>
     </PageTransition>
   );
