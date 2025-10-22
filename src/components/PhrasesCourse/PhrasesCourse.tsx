@@ -11,7 +11,7 @@ import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore } from '@/stores/progressStore';
 import { PhraseAdvancedItem, PhraseAdvancedMemory } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
-import PhraseAdvancedComponent from '@/components/PhraseAdvancedComponent/PhraseAdvancedComponent';
+import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
 import CoursePageLoading from '@/components/CoursePageLoading';
 import PageTransition from '@/components/PageTransition';
@@ -396,7 +396,7 @@ export default function PhrasesCourse({
                   // Only show the current unprocessed phrase
                   if (index === processedPhrases.length) {
                     return (
-                      <PhraseAdvancedComponent 
+                      <SentenceForm 
                         key={item.id}
                         phrase={item}
                         memory={phrasesMemory[item.id] || { correctAnswers: 0, isLearned: false }}

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { PhraseAdvancedItem, PhraseAdvancedMemory } from '@/types';
 import { processGeorgianSentence, normalizeForComparison } from '@/utils/georgian-text-utils';
-import './PhraseAdvancedComponent.css';
+import './SentenceForm.css';
 
-interface PhraseAdvancedComponentProps {
+interface SentenceFormProps {
   phrase: PhraseAdvancedItem;
   memory: PhraseAdvancedMemory;
   onNext: () => void;
@@ -15,7 +15,7 @@ interface PhraseAdvancedComponentProps {
  * Component for advanced phrase learning gameplay
  * Shows English sentence, user constructs Georgian translation by clicking word buttons
  */
-const PhraseAdvancedComponent: React.FC<PhraseAdvancedComponentProps> = ({ 
+const SentenceForm: React.FC<SentenceFormProps> = ({ 
   phrase, 
   memory,
   onNext, 
@@ -189,4 +189,4 @@ const PhraseAdvancedComponent: React.FC<PhraseAdvancedComponentProps> = ({
   );
 };
 
-export default PhraseAdvancedComponent;
+export default SentenceForm;

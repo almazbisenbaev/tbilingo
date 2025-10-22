@@ -17,7 +17,7 @@ import AppHeader from '@/components/layout/AppHeader';
 import PageLayout from '@/components/layout/PageLayout';
 import ContentContainer from '@/components/layout/ContentContainer';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
-import PhraseAdvancedComponent from '@/components/PhraseAdvancedComponent/PhraseAdvancedComponent';
+import SentenceForm from '@/components/SentenceForm/SentenceForm';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -342,7 +342,7 @@ export default function FamilyRelationshipsPage() {
           {phrasesToReview.map((item, index) => {
             if (index === processedPhrases.length) {
               return (
-                <PhraseAdvancedComponent 
+                <SentenceForm 
                   key={item.id}
                   phrase={item}
                   memory={phrasesMemory[item.id] || { correctAnswers: 0, isLearned: false }}

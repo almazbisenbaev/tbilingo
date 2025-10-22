@@ -18,7 +18,7 @@ import CourseIntro from '@/components/course/CourseIntro';
 import CourseCompletion from '@/components/course/CourseCompletion';
 
 // Course-specific components
-import PhraseAdvancedComponent from '@/components/PhraseAdvancedComponent/PhraseAdvancedComponent';
+import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import AppHeader from '@/components/layout/AppHeader';
 import PageLayout from '@/components/layout/PageLayout';
 import ContentContainer from '@/components/layout/ContentContainer';
@@ -138,7 +138,7 @@ export default function GenericCourse({
                   // Only show the current unprocessed phrase
                   if (index === processedPhrases.length) {
                     return (
-                      <PhraseAdvancedComponent 
+                      <SentenceForm 
                         key={item.id}
                         phrase={item}
                         memory={phrasesMemory[item.id] || { correctAnswers: 0, isLearned: false }}
