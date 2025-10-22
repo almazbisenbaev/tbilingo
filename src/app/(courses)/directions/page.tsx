@@ -9,8 +9,6 @@ import { shuffleArray } from '@/utils/shuffle-array';
 import { MemoryProgressService } from '@/services/memoryProgressService';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePhrasesCourse } from '@/hooks/useEnhancedLearningContent';
-import { processGeorgianSentence, normalizeForComparison } from '@/utils/georgian-text-utils';
-
 // UI Components
 import CoursePageLoading from '@/components/CoursePageLoading';
 import PageTransition from '@/components/PageTransition';
@@ -19,9 +17,7 @@ import AppHeader from '@/components/layout/AppHeader';
 import PageLayout from '@/components/layout/PageLayout';
 import ContentContainer from '@/components/layout/ContentContainer';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
-
-// Styles
-import '@/components/PhraseAdvancedComponent/PhraseAdvancedComponent.css';
+import PhraseAdvancedComponent from '@/components/PhraseAdvancedComponent/PhraseAdvancedComponent';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -29,138 +25,6 @@ import Link from 'next/link';
 const COURSE_ID = 'phrases-directions';
 const COURSE_TITLE = 'Directions & Navigation';
 const COURSE_DESCRIPTION = 'Georgian phrases for asking and giving directions';
-
-// Phrase Component (inline to keep course isolated)
-interface PhraseComponentProps {
-  phrase: PhraseAdvancedItem;
-  memory: PhraseAdvancedMemory;
-  onNext: () => void;
-  onCorrectAnswer: () => void;
-  onWrongAnswer: () => void;
-}
-
-function PhraseComponent({ phrase, memory, onNext, onCorrectAnswer, onWrongAnswer }: PhraseComponentProps) {
-  const [selectedWords, setSelectedWords] = useState<string[]>([]);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [georgianWords, setGeorgianWords] = useState<string[]>([]);
-
-  useEffect(() => {
-    const words = processGeorgianSentence(phrase.georgian);
-    setGeorgianWords(words);
-    setSelectedWords([]);
-    setIsSubmitted(false);
-    setIsCorrect(false);
-  }, [phrase.id, phrase.georgian]);
-
-  const handleWordClick = (word: string) => {
-    if (isSubmitted) return;
-    setSelectedWords(prev => [...prev, word]);
-  };
-
-  const handleRemoveWord = (index: number) => {
-    if (isSubmitted) return;
-    setSelectedWords(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const handleSubmit = () => {
-    if (selectedWords.length === 0) return;
-    
-    const constructedSentence = selectedWords.join(' ');
-    const normalizedConstructed = normalizeForComparison(constructedSentence);
-    const normalizedCorrect = normalizeForComparison(phrase.georgian);
-    
-    const isAnswerCorrect = normalizedConstructed === normalizedCorrect;
-    
-    setIsCorrect(isAnswerCorrect);
-    setIsSubmitted(true);
-    
-    if (isAnswerCorrect) {
-      onCorrectAnswer();
-    } else {
-      onWrongAnswer();
-    }
-  };
-
-  return (
-    <div className="phrase-advanced-component">
-      <div className="phrase-content">
-        <div className="phrase-memory-indicator">
-          <span className="memory-dots">
-            {[...Array(3)].map((_, i) => (
-              <span key={i} className={`memory-dot ${i < memory.correctAnswers ? 'filled' : ''}`} />
-            ))}
-          </span>
-          <span className="memory-text">{memory.correctAnswers}/3 correct</span>
-        </div>
-
-        <div className="phrase-english">{phrase.english}</div>
-
-        <div className="phrase-word-bank">
-          <div className="word-bank-title">Build the Georgian translation:</div>
-          <div className="word-buttons">
-            {georgianWords.map((word, index) => (
-              <button 
-                key={`${word}-${index}`}
-                onClick={() => handleWordClick(word)}
-                disabled={isSubmitted}
-                className="word-button"
-              >
-                {word}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="phrase-construction">
-          <div className="construction-title">Your answer:</div>
-          <div className="construction-area">
-            {selectedWords.length === 0 ? (
-              <span className="construction-placeholder">Click words above to build the sentence</span>
-            ) : (
-              <div className="constructed-sentence">
-                {selectedWords.map((word, index) => (
-                  <span 
-                    key={index}
-                    onClick={() => handleRemoveWord(index)}
-                    className={`constructed-word ${isSubmitted ? 'readonly' : ''}`}
-                  >
-                    {word}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="phrase-actions">
-          {!isSubmitted ? (
-            <button 
-              onClick={handleSubmit}
-              disabled={selectedWords.length === 0}
-              className="btn btn-primary btn-block"
-            >
-              Check Answer
-            </button>
-          ) : (
-            <div className="result-section">
-              <div className={`result-message ${isCorrect ? 'correct' : 'wrong'}`}>
-                {isCorrect ? '✅ Correct!' : '❌ Incorrect'}
-              </div>
-              {!isCorrect && (
-                <div className="correct-answer">
-                  <span className="label">Correct answer:</span>
-                  <span className="answer">{phrase.georgian}</span>
-                </div>
-              )}
-              <button onClick={onNext} className="btn btn-primary btn-block">Continue</button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function DirectionsNavigationPage() {
   useBackToHomeNavigation();
@@ -478,7 +342,7 @@ export default function DirectionsNavigationPage() {
           {phrasesToReview.map((item, index) => {
             if (index === processedPhrases.length) {
               return (
-                <PhraseComponent 
+                <PhraseAdvancedComponent 
                   key={item.id}
                   phrase={item}
                   memory={phrasesMemory[item.id] || { correctAnswers: 0, isLearned: false }}
