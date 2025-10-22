@@ -52,23 +52,3 @@
 .course-link-progress {
     margin-top: 8px;
 }
-
-.progress-bar {
-    height: 4px;
-    background-color: #F2482220;
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 4px;
-}
-
-.progress-fill {
-    height: 100%;
-    background-color: #F24822;
-    border-radius: 3px;
-    transition: width 0.3s ease;
-}
-
-.progress-text {
-    font-size: 0.75rem;
-    color: #555;
-}

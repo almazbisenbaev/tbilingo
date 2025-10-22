@@ -81,7 +81,7 @@ export interface WordsComponentProps {
 export interface ProgressBarProps {
   current: number;
   total: number;
-  showText?: boolean;
+  showNumbers?: boolean;
   width?: string;
 }
 

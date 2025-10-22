@@ -9,7 +9,7 @@ import './ProgressBar.css';
 const ProgressBar: React.FC<ProgressBarProps> = ({ 
   current, 
   total, 
-  showText = true,
+  showNumbers = false,
   width = '200px' 
 }) => {
   const percentage = total > 0 ? Math.round((current / total) * 100) : 0;
@@ -22,7 +22,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
           style={{ width: `${percentage}%` }}
         ></div>
       </div>
-      {showText && (
+      {showNumbers && (
         <div className="words-progress-text">
           {current} / {total}
         </div>

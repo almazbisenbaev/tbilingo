@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { CourseLinkProps } from '@/types';
 import { useStoreHydration } from '@/stores/progressStore';
+import ProgressBar from '@/components/ProgressBar/ProgressBar';
 
 import './CourseLink.css';
 
@@ -59,21 +60,11 @@ export default function CourseLink({
                     )}
                     {shouldShowProgress && (
                         <div className='course-link-progress'>
-                            <div className='progress-bar'>
-                                <div 
-                                    className='progress-fill' 
-                                    style={{ width: `${progress}%` }}
-                                    aria-valuenow={progress}
-                                    aria-valuemin={0}
-                                    aria-valuemax={100}
-                                    role="progressbar"
-                                ></div>
-                            </div>
-                            {completedItems !== undefined && totalItems !== undefined && (
-                                <div className='progress-text'>
-                                    {completedItems}/{totalItems} completed
-                                </div>
-                            )}
+                            <ProgressBar 
+                                current={completedItems || 0}
+                                total={totalItems || 0}
+                                width="100%"
+                            />
                         </div>
                     )}
                 </div>
