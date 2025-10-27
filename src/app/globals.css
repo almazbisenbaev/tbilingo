@@ -54,7 +54,7 @@ body {
   font-size: 1rem;  
   transition: .3s cubic-bezier(0.76, 0, 0.24, 1);
   /* background: linear-gradient(180deg, rgba(255, 118, 88, 0.03) 0%, rgba(255, 118, 88, 0.1) 100%), #FFFFFF; */
-  background: #fff;
+  background: #fafafa;
 }
 
 a {
@@ -654,19 +654,17 @@ input[type=submit]:focus {
 }
 
 .tab-bar {
-  border-top: 1px solid #ffffff55;
-  border-radius: 16px;
-  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px 12px 0 0;
+  background: #fff;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 
   position: fixed;
-  bottom: 10px;
-  left: 10px;
-  right: 10px;
-  background: #fafafaaa;
-  /* border-top: 1px solid rgba(0, 0, 0, 0.1); */
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   z-index: 100;
-  /* box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); */
 }
 
 .tab-button {
@@ -926,8 +924,24 @@ input[type=submit]:focus {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
 }
 
+
+
+
+.app {
+  background: #fff;
+  border-radius: 20px;
+
+  width: 640px;
+  max-width: 100%;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+@media (max-width: 640px) {
+  .app {
+    border-radius: 0;
+    width: 100%;
+  }
+}
