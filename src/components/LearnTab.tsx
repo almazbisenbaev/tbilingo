@@ -134,7 +134,7 @@ export default function LearnTab() {
           <CourseLinkSkeleton />
         ) : (
           <CourseLink 
-            href="/words"
+            href="/learn/3"
             title="Words & Phrases - Basic"
             icon="/images/icon-phrases.svg"
             disabled={wordsData.length === 0}
