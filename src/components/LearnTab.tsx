@@ -116,7 +116,7 @@ export default function LearnTab() {
           <CourseLinkSkeleton />
         ) : (
           <CourseLink 
-            href="/learn/numbers"
+            href="/learn/2"
             title="Numbers"
             icon="/images/icon-numbers.svg"
             disabled={numbersData.length === 0}
@@ -124,6 +124,7 @@ export default function LearnTab() {
             progress={numbersProgress}
             completedItems={numbersLearnedCount ?? 0}
             totalItems={numbersData.length}
+            // This is for a popup that tells you what you need complete first before this one
             onLockedClick={() => handleLockedClick("Learn Alphabet")}
           />
         )}
