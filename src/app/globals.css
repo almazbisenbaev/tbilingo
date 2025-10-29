@@ -657,9 +657,9 @@ input[type=submit]:focus {
   background: #fff;
   border-radius: 20px;
 
-  width: 640px;
-  max-width: 100%;
-  margin: 0 auto;
+  /* width: 640px; */
+  /* max-width: 100%; */
+  /* margin: 0 auto; */
   min-height: 100vh;
 }
 

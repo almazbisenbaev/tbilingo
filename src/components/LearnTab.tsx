@@ -101,8 +101,8 @@ export default function LearnTab() {
           <CourseLinkSkeleton />
         ) : (
           <CourseLink 
-            href="/alphabet"
-            title="Learn Alphabet"
+            href="/learn/1"
+            title="Alphabet"
             icon="/images/icon-alphabet.svg"
             disabled={alphabetData.length === 0}
             progress={alphabetProgress}
@@ -116,8 +116,8 @@ export default function LearnTab() {
           <CourseLinkSkeleton />
         ) : (
           <CourseLink 
-            href="/numbers"
-            title="Learn Numbers"
+            href="/learn/numbers"
+            title="Numbers"
             icon="/images/icon-numbers.svg"
             disabled={numbersData.length === 0}
             locked={!isAlphabetCompleted}

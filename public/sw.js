@@ -11,7 +11,7 @@ const CACHE_NAME = `tbilingo-v${CACHE_VERSION}`;
 
 const urlsToCache = [
   '/',
-  '/alphabet',
+  '/1',
   '/manifest.json',
   '/icon-192x192.png',
   '/icon-512x512.png',
@@ -81,7 +81,7 @@ self.addEventListener('fetch', (event) => {
   if (request.method === 'GET' && 
       (request.headers.get('accept')?.includes('text/html') || 
        url.pathname === '/' || 
-       url.pathname.startsWith('/alphabet'))) {
+       url.pathname.startsWith('/learn/1'))) {
     
     event.respondWith(
       fetch(request)

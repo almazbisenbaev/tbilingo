@@ -12,7 +12,7 @@ export const STORAGE_KEYS = {
 
 export const ROUTES = {
   HOME: '/',
-  ALPHABET: '/alphabet',
+  ALPHABET: '/learn/1',
 } as const;
 
 export const ALPHABET_TOTAL = 33; 

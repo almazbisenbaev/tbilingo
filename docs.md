@@ -356,7 +356,7 @@ interface ProgressState {
 ### Course Categories
 
 #### 1. Flashcard-based Courses (3 courses)
-- **Alphabet** (`/app/(courses)/alphabet/page.tsx`)
+- **Alphabet** (`/app/learn/1/page.tsx`)
 - **Numbers** (`/app/(courses)/numbers/page.tsx`)
 - **Words** (`/app/(courses)/words/page.tsx`)
 - **Gameplay**: Flip cards to learn individual items with "Mark as Learned" confirmation
