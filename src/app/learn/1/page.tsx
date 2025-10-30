@@ -1,5 +1,8 @@
 "use client";
 
+const course_id = 1;
+console.log(course_id);
+
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
