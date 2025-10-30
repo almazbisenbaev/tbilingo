@@ -46,7 +46,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     icon: '/images/icon-phrases.svg',
     estimatedTime: 60,
     order: 5,
-    route: '/business'
+    route: '/learn/5'
   },
   {
     id: 'phrases-travel',
@@ -58,7 +58,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     icon: '/images/icon-phrases.svg',
     estimatedTime: 40,
     order: 6,
-    route: '/travel'
+    route: '/learn/6'
   },
   {
     id: 'phrases-restaurant',
@@ -70,7 +70,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     icon: '/images/icon-phrases.svg',
     estimatedTime: 35,
     order: 7,
-    route: '/restaurant'
+    route: '/learn/7'
   },
   {
     id: 'phrases-shopping',
@@ -82,7 +82,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     icon: '/images/icon-phrases.svg',
     estimatedTime: 30,
     order: 8,
-    route: '/shopping'
+    route: '/learn/8'
   },
   {
     id: 'phrases-family',
@@ -94,7 +94,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     icon: '/images/icon-phrases.svg',
     estimatedTime: 40,
     order: 9,
-    route: '/family'
+    route: '/learn/9'
   },
   {
     id: 'phrases-medical',
@@ -106,7 +106,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     icon: '/images/icon-phrases.svg',
     estimatedTime: 50,
     order: 10,
-    route: '/medical'
+    route: '/learn/10'
   },
   {
     id: 'phrases-directions',
@@ -118,7 +118,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     icon: '/images/icon-phrases.svg',
     estimatedTime: 35,
     order: 11,
-    route: '/directions'
+    route: '/learn/11'
   },
   {
     id: 'phrases-weather',
@@ -130,7 +130,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     icon: '/images/icon-phrases.svg',
     estimatedTime: 25,
     order: 12,
-    route: '/weather'
+    route: '/learn/12'
   },
   {
     id: 'phrases-culture',
@@ -142,7 +142,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     icon: '/images/icon-phrases.svg',
     estimatedTime: 55,
     order: 13,
-    route: '/culture'
+    route: '/learn/13'
   },
   {
     id: 'phrases-emergency',
@@ -154,7 +154,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     icon: '/images/icon-phrases.svg',
     estimatedTime: 45,
     order: 14,
-    route: '/emergency'
+    route: '/learn/14'
   }
 ];
 

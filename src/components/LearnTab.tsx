@@ -263,7 +263,7 @@ export default function LearnTab() {
           <CourseLinkSkeleton />
         ) : (
           <CourseLink 
-            href="/learn/business"
+            href="/learn/5"
             title="Business Georgian"
             icon="/images/icon-phrases.svg"
             disabled={businessData.length === 0}
@@ -280,7 +280,7 @@ export default function LearnTab() {
           <CourseLinkSkeleton />
         ) : (
           <CourseLink 
-            href="/learn/travel"
+            href="/learn/6"
             title="Travel Georgian"
             icon="/images/icon-phrases.svg"
             disabled={travelData.length === 0}
@@ -297,7 +297,7 @@ export default function LearnTab() {
           <CourseLinkSkeleton />
         ) : (
           <CourseLink 
-            href="/learn/restaurant"
+            href="/learn/7"
             title="Restaurant & Food"
             icon="/images/icon-phrases.svg"
             disabled={restaurantData.length === 0}
@@ -314,7 +314,7 @@ export default function LearnTab() {
           <CourseLinkSkeleton />
         ) : (
           <CourseLink 
-            href="/learn/shopping"
+            href="/learn/8"
             title="Shopping & Markets"
             icon="/images/icon-phrases.svg"
             disabled={shoppingData.length === 0}
@@ -331,7 +331,7 @@ export default function LearnTab() {
           <CourseLinkSkeleton />
         ) : (
           <CourseLink 
-            href="/learn/family"
+            href="/learn/9"
             title="Family & Relationships"
             icon="/images/icon-phrases.svg"
             disabled={familyData.length === 0}
@@ -348,7 +348,7 @@ export default function LearnTab() {
           <CourseLinkSkeleton />
         ) : (
           <CourseLink 
-            href="/learn/medical"
+            href="/learn/10"
             title="Medical & Health"
             icon="/images/icon-phrases.svg"
             disabled={medicalData.length === 0}
@@ -365,7 +365,7 @@ export default function LearnTab() {
           <CourseLinkSkeleton />
         ) : (
           <CourseLink 
-            href="/learn/directions"
+            href="/learn/11"
             title="Directions & Transportation"
             icon="/images/icon-phrases.svg"
             disabled={directionsData.length === 0}
@@ -382,7 +382,7 @@ export default function LearnTab() {
           <CourseLinkSkeleton />
         ) : (
           <CourseLink 
-            href="/learn/weather"
+            href="/learn/12"
             title="Weather & Seasons"
             icon="/images/icon-phrases.svg"
             disabled={weatherData.length === 0}
@@ -399,7 +399,7 @@ export default function LearnTab() {
           <CourseLinkSkeleton />
         ) : (
           <CourseLink 
-            href="/learn/culture"
+            href="/learn/13"
             title="Culture & Traditions"
             icon="/images/icon-phrases.svg"
             disabled={cultureData.length === 0}
@@ -416,7 +416,7 @@ export default function LearnTab() {
           <CourseLinkSkeleton />
         ) : (
           <CourseLink 
-            href="/learn/emergency"
+            href="/learn/14"
             title="Emergency Situations"
             icon="/images/icon-phrases.svg"
             disabled={emergencyData.length === 0}
