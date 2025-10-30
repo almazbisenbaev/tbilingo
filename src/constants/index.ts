@@ -15,6 +15,7 @@ export const ROUTES = {
   ALPHABET: '/learn/1',
   NUMBERS: '/learn/2',
   WORDS: '/learn/3',
+  PHRASES_ADVANCED: '/learn/4',
 } as const;
 
 export const ALPHABET_TOTAL = 33; 

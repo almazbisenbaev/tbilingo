@@ -34,7 +34,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     icon: '/images/icon-phrases.svg',
     estimatedTime: 45,
     order: 4,
-    route: '/phrases-2'
+    route: '/learn/4'
   },
   {
     id: 'phrases-business',
