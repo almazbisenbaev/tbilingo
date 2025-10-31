@@ -166,6 +166,166 @@ export default function MigratePage() {
     }
   };
 
+  const handleBusinessClone = async () => {
+    try {
+      setIsLoading(true);
+      setMessage('');
+      setError('');
+      setMessage('Cloning phrases-business collection to 5...');
+      await EnhancedFirebaseService.cloneCourse('phrases-business', '5');
+      setMessage('✅ Successfully cloned phrases-business collection to 5!');
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Clone error:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsLoading(false);
+    }
+  };
+
+  const handleTravelClone = async () => {
+    try {
+      setIsLoading(true);
+      setMessage('');
+      setError('');
+      setMessage('Cloning phrases-travel collection to 6...');
+      await EnhancedFirebaseService.cloneCourse('phrases-travel', '6');
+      setMessage('✅ Successfully cloned phrases-travel collection to 6!');
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Clone error:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsLoading(false);
+    }
+  };
+
+  const handleRestaurantClone = async () => {
+    try {
+      setIsLoading(true);
+      setMessage('');
+      setError('');
+      setMessage('Cloning phrases-restaurant collection to 7...');
+      await EnhancedFirebaseService.cloneCourse('phrases-restaurant', '7');
+      setMessage('✅ Successfully cloned phrases-restaurant collection to 7!');
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Clone error:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsLoading(false);
+    }
+  };
+
+  const handleShoppingClone = async () => {
+    try {
+      setIsLoading(true);
+      setMessage('');
+      setError('');
+      setMessage('Cloning phrases-shopping collection to 8...');
+      await EnhancedFirebaseService.cloneCourse('phrases-shopping', '8');
+      setMessage('✅ Successfully cloned phrases-shopping collection to 8!');
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Clone error:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsLoading(false);
+    }
+  };
+
+  const handleFamilyClone = async () => {
+    try {
+      setIsLoading(true);
+      setMessage('');
+      setError('');
+      setMessage('Cloning phrases-family collection to 9...');
+      await EnhancedFirebaseService.cloneCourse('phrases-family', '9');
+      setMessage('✅ Successfully cloned phrases-family collection to 9!');
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Clone error:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsLoading(false);
+    }
+  };
+
+  const handleMedicalClone = async () => {
+    try {
+      setIsLoading(true);
+      setMessage('');
+      setError('');
+      setMessage('Cloning phrases-medical collection to 10...');
+      await EnhancedFirebaseService.cloneCourse('phrases-medical', '10');
+      setMessage('✅ Successfully cloned phrases-medical collection to 10!');
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Clone error:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsLoading(false);
+    }
+  };
+
+  const handleDirectionsClone = async () => {
+    try {
+      setIsLoading(true);
+      setMessage('');
+      setError('');
+      setMessage('Cloning phrases-directions collection to 11...');
+      await EnhancedFirebaseService.cloneCourse('phrases-directions', '11');
+      setMessage('✅ Successfully cloned phrases-directions collection to 11!');
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Clone error:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsLoading(false);
+    }
+  };
+
+  const handleWeatherClone = async () => {
+    try {
+      setIsLoading(true);
+      setMessage('');
+      setError('');
+      setMessage('Cloning phrases-weather collection to 12...');
+      await EnhancedFirebaseService.cloneCourse('phrases-weather', '12');
+      setMessage('✅ Successfully cloned phrases-weather collection to 12!');
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Clone error:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsLoading(false);
+    }
+  };
+
+  const handleCultureClone = async () => {
+    try {
+      setIsLoading(true);
+      setMessage('');
+      setError('');
+      setMessage('Cloning phrases-culture collection to 13...');
+      await EnhancedFirebaseService.cloneCourse('phrases-culture', '13');
+      setMessage('✅ Successfully cloned phrases-culture collection to 13!');
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Clone error:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsLoading(false);
+    }
+  };
+
+  const handleEmergencyClone = async () => {
+    try {
+      setIsLoading(true);
+      setMessage('');
+      setError('');
+      setMessage('Cloning phrases-emergency collection to 14...');
+      await EnhancedFirebaseService.cloneCourse('phrases-emergency', '14');
+      setMessage('✅ Successfully cloned phrases-emergency collection to 14!');
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Clone error:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-2xl mx-auto p-6">
@@ -255,6 +415,139 @@ export default function MigratePage() {
               }`}
             >
               {isLoading ? 'Cloning...' : 'Clone Phrases Advanced → 4'}
+            </button>
+          </div>
+        </div>
+
+        {/* Phrase Courses Collection Clones Section */}
+        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4">Phrase Courses Collection Clone</h2>
+          
+          <div className="mb-6">
+            <p className="text-gray-600 mb-4">
+              Clone phrase course collections (5-14) to their numbered IDs.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={handleBusinessClone}
+              disabled={isLoading}
+              className={`py-2 px-3 rounded-lg font-medium transition-colors text-sm ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-blue-500 hover:bg-blue-600 text-white'
+              }`}
+            >
+              {isLoading ? 'Cloning...' : 'Business → 5'}
+            </button>
+
+            <button
+              onClick={handleTravelClone}
+              disabled={isLoading}
+              className={`py-2 px-3 rounded-lg font-medium transition-colors text-sm ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-green-500 hover:bg-green-600 text-white'
+              }`}
+            >
+              {isLoading ? 'Cloning...' : 'Travel → 6'}
+            </button>
+
+            <button
+              onClick={handleRestaurantClone}
+              disabled={isLoading}
+              className={`py-2 px-3 rounded-lg font-medium transition-colors text-sm ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-red-500 hover:bg-red-600 text-white'
+              }`}
+            >
+              {isLoading ? 'Cloning...' : 'Restaurant → 7'}
+            </button>
+
+            <button
+              onClick={handleShoppingClone}
+              disabled={isLoading}
+              className={`py-2 px-3 rounded-lg font-medium transition-colors text-sm ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-yellow-500 hover:bg-yellow-600 text-white'
+              }`}
+            >
+              {isLoading ? 'Cloning...' : 'Shopping → 8'}
+            </button>
+
+            <button
+              onClick={handleFamilyClone}
+              disabled={isLoading}
+              className={`py-2 px-3 rounded-lg font-medium transition-colors text-sm ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-purple-500 hover:bg-purple-600 text-white'
+              }`}
+            >
+              {isLoading ? 'Cloning...' : 'Family → 9'}
+            </button>
+
+            <button
+              onClick={handleMedicalClone}
+              disabled={isLoading}
+              className={`py-2 px-3 rounded-lg font-medium transition-colors text-sm ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-pink-500 hover:bg-pink-600 text-white'
+              }`}
+            >
+              {isLoading ? 'Cloning...' : 'Medical → 10'}
+            </button>
+
+            <button
+              onClick={handleDirectionsClone}
+              disabled={isLoading}
+              className={`py-2 px-3 rounded-lg font-medium transition-colors text-sm ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-indigo-500 hover:bg-indigo-600 text-white'
+              }`}
+            >
+              {isLoading ? 'Cloning...' : 'Directions → 11'}
+            </button>
+
+            <button
+              onClick={handleWeatherClone}
+              disabled={isLoading}
+              className={`py-2 px-3 rounded-lg font-medium transition-colors text-sm ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-cyan-500 hover:bg-cyan-600 text-white'
+              }`}
+            >
+              {isLoading ? 'Cloning...' : 'Weather → 12'}
+            </button>
+
+            <button
+              onClick={handleCultureClone}
+              disabled={isLoading}
+              className={`py-2 px-3 rounded-lg font-medium transition-colors text-sm ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-orange-500 hover:bg-orange-600 text-white'
+              }`}
+            >
+              {isLoading ? 'Cloning...' : 'Culture → 13'}
+            </button>
+
+            <button
+              onClick={handleEmergencyClone}
+              disabled={isLoading}
+              className={`py-2 px-3 rounded-lg font-medium transition-colors text-sm ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-rose-500 hover:bg-rose-600 text-white'
+              }`}
+            >
+              {isLoading ? 'Cloning...' : 'Emergency → 14'}
             </button>
           </div>
         </div>

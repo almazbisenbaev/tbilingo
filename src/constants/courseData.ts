@@ -37,7 +37,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     route: '/learn/4'
   },
   {
-    id: 'phrases-business',
+    id: '5',
     title: 'Business Georgian',
     description: 'Essential Georgian phrases for business and professional settings',
     difficulty: 'intermediate',
@@ -49,7 +49,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     route: '/learn/5'
   },
   {
-    id: 'phrases-travel',
+    id: '6',
     title: 'Travel Georgian',
     description: 'Useful phrases for traveling and tourism in Georgia',
     difficulty: 'beginner',
@@ -61,7 +61,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     route: '/learn/6'
   },
   {
-    id: 'phrases-restaurant',
+    id: '7',
     title: 'Restaurant & Food',
     description: 'Georgian phrases for dining, ordering food, and restaurants',
     difficulty: 'beginner',
@@ -73,7 +73,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     route: '/learn/7'
   },
   {
-    id: 'phrases-shopping',
+    id: '8',
     title: 'Shopping & Markets',
     description: 'Essential phrases for shopping, bargaining, and market visits',
     difficulty: 'beginner',
@@ -85,7 +85,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     route: '/learn/8'
   },
   {
-    id: 'phrases-family',
+    id: '9',
     title: 'Family & Relationships',
     description: 'Georgian phrases about family, friends, and relationships',
     difficulty: 'beginner',
@@ -97,7 +97,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     route: '/learn/9'
   },
   {
-    id: 'phrases-medical',
+    id: '10',
     title: 'Medical & Health',
     description: 'Important Georgian phrases for medical situations and health',
     difficulty: 'intermediate',
@@ -109,7 +109,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     route: '/learn/10'
   },
   {
-    id: 'phrases-directions',
+    id: '11',
     title: 'Directions & Transportation',
     description: 'Georgian phrases for asking directions and using transportation',
     difficulty: 'beginner',
@@ -121,7 +121,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     route: '/learn/11'
   },
   {
-    id: 'phrases-weather',
+    id: '12',
     title: 'Weather & Seasons',
     description: 'Georgian phrases about weather, seasons, and climate',
     difficulty: 'beginner',
@@ -133,7 +133,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     route: '/learn/12'
   },
   {
-    id: 'phrases-culture',
+    id: '13',
     title: 'Culture & Traditions',
     description: 'Georgian phrases about culture, traditions, and customs',
     difficulty: 'intermediate',
@@ -145,7 +145,7 @@ export const PHRASE_COURSES: CourseConfig[] = [
     route: '/learn/13'
   },
   {
-    id: 'phrases-emergency',
+    id: '14',
     title: 'Emergency Situations',
     description: 'Critical Georgian phrases for emergency and urgent situations',
     difficulty: 'intermediate',

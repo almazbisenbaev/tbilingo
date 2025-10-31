@@ -25,7 +25,8 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const COURSE_ID = 'phrases-directions';
+const COURSE_DATA_ID = '11'; // Learning data collection
+const COURSE_PROGRESS_ID = 'phrases-directions'; // Progress tracking collection
 const COURSE_TITLE = 'Directions & Navigation';
 const COURSE_DESCRIPTION = 'Georgian phrases for asking and giving directions';
 
@@ -33,7 +34,7 @@ export default function DirectionsNavigationPage() {
   useBackToHomeNavigation();
   
   const { currentUser } = useAuth();
-  const { items: phrases, loading: phrasesLoading, error: phrasesError } = usePhrasesCourse(COURSE_ID);
+  const { items: phrases, loading: phrasesLoading, error: phrasesError } = usePhrasesCourse(COURSE_DATA_ID);
   const { getCourseProgress, addLearnedItem, initializeCourse } = useProgressStore();
   
   const [learnedPhrases, setLearnedPhrases] = useState<number[]>([]);
@@ -48,11 +49,11 @@ export default function DirectionsNavigationPage() {
   // Initialize course memory
   useEffect(() => {
     if (!phrasesLoading && phrases.length > 0 && currentUser && !isInitialized) {
-      initializeCourse(COURSE_ID, phrases.length);
+      initializeCourse(COURSE_PROGRESS_ID, phrases.length);
       
       const loadMemoryProgress = async () => {
         try {
-          const memoryProgress = await MemoryProgressService.getMemoryProgress(COURSE_ID);
+          const memoryProgress = await MemoryProgressService.getMemoryProgress(COURSE_PROGRESS_ID);
           
           const initialMemory: Record<number, PhraseAdvancedMemory> = {};
           const learnedIds: number[] = [];
@@ -77,13 +78,13 @@ export default function DirectionsNavigationPage() {
           setLearnedPhrases(learnedIds);
           
           learnedIds.forEach(phraseId => {
-            addLearnedItem(COURSE_ID, String(phraseId));
+            addLearnedItem(COURSE_PROGRESS_ID, String(phraseId));
           });
           
         } catch (error) {
           console.error('Error loading memory progress:', error);
           
-          const phrasesProgress = getCourseProgress(COURSE_ID);
+          const phrasesProgress = getCourseProgress(COURSE_PROGRESS_ID);
           const learnedList = Array.from(phrasesProgress.learnedItems).map(Number);
           setLearnedPhrases(learnedList);
           
@@ -115,13 +116,13 @@ export default function DirectionsNavigationPage() {
 
   const handleCorrectAnswer = async (phraseId: number) => {
     try {
-      const updatedMemory = await MemoryProgressService.incrementCorrectAnswers(COURSE_ID, String(phraseId));
+      const updatedMemory = await MemoryProgressService.incrementCorrectAnswers(COURSE_PROGRESS_ID, String(phraseId));
       
       setPhrasesMemory(prev => {
         const currentMemory = prev[phraseId] || { correctAnswers: 0, isLearned: false };
         
         if (updatedMemory.isLearned && !currentMemory.isLearned) {
-          addLearnedItem(COURSE_ID, String(phraseId));
+          addLearnedItem(COURSE_PROGRESS_ID, String(phraseId));
           setLearnedPhrases(prevLearned => {
             if (!prevLearned.includes(phraseId)) {
               return [...prevLearned, phraseId];
@@ -139,7 +140,7 @@ export default function DirectionsNavigationPage() {
 
   const handleWrongAnswer = async (phraseId: number) => {
     try {
-      const updatedMemory = await MemoryProgressService.decrementCorrectAnswers(COURSE_ID, String(phraseId));
+      const updatedMemory = await MemoryProgressService.decrementCorrectAnswers(COURSE_PROGRESS_ID, String(phraseId));
       
       setPhrasesMemory(prev => ({
         ...prev,
@@ -158,7 +159,7 @@ export default function DirectionsNavigationPage() {
     setProcessedPhrases([]);
     setAllCardsReviewed(false);
 
-    const phrasesProgress = getCourseProgress(COURSE_ID);
+    const phrasesProgress = getCourseProgress(COURSE_PROGRESS_ID);
     const learnedPhrasesInLocal = Array.from(phrasesProgress.learnedItems).map(Number);
     
     let phrasesMissingInLocal = phrases.filter((phrase) => !learnedPhrasesInLocal.includes(phrase.id));
