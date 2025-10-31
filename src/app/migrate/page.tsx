@@ -103,6 +103,69 @@ export default function MigratePage() {
     }
   };
 
+  const handleNumbersClone = async () => {
+    try {
+      setIsLoading(true);
+      setMessage('');
+      setError('');
+
+      setMessage('Cloning numbers collection to 2...');
+
+      // Clone numbers collection to 2
+      await EnhancedFirebaseService.cloneCourse('numbers', '2');
+
+      setMessage('✅ Successfully cloned numbers collection to 2!');
+      setIsLoading(false);
+
+    } catch (error) {
+      console.error('Clone error:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsLoading(false);
+    }
+  };
+
+  const handleWordsClone = async () => {
+    try {
+      setIsLoading(true);
+      setMessage('');
+      setError('');
+
+      setMessage('Cloning phrases-1 collection to 3...');
+
+      // Clone phrases-1 collection to 3
+      await EnhancedFirebaseService.cloneCourse('phrases-1', '3');
+
+      setMessage('✅ Successfully cloned phrases-1 collection to 3!');
+      setIsLoading(false);
+
+    } catch (error) {
+      console.error('Clone error:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsLoading(false);
+    }
+  };
+
+  const handlePhrasesAdvancedClone = async () => {
+    try {
+      setIsLoading(true);
+      setMessage('');
+      setError('');
+
+      setMessage('Cloning phrases-2 collection to 4...');
+
+      // Clone phrases-2 collection to 4
+      await EnhancedFirebaseService.cloneCourse('phrases-2', '4');
+
+      setMessage('✅ Successfully cloned phrases-2 collection to 4!');
+      setIsLoading(false);
+
+    } catch (error) {
+      console.error('Clone error:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-2xl mx-auto p-6">
@@ -129,33 +192,71 @@ export default function MigratePage() {
           </p>
         </div>
 
-        {/* Alphabet Clone Section */}
+        {/* Course Collection Clones Section */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Alphabet Collection Clone</h2>
+          <h2 className="text-xl font-semibold mb-4">Core Courses Collection Clone</h2>
           
           <div className="mb-6">
             <p className="text-gray-600 mb-4">
-              Clone the &quot;alphabet&quot; collection to &quot;1&quot; to align database structure with course IDs.
+              Clone course collections to numbered IDs to align database structure with course IDs.
             </p>
             
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
               <p className="text-blue-800 text-sm">
-                <strong>Note:</strong> This will copy all course data and items from the alphabet collection.
+                <strong>Note:</strong> This will copy all course data and items from each collection.
               </p>
             </div>
           </div>
 
-          <button
-            onClick={handleAlphabetClone}
-            disabled={isLoading}
-            className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
-              isLoading
-                ? 'bg-gray-400 cursor-not-allowed text-white'
-                : 'bg-purple-600 hover:bg-purple-700 text-white'
-            }`}
-          >
-            {isLoading ? 'Cloning...' : 'Clone Alphabet to 1'}
-          </button>
+          <div className="space-y-3">
+            <button
+              onClick={handleAlphabetClone}
+              disabled={isLoading}
+              className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-purple-600 hover:bg-purple-700 text-white'
+              }`}
+            >
+              {isLoading ? 'Cloning...' : 'Clone Alphabet → 1'}
+            </button>
+
+            <button
+              onClick={handleNumbersClone}
+              disabled={isLoading}
+              className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+              }`}
+            >
+              {isLoading ? 'Cloning...' : 'Clone Numbers → 2'}
+            </button>
+
+            <button
+              onClick={handleWordsClone}
+              disabled={isLoading}
+              className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-pink-600 hover:bg-pink-700 text-white'
+              }`}
+            >
+              {isLoading ? 'Cloning...' : 'Clone Words → 3'}
+            </button>
+
+            <button
+              onClick={handlePhrasesAdvancedClone}
+              disabled={isLoading}
+              className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-teal-600 hover:bg-teal-700 text-white'
+              }`}
+            >
+              {isLoading ? 'Cloning...' : 'Clone Phrases Advanced → 4'}
+            </button>
+          </div>
         </div>
 
         {/* Migration Section */}

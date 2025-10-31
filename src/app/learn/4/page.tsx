@@ -25,7 +25,7 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const COURSE_ID = 'phrases-2';
+const COURSE_ID = '4';
 const COURSE_TITLE = 'Phrases Advanced';
 const COURSE_DESCRIPTION = 'Advanced Georgian phrases with sentence construction gameplay';
 

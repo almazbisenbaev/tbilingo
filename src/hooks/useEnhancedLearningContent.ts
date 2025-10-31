@@ -113,7 +113,7 @@ export const useAlphabet = () => {
 export function useNumbers(): CourseDataState<NumberItem> {
   debugLog('Using enhanced numbers hook');
   
-  const result = useCourseData<NumberItem>('numbers');
+  const result = useCourseData<NumberItem>('2');
   
   // Transform the data to match the expected NumberItem interface
   const transformedItems = result.items.map(item => ({
@@ -135,7 +135,7 @@ export function useNumbers(): CourseDataState<NumberItem> {
 export function useWords(): CourseDataState<WordItem> {
   debugLog('Using enhanced words hook');
   
-  const result = useCourseData<WordItem>('phrases-1');
+  const result = useCourseData<WordItem>('3');
   
   // Transform the data to match the expected WordItem interface
   const transformedItems = result.items.map(item => ({
@@ -157,7 +157,7 @@ export function useWords(): CourseDataState<WordItem> {
 export function usePhrasesAdvanced(): CourseDataState<PhraseAdvancedItem> {
   debugLog('Using enhanced phrases-advanced hook');
   
-  const result = useCourseData<PhraseAdvancedItem>('phrases-2');
+  const result = useCourseData<PhraseAdvancedItem>('4');
   
   // Transform the data to match the expected PhraseAdvancedItem interface
   const transformedItems = result.items.map(item => ({

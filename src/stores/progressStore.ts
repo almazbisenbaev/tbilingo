@@ -14,7 +14,7 @@ const debugLog = (operation: string, data?: any) => {
 };
 
 // Local course types (keeping for backward compatibility)
-export type CourseType = 'alphabet' | 'numbers' | 'words' | 'phrases' | 'phrases-2' | 'vocabulary' | string;
+export type CourseType = 'alphabet' | 'numbers' | 'words' | 'phrases' | '4' | 'phrases-2' | 'vocabulary' | string;
 
 // Course progress interface
 export interface CourseProgress {
@@ -58,6 +58,7 @@ const mapCourseType = (courseType: CourseType): string | null => {
     'numbers': 'numbers', 
     'words': 'phrases-1',  // Note: words course uses phrases-1 ID
     'phrases': 'phrases-1',
+    '4': 'phrases-2',  // Course 4 learning data uses '4', but progress uses 'phrases-2'
     'phrases-2': 'phrases-2',
     'vocabulary': 'vocabulary'
   };
@@ -82,6 +83,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     numbers: createDefaultCourseProgress(),
     words: createDefaultCourseProgress(),
     phrases: createDefaultCourseProgress(),
+    '4': createDefaultCourseProgress(),
     'phrases-2': createDefaultCourseProgress(),
     vocabulary: createDefaultCourseProgress(),
   },
@@ -105,6 +107,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
           numbers: createDefaultCourseProgress(),
           words: createDefaultCourseProgress(),
           phrases: createDefaultCourseProgress(),
+          '4': createDefaultCourseProgress(),
           'phrases-2': createDefaultCourseProgress(),
           vocabulary: createDefaultCourseProgress(),
         },
@@ -126,7 +129,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       set({ isLoading: true });
 
       // Load progress for all supported courses
-      const supportedCourses: CourseType[] = ['alphabet', 'numbers', 'words', 'phrases-2'];
+      const supportedCourses: CourseType[] = ['alphabet', 'numbers', 'words', '4', 'phrases-2'];
       const progressPromises = supportedCourses.map(async (courseType) => {
         const firebaseCourseId = mapCourseType(courseType);
         if (firebaseCourseId) {
@@ -309,6 +312,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         numbers: createDefaultCourseProgress(),
         words: createDefaultCourseProgress(),
         phrases: createDefaultCourseProgress(),
+        '4': createDefaultCourseProgress(),
         'phrases-2': createDefaultCourseProgress(),
         vocabulary: createDefaultCourseProgress(),
       };

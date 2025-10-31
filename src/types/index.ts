@@ -45,7 +45,7 @@ export interface ProgressData {
 }
 
 // Course type definitions
-export type CourseType = 'alphabet' | 'numbers' | 'words' | 'phrases' | 'phrases-2' | 'vocabulary';
+export type CourseType = 'alphabet' | 'numbers' | 'words' | 'phrases' | '4' | 'phrases-2' | 'vocabulary';
 
 // Component prop interfaces
 export interface CourseLinkProps {

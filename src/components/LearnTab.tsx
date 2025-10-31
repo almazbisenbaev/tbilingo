@@ -12,7 +12,7 @@ import { ConfirmationDialog } from '@/components/ShadcnConfirmationDialog';
 import { isCourseCompleted } from '@/utils/course-unlock-utils';
 
 // Unlocks all courses for testing
-const UNLOCK_ALL_COURSES_FOR_TESTING = false;
+const UNLOCK_ALL_COURSES_FOR_TESTING = true;
 
 export default function LearnTab() {
   const { initializeCourse } = useProgressStore();
@@ -23,7 +23,7 @@ export default function LearnTab() {
   const { items: wordsData, loading: wordsLoading } = useWords();
   
   // Fetch phrase courses data
-  const { items: phrasesAdvancedData, loading: phrasesAdvancedLoading } = usePhrasesCourse('phrases-2');
+  const { items: phrasesAdvancedData, loading: phrasesAdvancedLoading } = usePhrasesCourse('4');
   const { items: businessData, loading: businessLoading } = usePhrasesCourse('phrases-business');
   const { items: travelData, loading: travelLoading } = usePhrasesCourse('phrases-travel');
   const { items: restaurantData, loading: restaurantLoading } = usePhrasesCourse('phrases-restaurant');
@@ -47,7 +47,7 @@ export default function LearnTab() {
   const wordsLearnedCount = useSafeProgressStore(state => state.getLearnedCount('words'));
   
   // Phrase courses learned counts
-  const phrasesAdvancedLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-2'));
+  const phrasesAdvancedLearnedCount = useSafeProgressStore(state => state.getLearnedCount('4'));
   const businessLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-business'));
   const travelLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-travel'));
   const restaurantLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-restaurant'));
@@ -67,7 +67,7 @@ export default function LearnTab() {
   const wordsProgress = getCompletionPercentage('words', wordsData.length);
   
   // Calculate completion percentages for phrase courses
-  const phrasesAdvancedProgress = getCompletionPercentage('phrases-2', phrasesAdvancedData.length);
+  const phrasesAdvancedProgress = getCompletionPercentage('4', phrasesAdvancedData.length);
   const businessProgress = getCompletionPercentage('phrases-business', businessData.length);
   const travelProgress = getCompletionPercentage('phrases-travel', travelData.length);
   const restaurantProgress = getCompletionPercentage('phrases-restaurant', restaurantData.length);
@@ -113,7 +113,7 @@ export default function LearnTab() {
   // Initialize phrase courses
   useEffect(() => {
     if (!phrasesAdvancedLoading && phrasesAdvancedData.length > 0) {
-      initializeCourse('phrases-2', phrasesAdvancedData.length);
+      initializeCourse('4', phrasesAdvancedData.length);
     }
   }, [phrasesAdvancedLoading, phrasesAdvancedData.length, initializeCourse]);
   
