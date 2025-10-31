@@ -399,4 +399,40 @@ export class EnhancedFirebaseService {
       throw error;
     }
   }
+
+  /**
+   * Course Cloning
+   */
+  
+  // Clone a course and all its items to a new course ID
+  static async cloneCourse(sourceCourseId: string, targetCourseId: string): Promise<void> {
+    try {
+      debugLog(`Cloning course from ${sourceCourseId} to ${targetCourseId}`);
+      
+      // Get source course
+      const sourceCourse = await this.getCourse(sourceCourseId);
+      if (!sourceCourse) {
+        throw new Error(`Source course ${sourceCourseId} not found`);
+      }
+
+      // Get source course items
+      const sourceItems = await this.getCourseItems(sourceCourseId);
+
+      // Create target course
+      await this.createCourse({
+        ...sourceCourse,
+        id: targetCourseId
+      });
+
+      // Clone all items
+      if (sourceItems.length > 0) {
+        await this.addCourseItems(targetCourseId, sourceItems);
+      }
+
+      debugLog(`Successfully cloned course from ${sourceCourseId} to ${targetCourseId}`);
+    } catch (error) {
+      console.error(`❌ Error cloning course from ${sourceCourseId} to ${targetCourseId}:`, error);
+      throw error;
+    }
+  }
 }

@@ -102,25 +102,10 @@ function useCourseData<T>(courseId: string): CourseDataState<T> {
 /**
  * Hook for Georgian Alphabet course
  */
-export function useAlphabet(): CourseDataState<AlphabetItem> {
-  debugLog('Using enhanced alphabet hook');
-  
-  const result = useCourseData<AlphabetItem>('alphabet');
-  
-  // Transform the data to match the expected AlphabetItem interface
-  const transformedItems = result.items.map(item => ({
-    id: typeof item.id === 'string' ? parseInt(item.id) : item.id,
-    character: (item as any).character,
-    name: (item as any).name,
-    pronunciation: (item as any).pronunciation,
-    audioUrl: (item as any).audioUrl
-  }));
-
-  return {
-    ...result,
-    items: transformedItems
-  };
-}
+// Hook: Get Alphabet
+export const useAlphabet = () => {
+  return useCourseData<AlphabetItem>('1');
+};
 
 /**
  * Hook for Georgian Numbers course

@@ -82,6 +82,27 @@ export default function MigratePage() {
     }
   };
 
+  const handleAlphabetClone = async () => {
+    try {
+      setIsLoading(true);
+      setMessage('');
+      setError('');
+
+      setMessage('Cloning alphabet collection to 1...');
+
+      // Clone alphabet collection to 1
+      await EnhancedFirebaseService.cloneCourse('alphabet', '1');
+
+      setMessage('✅ Successfully cloned alphabet collection to 1!');
+      setIsLoading(false);
+
+    } catch (error) {
+      console.error('Clone error:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-2xl mx-auto p-6">
@@ -106,6 +127,35 @@ export default function MigratePage() {
           <p className="text-gray-600">
             Populate the database with sample data for the "Phrases Advanced" course.
           </p>
+        </div>
+
+        {/* Alphabet Clone Section */}
+        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4">Alphabet Collection Clone</h2>
+          
+          <div className="mb-6">
+            <p className="text-gray-600 mb-4">
+              Clone the &quot;alphabet&quot; collection to &quot;1&quot; to align database structure with course IDs.
+            </p>
+            
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <p className="text-blue-800 text-sm">
+                <strong>Note:</strong> This will copy all course data and items from the alphabet collection.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={handleAlphabetClone}
+            disabled={isLoading}
+            className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
+              isLoading
+                ? 'bg-gray-400 cursor-not-allowed text-white'
+                : 'bg-purple-600 hover:bg-purple-700 text-white'
+            }`}
+          >
+            {isLoading ? 'Cloning...' : 'Clone Alphabet to 1'}
+          </button>
         </div>
 
         {/* Migration Section */}
