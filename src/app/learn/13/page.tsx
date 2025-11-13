@@ -27,10 +27,10 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const COURSE_DATA_ID = '13'; // Learning data collection
+// const COURSE_DATA_ID = '13'; // Learning data collection
 const COURSE_PROGRESS_ID = 'phrases-culture'; // Progress tracking collection
 const COURSE_TITLE = 'Culture & Traditions';
-const COURSE_DESCRIPTION = 'Georgian phrases about culture, traditions, and customs';
+const COURSE_DESCRIPTION = 'Georgian phrases related to culture and traditions';
 
 export default function CulturePage() {
   useBackToHomeNavigation();

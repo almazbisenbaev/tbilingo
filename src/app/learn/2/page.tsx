@@ -11,7 +11,7 @@ import { EnhancedFirebaseService } from '@/services/enhancedFirebase';
 import { NumberItem, PendingNumberAction } from '@/types';
 import FlashcardNumber from '@/components/FlashcardNumber/FlashcardNumber';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
-import SuccessModal from '@/components/ShadcnSuccessModal';
+// import SuccessModal from '@/components/ShadcnSuccessModal';
 import CoursePageLoading from '@/components/CoursePageLoading';
 import PageTransition from '@/components/PageTransition';
 
@@ -39,12 +39,12 @@ export default function NumbersCourse() {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [pendingLearnedAction, setPendingLearnedAction] = useState<PendingNumberAction | null>(null);
 
-  const isHydrated = useStoreHydration();
+  // const isHydrated = useStoreHydration();
   
   const { 
     getCourseProgress, 
     addLearnedItem, 
-    isItemLearned, 
+    // isItemLearned, 
     initializeCourse,
 
   } = useProgressStore();

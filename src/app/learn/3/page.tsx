@@ -13,7 +13,7 @@ import { WordItem, PendingWordAction } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
 import WordsComponent from '@/components/WordsComponent/WordsComponent';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
-import SuccessModal from '@/components/ShadcnSuccessModal';
+// import SuccessModal from '@/components/ShadcnSuccessModal';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
 import CoursePageLoading from '@/components/CoursePageLoading';
 import PageTransition from '@/components/PageTransition';
@@ -43,12 +43,12 @@ export default function WordsCourse() {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [pendingLearnedAction, setPendingLearnedAction] = useState<PendingWordAction | null>(null);
 
-  const isHydrated = useStoreHydration();
+  // const isHydrated = useStoreHydration();
   
   const { 
     getCourseProgress, 
     addLearnedItem, 
-    isItemLearned, 
+    // isItemLearned, 
     initializeCourse,
   } = useProgressStore();
 

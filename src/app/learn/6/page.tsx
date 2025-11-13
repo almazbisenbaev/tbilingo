@@ -26,7 +26,7 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const COURSE_DATA_ID = '6'; // Learning data collection
+// const COURSE_DATA_ID = '6'; // Learning data collection
 const COURSE_PROGRESS_ID = 'phrases-travel'; // Progress tracking collection
 const COURSE_TITLE = 'Travel Georgian';
 const COURSE_DESCRIPTION = 'Useful phrases for traveling and tourism in Georgia';

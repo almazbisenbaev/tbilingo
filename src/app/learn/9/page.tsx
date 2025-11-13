@@ -25,10 +25,10 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const COURSE_DATA_ID = '9'; // Learning data collection
+// const COURSE_DATA_ID = '9'; // Learning data collection
 const COURSE_PROGRESS_ID = 'phrases-family'; // Progress tracking collection
 const COURSE_TITLE = 'Family & Relationships';
-const COURSE_DESCRIPTION = 'Georgian phrases about family, friends, and relationships';
+const COURSE_DESCRIPTION = 'Georgian phrases about family and relationships';
 
 export default function FamilyRelationshipsPage() {
   useBackToHomeNavigation();

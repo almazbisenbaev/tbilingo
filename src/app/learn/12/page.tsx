@@ -25,10 +25,10 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const COURSE_DATA_ID = '12'; // Learning data collection
+// const COURSE_DATA_ID = '12'; // Learning data collection
 const COURSE_PROGRESS_ID = 'phrases-weather'; // Progress tracking collection
 const COURSE_TITLE = 'Weather & Nature';
-const COURSE_DESCRIPTION = 'Georgian phrases about weather, nature, and environment';
+const COURSE_DESCRIPTION = 'Georgian phrases about weather and nature';
 
 export default function WeatherNaturePage() {
   useBackToHomeNavigation();

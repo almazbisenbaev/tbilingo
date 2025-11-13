@@ -25,7 +25,7 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const COURSE_DATA_ID = '5'; // Learning data collection
+// const COURSE_DATA_ID = '5'; // Learning data collection
 const COURSE_PROGRESS_ID = 'phrases-business'; // Progress tracking collection
 const COURSE_TITLE = 'Business & Work';
 const COURSE_DESCRIPTION = 'Professional Georgian phrases for business and work settings';

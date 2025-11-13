@@ -25,10 +25,10 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const COURSE_DATA_ID = '7'; // Learning data collection
+// const COURSE_DATA_ID = '7'; // Learning data collection
 const COURSE_PROGRESS_ID = 'phrases-restaurant'; // Progress tracking collection
-const COURSE_TITLE = 'Restaurant & Food';
-const COURSE_DESCRIPTION = 'Georgian phrases for dining, ordering food, and restaurants';
+const COURSE_TITLE = 'Restaurant & Dining';
+const COURSE_DESCRIPTION = 'Georgian phrases for dining out and ordering food';
 
 export default function RestaurantPage() {
   useBackToHomeNavigation();

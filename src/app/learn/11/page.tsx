@@ -25,10 +25,10 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const COURSE_DATA_ID = '11'; // Learning data collection
+// const COURSE_DATA_ID = '11'; // Learning data collection
 const COURSE_PROGRESS_ID = 'phrases-directions'; // Progress tracking collection
 const COURSE_TITLE = 'Directions & Navigation';
-const COURSE_DESCRIPTION = 'Georgian phrases for asking and giving directions';
+const COURSE_DESCRIPTION = 'Georgian phrases for finding your way around';
 
 export default function DirectionsNavigationPage() {
   useBackToHomeNavigation();

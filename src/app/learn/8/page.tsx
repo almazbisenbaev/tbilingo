@@ -25,10 +25,10 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const COURSE_DATA_ID = '8'; // Learning data collection
+// const COURSE_DATA_ID = '8'; // Learning data collection
 const COURSE_PROGRESS_ID = 'phrases-shopping'; // Progress tracking collection
 const COURSE_TITLE = 'Shopping & Markets';
-const COURSE_DESCRIPTION = 'Essential phrases for shopping, bargaining, and market visits';
+const COURSE_DESCRIPTION = 'Essential phrases for shopping and market visits in Georgia';
 
 export default function ShoppingMarketsPage() {
   useBackToHomeNavigation();

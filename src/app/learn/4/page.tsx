@@ -25,7 +25,7 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const COURSE_ID = '4';
+// const COURSE_ID = '4';
 const COURSE_TITLE = 'Phrases Advanced';
 const COURSE_DESCRIPTION = 'Advanced Georgian phrases with sentence construction gameplay';
 
@@ -83,11 +83,11 @@ export default function PhrasesAdvancedPage() {
   // Initialize course memory
   useEffect(() => {
     if (!phrasesLoading && phrases.length > 0 && currentUser && !isInitialized) {
-      initializeCourse(COURSE_ID, phrases.length);
+      initializeCourse(String(course_id), phrases.length);
       
       const loadMemoryProgress = async () => {
         try {
-          const memoryProgress = await MemoryProgressService.getMemoryProgress(COURSE_ID);
+          const memoryProgress = await MemoryProgressService.getMemoryProgress(String(course_id));
           
           const initialMemory: Record<number, PhraseAdvancedMemory> = {};
           const learnedIds: number[] = [];
@@ -112,13 +112,13 @@ export default function PhrasesAdvancedPage() {
           setLearnedPhrases(learnedIds);
           
           learnedIds.forEach(phraseId => {
-            addLearnedItem(COURSE_ID, String(phraseId));
+            addLearnedItem(String(course_id), String(phraseId));
           });
           
         } catch (error) {
           console.error('Error loading memory progress:', error);
           
-          const phrasesProgress = getCourseProgress(COURSE_ID);
+          const phrasesProgress = getCourseProgress(String(course_id));
           const learnedList = Array.from(phrasesProgress.learnedItems).map(Number);
           setLearnedPhrases(learnedList);
           
@@ -150,13 +150,13 @@ export default function PhrasesAdvancedPage() {
 
   const handleCorrectAnswer = async (phraseId: number) => {
     try {
-      const updatedMemory = await MemoryProgressService.incrementCorrectAnswers(COURSE_ID, String(phraseId));
+      const updatedMemory = await MemoryProgressService.incrementCorrectAnswers(String(course_id), String(phraseId));
       
       setPhrasesMemory(prev => {
         const currentMemory = prev[phraseId] || { correctAnswers: 0, isLearned: false };
         
         if (updatedMemory.isLearned && !currentMemory.isLearned) {
-          addLearnedItem(COURSE_ID, String(phraseId));
+          addLearnedItem(String(course_id), String(phraseId));
           setLearnedPhrases(prevLearned => {
             if (!prevLearned.includes(phraseId)) {
               return [...prevLearned, phraseId];
@@ -174,7 +174,7 @@ export default function PhrasesAdvancedPage() {
 
   const handleWrongAnswer = async (phraseId: number) => {
     try {
-      const updatedMemory = await MemoryProgressService.decrementCorrectAnswers(COURSE_ID, String(phraseId));
+      const updatedMemory = await MemoryProgressService.decrementCorrectAnswers(String(course_id), String(phraseId));
       
       setPhrasesMemory(prev => ({
         ...prev,
@@ -193,7 +193,7 @@ export default function PhrasesAdvancedPage() {
     setProcessedPhrases([]);
     setAllCardsReviewed(false);
 
-    const phrasesProgress = getCourseProgress(COURSE_ID);
+    const phrasesProgress = getCourseProgress(String(course_id));
     const learnedPhrasesInLocal = Array.from(phrasesProgress.learnedItems).map(Number);
     
     let phrasesMissingInLocal = phrases.filter((phrase) => !learnedPhrasesInLocal.includes(phrase.id));

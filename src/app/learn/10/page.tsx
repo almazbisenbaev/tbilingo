@@ -25,10 +25,10 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const COURSE_DATA_ID = '10'; // Learning data collection
+// const COURSE_DATA_ID = '10'; // Learning data collection
 const COURSE_PROGRESS_ID = 'phrases-medical'; // Progress tracking collection
 const COURSE_TITLE = 'Medical & Health';
-const COURSE_DESCRIPTION = 'Important Georgian phrases for medical situations and health';
+const COURSE_DESCRIPTION = 'Important medical and health-related Georgian phrases';
 
 export default function MedicalPage() {
   useBackToHomeNavigation();

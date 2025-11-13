@@ -44,7 +44,7 @@ export default function AlphabetCourse() {
   const [pendingLearnedAction, setPendingLearnedAction] = useState<{characterId: number, index: number, element: HTMLElement | null} | null>(null);
 
   const { fontType } = useFontTypeStore();
-  const isHydrated = useStoreHydration();
+  // const isHydrated = useStoreHydration();
   
   const { 
     getCourseProgress, 

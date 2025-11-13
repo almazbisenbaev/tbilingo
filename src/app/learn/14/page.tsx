@@ -25,10 +25,10 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const COURSE_DATA_ID = '14'; // Learning data collection
+// const COURSE_DATA_ID = '14'; // Learning data collection
 const COURSE_PROGRESS_ID = 'phrases-emergency'; // Progress tracking collection
 const COURSE_TITLE = 'Emergency Situations';
-const COURSE_DESCRIPTION = 'Critical Georgian phrases for emergency and urgent situations';
+const COURSE_DESCRIPTION = 'Critical Georgian phrases for emergency situations';
 
 export default function EmergencySituationsPage() {
   useBackToHomeNavigation();
