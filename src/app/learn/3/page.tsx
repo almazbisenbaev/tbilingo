@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore, useStoreHydration } from '@/stores/progressStore';
 import { useFontTypeStore } from '@/stores/fontTypeStore';
-import { useWords } from '@/hooks/useEnhancedLearningContent';
+import { EnhancedFirebaseService } from '@/services/enhancedFirebase';
 import { WordItem, PendingWordAction } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
 import WordsComponent from '@/components/WordsComponent/WordsComponent';
@@ -23,6 +23,11 @@ import Link from 'next/link';
 
 export default function WordsCourse() {
   useBackToHomeNavigation();
+
+  // State for words data fetching
+  const [words, setWords] = useState<WordItem[]>([]);
+  const [wordsLoading, setWordsLoading] = useState<boolean>(true);
+  const [wordsError, setWordsError] = useState<string | null>(null);
 
   const [learnedWords, setLearnedWords] = useState<number[]>([]); // Store words that the user has learned
   
@@ -40,15 +45,44 @@ export default function WordsCourse() {
 
   const isHydrated = useStoreHydration();
   
-  // Fetch words data from Firebase
-  const { items: words, loading: wordsLoading, error: wordsError } = useWords();
-  
   const { 
     getCourseProgress, 
     addLearnedItem, 
     isItemLearned, 
     initializeCourse,
   } = useProgressStore();
+
+  // Fetch words data from Firebase
+  useEffect(() => {
+    const fetchWordsData = async () => {
+      try {
+        setWordsLoading(true);
+        setWordsError(null);
+        
+        // Fetch course items for words
+        const items = await EnhancedFirebaseService.getCourseItems(String(course_id));
+        
+        // Transform the data to match WordItem interface
+        const wordItems: WordItem[] = items.map(item => ({
+          id: typeof item.id === 'string' ? parseInt(item.id) : item.id,
+          english: (item as any).english,
+          georgian: (item as any).georgian,
+          latin: (item as any).latin
+        }));
+        
+        setWords(wordItems);
+        
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error('❌ Error fetching words data:', error);
+        setWordsError(errorMessage);
+      } finally {
+        setWordsLoading(false);
+      }
+    };
+
+    fetchWordsData();
+  }, []);
 
   useEffect(() => {
     // Initialize course when words data is loaded

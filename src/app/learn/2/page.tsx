@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore, useStoreHydration } from '@/stores/progressStore';
-import { useNumbers } from '@/hooks/useEnhancedLearningContent';
+import { EnhancedFirebaseService } from '@/services/enhancedFirebase';
 import { NumberItem, PendingNumberAction } from '@/types';
 import FlashcardNumber from '@/components/FlashcardNumber/FlashcardNumber';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
@@ -20,6 +20,11 @@ import Link from 'next/link';
 
 export default function NumbersCourse() {
   useBackToHomeNavigation();
+
+  // State for numbers data fetching
+  const [numbers, setNumbers] = useState<NumberItem[]>([]);
+  const [numbersLoading, setNumbersLoading] = useState<boolean>(true);
+  const [numbersError, setNumbersError] = useState<string | null>(null);
 
   const [learnedNumbers, setLearnedNumbers] = useState<number[]>([]); // Store numbers that the viewers has seen during the gameplay
   
@@ -36,9 +41,6 @@ export default function NumbersCourse() {
 
   const isHydrated = useStoreHydration();
   
-  // Fetch numbers data from Firebase
-  const { items: numbers, loading: numbersLoading, error: numbersError } = useNumbers();
-  
   const { 
     getCourseProgress, 
     addLearnedItem, 
@@ -46,6 +48,38 @@ export default function NumbersCourse() {
     initializeCourse,
 
   } = useProgressStore();
+
+  // Fetch numbers data from Firebase
+  useEffect(() => {
+    const fetchNumbersData = async () => {
+      try {
+        setNumbersLoading(true);
+        setNumbersError(null);
+        
+        // Fetch course items for numbers
+        const items = await EnhancedFirebaseService.getCourseItems(String(course_id));
+        
+        // Transform the data to match NumberItem interface
+        const numberItems: NumberItem[] = items.map(item => ({
+          id: typeof item.id === 'string' ? parseInt(item.id) : item.id,
+          number: (item as any).number,
+          translation: (item as any).translation,
+          translationLatin: (item as any).translationLatin
+        }));
+        
+        setNumbers(numberItems);
+        
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error('❌ Error fetching numbers data:', error);
+        setNumbersError(errorMessage);
+      } finally {
+        setNumbersLoading(false);
+      }
+    };
+
+    fetchNumbersData();
+  }, []);
 
   useEffect(() => {
     // Initialize course when numbers data is loaded

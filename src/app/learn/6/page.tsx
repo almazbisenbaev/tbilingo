@@ -11,7 +11,7 @@ import { PhraseAdvancedItem, PhraseAdvancedMemory } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
 import { MemoryProgressService } from '@/services/memoryProgressService';
 import { useAuth } from '@/contexts/AuthContext';
-import { usePhrasesCourse } from '@/hooks/useEnhancedLearningContent';
+import { EnhancedFirebaseService } from '@/services/enhancedFirebase';
 
 // UI Components
 import CoursePageLoading from '@/components/CoursePageLoading';
@@ -35,9 +35,13 @@ export default function TravelPage() {
   useBackToHomeNavigation();
   
   const { currentUser } = useAuth();
-  const { items: phrases, loading: phrasesLoading, error: phrasesError } = usePhrasesCourse(COURSE_DATA_ID);
   const { getCourseProgress, addLearnedItem, initializeCourse } = useProgressStore();
   
+  // State for phrases data fetching
+  const [phrases, setPhrases] = useState<PhraseAdvancedItem[]>([]);
+  const [phrasesLoading, setPhrasesLoading] = useState<boolean>(true);
+  const [phrasesError, setPhrasesError] = useState<string | null>(null);
+
   const [learnedPhrases, setLearnedPhrases] = useState<number[]>([]);
   const [phrasesMemory, setPhrasesMemory] = useState<Record<number, PhraseAdvancedMemory>>({});
   const [isInitialized, setIsInitialized] = useState(false);
@@ -46,6 +50,37 @@ export default function TravelPage() {
   const [processedPhrases, setProcessedPhrases] = useState<number[]>([]);
   const [phrasesToReview, setPhrasesToReview] = useState<PhraseAdvancedItem[]>([]);
   const [allCardsReviewed, setAllCardsReviewed] = useState<boolean>(false);
+
+  // Fetch phrases data from Firebase
+  useEffect(() => {
+    const fetchPhrasesData = async () => {
+      try {
+        setPhrasesLoading(true);
+        setPhrasesError(null);
+        
+        // Fetch course items for phrases
+        const items = await EnhancedFirebaseService.getCourseItems(String(course_id));
+        
+        // Transform the data to match PhraseAdvancedItem interface
+        const phraseItems: PhraseAdvancedItem[] = items.map(item => ({
+          id: typeof item.id === 'string' ? parseInt(item.id) : item.id,
+          english: (item as any).english,
+          georgian: (item as any).georgian
+        }));
+        
+        setPhrases(phraseItems);
+        
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error('❌ Error fetching phrases data:', error);
+        setPhrasesError(errorMessage);
+      } finally {
+        setPhrasesLoading(false);
+      }
+    };
+
+    fetchPhrasesData();
+  }, []);
 
   // Initialize course memory
   useEffect(() => {
