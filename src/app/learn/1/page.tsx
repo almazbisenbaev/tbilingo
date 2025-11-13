@@ -1,7 +1,7 @@
 "use client";
 
 const course_id = 1;
-console.log(course_id);
+console.log('Course ID: ' + course_id);
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -49,7 +49,6 @@ export default function AlphabetCourse() {
   const { 
     getCourseProgress, 
     addLearnedItem, 
-    isItemLearned, 
     initializeCourse,
 
   } = useProgressStore();
@@ -62,7 +61,7 @@ export default function AlphabetCourse() {
         setAlphabetError(null);
         
         // Fetch course items for alphabet (course ID '1')
-        const items = await EnhancedFirebaseService.getCourseItems('1');
+        const items = await EnhancedFirebaseService.getCourseItems(String(course_id));
         
         // Transform the data to match AlphabetItem interface
         const alphabetItems: AlphabetItem[] = items.map(item => ({
