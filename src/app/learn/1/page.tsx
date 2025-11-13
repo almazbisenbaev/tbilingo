@@ -8,12 +8,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { useProgressStore, useStoreHydration } from '@/stores/progressStore';
 import { useFontTypeStore } from '@/stores/fontTypeStore';
-import { useAlphabet } from '@/hooks/useEnhancedLearningContent';
-import { AlphabetItem, PendingLearnedAction } from '@/types';
+import { EnhancedFirebaseService } from '@/services/enhancedFirebase';
+import { AlphabetItem } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
 import FlashcardLetter from '@/components/FlashcardLetter/FlashcardLetter';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
-import SuccessModal from '@/components/ShadcnSuccessModal';
+// import SuccessModal from '@/components/ShadcnSuccessModal';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
 import CoursePageLoading from '@/components/CoursePageLoading';
 import PageTransition from '@/components/PageTransition';
@@ -24,6 +24,11 @@ import Link from 'next/link';
 export default function AlphabetCourse() {
   // All hooks must be at the top level and called in the same order every time
   useBackToHomeNavigation();
+
+  // State for alphabet data fetching
+  const [alphabet, setAlphabet] = useState<AlphabetItem[]>([]);
+  const [alphabetLoading, setAlphabetLoading] = useState<boolean>(true);
+  const [alphabetError, setAlphabetError] = useState<string | null>(null);
 
   const [learnedCharacters, setLearnedCharacters] = useState<number[]>([]); // Store characters that the viewers has seen during the gameplay
   
@@ -41,9 +46,6 @@ export default function AlphabetCourse() {
   const { fontType } = useFontTypeStore();
   const isHydrated = useStoreHydration();
   
-  // Fetch alphabet data from Firebase
-  const { items: alphabet, loading: alphabetLoading, error: alphabetError } = useAlphabet();
-  
   const { 
     getCourseProgress, 
     addLearnedItem, 
@@ -51,6 +53,39 @@ export default function AlphabetCourse() {
     initializeCourse,
 
   } = useProgressStore();
+
+  // Fetch alphabet data from Firebase
+  useEffect(() => {
+    const fetchAlphabetData = async () => {
+      try {
+        setAlphabetLoading(true);
+        setAlphabetError(null);
+        
+        // Fetch course items for alphabet (course ID '1')
+        const items = await EnhancedFirebaseService.getCourseItems('1');
+        
+        // Transform the data to match AlphabetItem interface
+        const alphabetItems: AlphabetItem[] = items.map(item => ({
+          id: typeof item.id === 'string' ? parseInt(item.id) : item.id,
+          character: (item as any).character,
+          name: (item as any).name,
+          pronunciation: (item as any).pronunciation,
+          audioUrl: (item as any).audioUrl || ''
+        }));
+        
+        setAlphabet(alphabetItems);
+        
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error('❌ Error fetching alphabet data:', error);
+        setAlphabetError(errorMessage);
+      } finally {
+        setAlphabetLoading(false);
+      }
+    };
+
+    fetchAlphabetData();
+  }, []);
 
   // Check if all cards have been reviewed
   useEffect(() => {
