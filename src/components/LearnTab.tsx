@@ -25,15 +25,6 @@ export default function LearnTab() {
   // Fetch phrase courses data
   const { items: phrasesAdvancedData, loading: phrasesAdvancedLoading } = usePhrasesCourse('4');
   const { items: businessData, loading: businessLoading } = usePhrasesCourse('5');
-  const { items: travelData, loading: travelLoading } = usePhrasesCourse('6');
-  const { items: restaurantData, loading: restaurantLoading } = usePhrasesCourse('7');
-  const { items: shoppingData, loading: shoppingLoading } = usePhrasesCourse('8');
-  const { items: familyData, loading: familyLoading } = usePhrasesCourse('9');
-  const { items: medicalData, loading: medicalLoading } = usePhrasesCourse('10');
-  const { items: directionsData, loading: directionsLoading } = usePhrasesCourse('11');
-  const { items: weatherData, loading: weatherLoading } = usePhrasesCourse('12');
-  const { items: cultureData, loading: cultureLoading } = usePhrasesCourse('13');
-  const { items: emergencyData, loading: emergencyLoading } = usePhrasesCourse('14');
   
   // State for locked course dialog
   const [showLockedDialog, setShowLockedDialog] = useState(false);
@@ -49,15 +40,6 @@ export default function LearnTab() {
   // Phrase courses learned counts (using old slugs for progress tracking)
   const phrasesAdvancedLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-2'));
   const businessLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-business'));
-  const travelLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-travel'));
-  const restaurantLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-restaurant'));
-  const shoppingLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-shopping'));
-  const familyLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-family'));
-  const medicalLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-medical'));
-  const directionsLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-directions'));
-  const weatherLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-weather'));
-  const cultureLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-culture'));
-  const emergencyLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-emergency'));
   
   const getCompletionPercentage = useProgressStore(state => state.getCompletionPercentage);
   
@@ -65,19 +47,8 @@ export default function LearnTab() {
   const alphabetProgress = getCompletionPercentage('alphabet', alphabetData.length);
   const numbersProgress = getCompletionPercentage('numbers', numbersData.length);
   const wordsProgress = getCompletionPercentage('words', wordsData.length);
-  
-  // Calculate completion percentages for phrase courses (using old slugs for progress)
   const phrasesAdvancedProgress = getCompletionPercentage('phrases-2', phrasesAdvancedData.length);
   const businessProgress = getCompletionPercentage('phrases-business', businessData.length);
-  const travelProgress = getCompletionPercentage('phrases-travel', travelData.length);
-  const restaurantProgress = getCompletionPercentage('phrases-restaurant', restaurantData.length);
-  const shoppingProgress = getCompletionPercentage('phrases-shopping', shoppingData.length);
-  const familyProgress = getCompletionPercentage('phrases-family', familyData.length);
-  const medicalProgress = getCompletionPercentage('phrases-medical', medicalData.length);
-  const directionsProgress = getCompletionPercentage('phrases-directions', directionsData.length);
-  const weatherProgress = getCompletionPercentage('phrases-weather', weatherData.length);
-  const cultureProgress = getCompletionPercentage('phrases-culture', cultureData.length);
-  const emergencyProgress = getCompletionPercentage('phrases-emergency', emergencyData.length);
   
   // Check if each course is completed (or bypass if testing flag is enabled)
   const isAlphabetCompleted = UNLOCK_ALL_COURSES_FOR_TESTING || isCourseCompleted(alphabetProgress);
@@ -122,62 +93,6 @@ export default function LearnTab() {
       initializeCourse('phrases-business', businessData.length);
     }
   }, [businessLoading, businessData.length, initializeCourse]);
-  
-  useEffect(() => {
-    if (!travelLoading && travelData.length > 0) {
-      initializeCourse('phrases-travel', travelData.length);
-    }
-  }, [travelLoading, travelData.length, initializeCourse]);
-  
-  useEffect(() => {
-    if (!restaurantLoading && restaurantData.length > 0) {
-      initializeCourse('phrases-restaurant', restaurantData.length);
-    }
-  }, [restaurantLoading, restaurantData.length, initializeCourse]);
-  
-  useEffect(() => {
-    if (!shoppingLoading && shoppingData.length > 0) {
-      initializeCourse('phrases-shopping', shoppingData.length);
-    }
-  }, [shoppingLoading, shoppingData.length, initializeCourse]);
-  
-  useEffect(() => {
-    if (!familyLoading && familyData.length > 0) {
-      initializeCourse('phrases-family', familyData.length);
-    }
-  }, [familyLoading, familyData.length, initializeCourse]);
-  
-  useEffect(() => {
-    if (!medicalLoading && medicalData.length > 0) {
-      initializeCourse('phrases-medical', medicalData.length);
-    }
-  }, [medicalLoading, medicalData.length, initializeCourse]);
-  
-  useEffect(() => {
-    if (!directionsLoading && directionsData.length > 0) {
-      initializeCourse('phrases-directions', directionsData.length);
-    }
-  }, [directionsLoading, directionsData.length, initializeCourse]);
-  
-  useEffect(() => {
-    if (!weatherLoading && weatherData.length > 0) {
-      initializeCourse('phrases-weather', weatherData.length);
-    }
-  }, [weatherLoading, weatherData.length, initializeCourse]);
-  
-  useEffect(() => {
-    if (!cultureLoading && cultureData.length > 0) {
-      initializeCourse('phrases-culture', cultureData.length);
-    }
-  }, [cultureLoading, cultureData.length, initializeCourse]);
-  
-  useEffect(() => {
-    if (!emergencyLoading && emergencyData.length > 0) {
-      initializeCourse('phrases-emergency', emergencyData.length);
-    }
-  }, [emergencyLoading, emergencyData.length, initializeCourse]);
-
-
   
 
 
@@ -274,159 +189,7 @@ export default function LearnTab() {
             onLockedClick={() => handleLockedClick("Phrases Advanced")}
           />
         )}
-        
-        {/* Travel Georgian Course - Unlocked after words */}
-        {travelLoading ? (
-          <CourseLinkSkeleton />
-        ) : (
-          <CourseLink 
-            href="/learn/6"
-            title="Travel Georgian"
-            icon="/images/icon-phrases.svg"
-            disabled={travelData.length === 0}
-            locked={!isWordsCompleted}
-            progress={travelProgress}
-            completedItems={travelLearnedCount ?? 0}
-            totalItems={travelData.length}
-            onLockedClick={() => handleLockedClick("Words & Phrases - Basic")}
-          />
-        )}
-        
-        {/* Restaurant & Food Course - Unlocked after words */}
-        {restaurantLoading ? (
-          <CourseLinkSkeleton />
-        ) : (
-          <CourseLink 
-            href="/learn/7"
-            title="Restaurant & Food"
-            icon="/images/icon-phrases.svg"
-            disabled={restaurantData.length === 0}
-            locked={!isWordsCompleted}
-            progress={restaurantProgress}
-            completedItems={restaurantLearnedCount ?? 0}
-            totalItems={restaurantData.length}
-            onLockedClick={() => handleLockedClick("Words & Phrases - Basic")}
-          />
-        )}
-        
-        {/* Shopping & Markets Course - Unlocked after words */}
-        {shoppingLoading ? (
-          <CourseLinkSkeleton />
-        ) : (
-          <CourseLink 
-            href="/learn/8"
-            title="Shopping & Markets"
-            icon="/images/icon-phrases.svg"
-            disabled={shoppingData.length === 0}
-            locked={!isWordsCompleted}
-            progress={shoppingProgress}
-            completedItems={shoppingLearnedCount ?? 0}
-            totalItems={shoppingData.length}
-            onLockedClick={() => handleLockedClick("Words & Phrases - Basic")}
-          />
-        )}
-        
-        {/* Family & Relationships Course - Unlocked after words */}
-        {familyLoading ? (
-          <CourseLinkSkeleton />
-        ) : (
-          <CourseLink 
-            href="/learn/9"
-            title="Family & Relationships"
-            icon="/images/icon-phrases.svg"
-            disabled={familyData.length === 0}
-            locked={!isWordsCompleted}
-            progress={familyProgress}
-            completedItems={familyLearnedCount ?? 0}
-            totalItems={familyData.length}
-            onLockedClick={() => handleLockedClick("Words & Phrases - Basic")}
-          />
-        )}
-        
-        {/* Medical & Health Course - Unlocked after phrases advanced */}
-        {medicalLoading ? (
-          <CourseLinkSkeleton />
-        ) : (
-          <CourseLink 
-            href="/learn/10"
-            title="Medical & Health"
-            icon="/images/icon-phrases.svg"
-            disabled={medicalData.length === 0}
-            locked={!isPhrasesAdvancedCompleted}
-            progress={medicalProgress}
-            completedItems={medicalLearnedCount ?? 0}
-            totalItems={medicalData.length}
-            onLockedClick={() => handleLockedClick("Phrases Advanced")}
-          />
-        )}
-        
-        {/* Directions & Transportation Course - Unlocked after words */}
-        {directionsLoading ? (
-          <CourseLinkSkeleton />
-        ) : (
-          <CourseLink 
-            href="/learn/11"
-            title="Directions & Transportation"
-            icon="/images/icon-phrases.svg"
-            disabled={directionsData.length === 0}
-            locked={!isWordsCompleted}
-            progress={directionsProgress}
-            completedItems={directionsLearnedCount ?? 0}
-            totalItems={directionsData.length}
-            onLockedClick={() => handleLockedClick("Words & Phrases - Basic")}
-          />
-        )}
-        
-        {/* Weather & Seasons Course - Unlocked after words */}
-        {weatherLoading ? (
-          <CourseLinkSkeleton />
-        ) : (
-          <CourseLink 
-            href="/learn/12"
-            title="Weather & Seasons"
-            icon="/images/icon-phrases.svg"
-            disabled={weatherData.length === 0}
-            locked={!isWordsCompleted}
-            progress={weatherProgress}
-            completedItems={weatherLearnedCount ?? 0}
-            totalItems={weatherData.length}
-            onLockedClick={() => handleLockedClick("Words & Phrases - Basic")}
-          />
-        )}
-        
-        {/* Culture & Traditions Course - Unlocked after phrases advanced */}
-        {cultureLoading ? (
-          <CourseLinkSkeleton />
-        ) : (
-          <CourseLink 
-            href="/learn/13"
-            title="Culture & Traditions"
-            icon="/images/icon-phrases.svg"
-            disabled={cultureData.length === 0}
-            locked={!isPhrasesAdvancedCompleted}
-            progress={cultureProgress}
-            completedItems={cultureLearnedCount ?? 0}
-            totalItems={cultureData.length}
-            onLockedClick={() => handleLockedClick("Phrases Advanced")}
-          />
-        )}
-        
-        {/* Emergency Situations Course - Unlocked after phrases advanced */}
-        {emergencyLoading ? (
-          <CourseLinkSkeleton />
-        ) : (
-          <CourseLink 
-            href="/learn/14"
-            title="Emergency Situations"
-            icon="/images/icon-phrases.svg"
-            disabled={emergencyData.length === 0}
-            locked={!isPhrasesAdvancedCompleted}
-            progress={emergencyProgress}
-            completedItems={emergencyLearnedCount ?? 0}
-            totalItems={emergencyData.length}
-            onLockedClick={() => handleLockedClick("Phrases Advanced")}
-          />
-        )}
+
       </div>
       
       {/* Locked Course Dialog */}
