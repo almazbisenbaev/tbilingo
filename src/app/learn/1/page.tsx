@@ -6,9 +6,7 @@ console.log('Course ID: ' + course_id);
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
-import { useProgressStore, useStoreHydration } from '@/stores/progressStore';
 import { useFontTypeStore } from '@/stores/fontTypeStore';
-import { EnhancedFirebaseService } from '@/services/enhancedFirebase';
 import { AlphabetItem } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
 import FlashcardLetter from '@/components/FlashcardLetter/FlashcardLetter';
@@ -20,6 +18,8 @@ import PageTransition from '@/components/PageTransition';
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { db, auth } from '@root/firebaseConfig';
 
 export default function AlphabetCourse() {
   // All hooks must be at the top level and called in the same order every time
@@ -45,13 +45,6 @@ export default function AlphabetCourse() {
 
   const { fontType } = useFontTypeStore();
   // const isHydrated = useStoreHydration();
-  
-  const { 
-    getCourseProgress, 
-    addLearnedItem, 
-    initializeCourse,
-
-  } = useProgressStore();
 
   // Fetch alphabet data from Firebase
   useEffect(() => {
@@ -59,19 +52,16 @@ export default function AlphabetCourse() {
       try {
         setAlphabetLoading(true);
         setAlphabetError(null);
-        
-        // Fetch course items for alphabet (course ID '1')
-        const items = await EnhancedFirebaseService.getCourseItems(String(course_id));
-        
-        // Transform the data to match AlphabetItem interface
-        const alphabetItems: AlphabetItem[] = items.map(item => ({
-          id: typeof item.id === 'string' ? parseInt(item.id) : item.id,
-          character: (item as any).character,
-          name: (item as any).name,
-          pronunciation: (item as any).pronunciation,
-          audioUrl: (item as any).audioUrl || ''
+        const itemsRef = collection(db, 'courses', String(course_id), 'items');
+        const qItems = query(itemsRef, orderBy('order', 'asc'));
+        const snapshot = await getDocs(qItems);
+        const alphabetItems: AlphabetItem[] = snapshot.docs.map(docSnap => ({
+          id: typeof docSnap.id === 'string' ? parseInt(docSnap.id) : (docSnap.id as unknown as number),
+          character: (docSnap.data() as any).character,
+          name: (docSnap.data() as any).name,
+          pronunciation: (docSnap.data() as any).pronunciation,
+          audioUrl: (docSnap.data() as any).audioUrl || ''
         }));
-        
         setAllAlphabetItems(alphabetItems);
         
       } catch (error) {
@@ -96,13 +86,30 @@ export default function AlphabetCourse() {
   useEffect(() => {
     // Initialize course when alphabet data is loaded
     if (!alphabetLoading && allAlphabetItems.length > 0) {
-      initializeCourse('1', allAlphabetItems.length);
-      
-      // Load learned characters from the store
-      const alphabetProgress = getCourseProgress('alphabet');
-      setLearnedCharacters(Array.from(alphabetProgress.learnedItems).map(Number));
+      const loadProgress = async () => {
+        try {
+          const user = auth.currentUser;
+          if (!user) {
+            setLearnedCharacters([]);
+            return;
+          }
+          const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+          const progressSnap = await getDoc(progressRef);
+          if (progressSnap.exists()) {
+            const data = progressSnap.data() as any;
+            const learnedItemIds: string[] = data.learnedItemIds || [];
+            setLearnedCharacters(learnedItemIds.map(id => parseInt(id)));
+          } else {
+            setLearnedCharacters([]);
+          }
+        } catch (e) {
+          console.error('❌ Error loading user progress:', e);
+          setLearnedCharacters([]);
+        }
+      };
+      loadProgress();
     }
-  }, [alphabetLoading, allAlphabetItems.length, initializeCourse, getCourseProgress]);
+  }, [alphabetLoading, allAlphabetItems.length]);
 
   // Show loading state
   if (alphabetLoading) {
@@ -161,16 +168,11 @@ export default function AlphabetCourse() {
    * 4. Sets up the UI for the learning experience
    */
   const startGameplay = () => {
-    // Get previously learned characters from progress store
-    const alphabetProgress = getCourseProgress('alphabet');
-    const learnedCharactersInFirestore = Array.from(alphabetProgress.learnedItems).map(Number);
-    
-    // Filter out characters that have already been learned
-    const unlearnedCharacters = allAlphabetItems.filter((letter: any) => !learnedCharactersInFirestore.includes(letter.id)) as AlphabetItem[];
+    const learnedCharactersInLocal = learnedCharacters;
+    const unlearnedCharacters = allAlphabetItems.filter((letter: any) => !learnedCharactersInLocal.includes(letter.id)) as AlphabetItem[];
     
     // Reset session state
     setProcessedCharacters([]);
-    setLearnedCharacters(learnedCharactersInFirestore);
     setSlideWidth(0);
 
     // Shuffle remaining characters and select a subset for this session
@@ -225,8 +227,27 @@ export default function AlphabetCourse() {
    * @param characterId - The ID of the character to save as learned
    */
   const saveItemAsLearned = (characterId: number) => {
-    // Add the learned character to the progress store
-    addLearnedItem('alphabet', String(characterId));
+    const user = auth.currentUser;
+    if (!user) return;
+    (async () => {
+      try {
+        const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+        const snap = await getDoc(progressRef);
+        const current = snap.exists() ? (snap.data() as any) : null;
+        const currentIds: string[] = current?.learnedItemIds || [];
+        if (currentIds.includes(String(characterId))) return;
+        const updatedIds = [...currentIds, String(characterId)];
+        await setDoc(progressRef, {
+          userId: user.uid,
+          courseId: String(course_id),
+          learnedItemIds: updatedIds,
+          lastUpdated: serverTimestamp(),
+          createdAt: current?.createdAt || serverTimestamp()
+        });
+      } catch (e) {
+        console.error('❌ Error saving learned item:', e);
+      }
+    })();
   };
 
   /**
@@ -298,9 +319,27 @@ export default function AlphabetCourse() {
     setAllCardsReviewed(false);
     setProcessedCharacters([]);
     setCharactersToReview([]);
-    // Reload learned characters count
-    const alphabetProgress = getCourseProgress('alphabet');
-    setLearnedCharacters(Array.from(alphabetProgress.learnedItems).map(Number));
+    const user = auth.currentUser;
+    if (!user) {
+      setLearnedCharacters([]);
+      return;
+    }
+    (async () => {
+      try {
+        const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+        const progressSnap = await getDoc(progressRef);
+        if (progressSnap.exists()) {
+          const data = progressSnap.data() as any;
+          const learnedItemIds: string[] = data.learnedItemIds || [];
+          setLearnedCharacters(learnedItemIds.map(id => parseInt(id)));
+        } else {
+          setLearnedCharacters([]);
+        }
+      } catch (e) {
+        console.error('❌ Error reloading user progress:', e);
+        setLearnedCharacters([]);
+      }
+    })();
   };
 
   // Main alphabet page
