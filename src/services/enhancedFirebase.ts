@@ -99,7 +99,6 @@ export interface UserProgress {
   userId: string;
   courseId: string;
   learnedItems: string[];
-  totalItems: number;
   completionPercentage: number;
   startedAt: any;
   lastStudiedAt: any;
@@ -351,7 +350,6 @@ export class EnhancedFirebaseService {
       // Update progress
       const progressUpdate: Partial<UserProgress> = {
         learnedItems: updatedLearnedItems,
-        totalItems,
         completionPercentage,
         itemProgress: {
           ...currentProgress?.itemProgress,
