@@ -155,7 +155,7 @@ export default function AlphabetCourse() {
   /**
    * Initializes the gameplay session with flashcards
    * This function:
-   * 1. Loads the user's progress from localStorage
+   * 1. Loads the user's progress from firestore
    * 2. Filters out already learned characters
    * 3. Randomly selects characters for the current session
    * 4. Sets up the UI for the learning experience
@@ -163,20 +163,20 @@ export default function AlphabetCourse() {
   const startGameplay = () => {
     // Get previously learned characters from progress store
     const alphabetProgress = getCourseProgress('alphabet');
-    const learnedCharactersInLocal = Array.from(alphabetProgress.learnedItems).map(Number);
+    const learnedCharactersInFirestore = Array.from(alphabetProgress.learnedItems).map(Number);
     
     // Filter out characters that have already been learned
-    const charactersMissingInLocal = alphabet.filter((letter: any) => !learnedCharactersInLocal.includes(letter.id)) as AlphabetItem[];
+    const unlearnedCharacters = alphabet.filter((letter: any) => !learnedCharactersInFirestore.includes(letter.id)) as AlphabetItem[];
     
     // Reset session state
     setProcessedCharacters([]);
-    setLearnedCharacters(learnedCharactersInLocal);
+    setLearnedCharacters(learnedCharactersInFirestore);
     setSlideWidth(0);
 
     // Shuffle remaining characters and select a subset for this session
-    const shuffledCharactersMissingInLocal = shuffleArray(charactersMissingInLocal);
+    const shuffledUnlearnedCharacters = shuffleArray(unlearnedCharacters);
     // Limit to 10 characters per session for better learning experience
-    const selectedCharacters = shuffledCharactersMissingInLocal.slice(0, 10);
+    const selectedCharacters = shuffledUnlearnedCharacters.slice(0, 10);
 
     // Update state to start the gameplay
     setCharactersToReview(selectedCharacters);
@@ -224,7 +224,7 @@ export default function AlphabetCourse() {
    * This function is called when a user confirms they've learned a character
    * @param characterId - The ID of the character to save as learned
    */
-  const saveLetterToLocal = (characterId: number) => {
+  const saveItemAsLearned = (characterId: number) => {
     // Add the learned character to the progress store
     addLearnedItem('alphabet', String(characterId));
   };
@@ -269,7 +269,7 @@ export default function AlphabetCourse() {
    * 1. Adds the character to processed characters (for this session)
    * 2. Adds the character to learned characters (persistent)
    * 3. Advances to the next slide
-   * 4. Saves the learned status to localStorage
+   * 4. Saves the learned item in user's firestore
    */
   const confirmMarkAsLearned = () => {
     if (pendingLearnedAction) {
@@ -278,7 +278,7 @@ export default function AlphabetCourse() {
         setProcessedCharacters((prev) => [...prev, characterId]); // Add to processed characters for this session
         setLearnedCharacters((prev) => [...prev, characterId]); // Add to learned characters list
         switchSlide(index, element); // Animate to the next slide
-        saveLetterToLocal(characterId); // Persist the learned status in localStorage
+        saveItemAsLearned(characterId); // Persist the learned status in user's firestore
       }, 450); // Delay for better user experience and to allow animation to complete
     }
     // Clean up the confirmation state
