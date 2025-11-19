@@ -33,7 +33,6 @@ export default function MigratePage() {
           description: course.description,
           type: 'phrases' as const,
           isActive: true,
-          totalItems: sampleData.length,
           estimatedTime: course.estimatedTime,
           prerequisites: course.prerequisites,
           icon: course.icon,

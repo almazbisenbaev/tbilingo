@@ -44,7 +44,7 @@ export interface CourseDefinition {
   description: string;
   type: 'alphabet' | 'numbers' | 'words' | 'phrases' | 'grammar' | 'listening' | 'custom';
   isActive: boolean;
-  totalItems: number;
+  totalItems?: number;
   estimatedTime: number; // minutes
   prerequisites: string[]; // course IDs that should be completed first
   icon: string;
@@ -149,8 +149,9 @@ export class EnhancedFirebaseService {
       debugLog(`Creating course: ${courseData.id}`);
       
       const courseRef = doc(db, COLLECTIONS.COURSES, courseData.id);
+      const { totalItems: _omitTotalItems, ...rest } = courseData as any;
       await setDoc(courseRef, {
-        ...courseData,
+        ...rest,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       });
@@ -270,7 +271,6 @@ export class EnhancedFirebaseService {
     try {
       const courseRef = doc(db, COLLECTIONS.COURSES, courseId);
       await updateDoc(courseRef, {
-        totalItems,
         updatedAt: serverTimestamp()
       });
     } catch (error) {
@@ -343,9 +343,9 @@ export class EnhancedFirebaseService {
       // Add to learned items
       const updatedLearnedItems = [...learnedItems, itemId];
       
-      // Get course info for completion percentage
-      const course = await this.getCourse(courseId);
-      const totalItems = course?.totalItems || 0;
+      // Compute total items dynamically from items collection
+      const courseItems = await this.getCourseItems(courseId);
+      const totalItems = courseItems.length;
       const completionPercentage = totalItems > 0 ? Math.round((updatedLearnedItems.length / totalItems) * 100) : 0;
 
       // Update progress
