@@ -6,9 +6,8 @@ console.log(course_id);
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
-import { useProgressStore, useStoreHydration } from '@/stores/progressStore';
+// import { useStoreHydration } from '@/stores/progressStore';
 import { useFontTypeStore } from '@/stores/fontTypeStore';
-import { EnhancedFirebaseService } from '@/services/enhancedFirebase';
 import { WordItem, PendingWordAction } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
 import WordsComponent from '@/components/WordsComponent/WordsComponent';
@@ -20,6 +19,8 @@ import PageTransition from '@/components/PageTransition';
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { db, auth } from '@root/firebaseConfig';
 
 export default function WordsCourse() {
   useBackToHomeNavigation();
@@ -45,12 +46,7 @@ export default function WordsCourse() {
 
   // const isHydrated = useStoreHydration();
   
-  const { 
-    getCourseProgress, 
-    addLearnedItem, 
-    // isItemLearned, 
-    initializeCourse,
-  } = useProgressStore();
+  
 
   // Fetch words data from Firebase
   useEffect(() => {
@@ -59,17 +55,15 @@ export default function WordsCourse() {
         setWordsLoading(true);
         setWordsError(null);
         
-        // Fetch course items for words
-        const items = await EnhancedFirebaseService.getCourseItems(String(course_id));
-        
-        // Transform the data to match WordItem interface
-        const wordItems: WordItem[] = items.map(item => ({
-          id: typeof item.id === 'string' ? parseInt(item.id) : item.id,
-          english: (item as any).english,
-          georgian: (item as any).georgian,
-          latin: (item as any).latin
+        const itemsRef = collection(db, 'courses', String(course_id), 'items');
+        const qItems = query(itemsRef, orderBy('order', 'asc'));
+        const snapshot = await getDocs(qItems);
+        const wordItems: WordItem[] = snapshot.docs.map(docSnap => ({
+          id: typeof docSnap.id === 'string' ? parseInt(docSnap.id) : (docSnap.id as unknown as number),
+          english: (docSnap.data() as any).english,
+          georgian: (docSnap.data() as any).georgian,
+          latin: (docSnap.data() as any).latin
         }));
-        
         setWords(wordItems);
         
       } catch (error) {
@@ -85,15 +79,31 @@ export default function WordsCourse() {
   }, []);
 
   useEffect(() => {
-    // Initialize course when words data is loaded
     if (!wordsLoading && words.length > 0) {
-      initializeCourse('words', words.length);
-      
-      // Load learned words from the store
-      const wordsProgress = getCourseProgress('words');
-      setLearnedWords(Array.from(wordsProgress.learnedItems).map(Number));
+      const loadProgress = async () => {
+        try {
+          const user = auth.currentUser;
+          if (!user) {
+            setLearnedWords([]);
+            return;
+          }
+          const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+          const progressSnap = await getDoc(progressRef);
+          if (progressSnap.exists()) {
+            const data = progressSnap.data() as any;
+            const learnedItemIds: string[] = data.learnedItemIds || [];
+            setLearnedWords(learnedItemIds.map(id => parseInt(id)));
+          } else {
+            setLearnedWords([]);
+          }
+        } catch (e) {
+          console.error('❌ Error loading user progress:', e);
+          setLearnedWords([]);
+        }
+      };
+      loadProgress();
     }
-  }, [wordsLoading, words.length, initializeCourse, getCourseProgress]);
+  }, [wordsLoading, words.length]);
 
   // Check if all cards have been reviewed - moved to top level to avoid hooks order issues
   useEffect(() => {
@@ -155,16 +165,11 @@ export default function WordsCourse() {
    * Selects 10 random items from unlearned words
    */
   const startGameplay = () => {
-    // Get previously learned words from progress store
-    const wordsProgress = getCourseProgress('words');
-    const learnedWordsInLocal = Array.from(wordsProgress.learnedItems).map(Number);
-    
-    // Filter out words that have already been learned
+    const learnedWordsInLocal = learnedWords;
     const wordsMissingInLocal = words.filter((word: any) => !learnedWordsInLocal.includes(word.id)) as WordItem[];
     
     // Reset session state
     setProcessedWords([]);
-    setLearnedWords(learnedWordsInLocal);
     setCurrentWordIndex(0);
     setSlideWidth(0);
 
@@ -215,7 +220,27 @@ export default function WordsCourse() {
    * @param wordId - The ID of the word to save as learned
    */
   const saveWordToLocal = (wordId: number) => {
-    addLearnedItem('words', String(wordId));
+    const user = auth.currentUser;
+    if (!user) return;
+    (async () => {
+      try {
+        const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+        const snap = await getDoc(progressRef);
+        const current = snap.exists() ? (snap.data() as any) : null;
+        const currentIds: string[] = current?.learnedItemIds || [];
+        if (currentIds.includes(String(wordId))) return;
+        const updatedIds = [...currentIds, String(wordId)];
+        await setDoc(progressRef, {
+          userId: user.uid,
+          courseId: String(course_id),
+          learnedItemIds: updatedIds,
+          lastUpdated: serverTimestamp(),
+          createdAt: current?.createdAt || serverTimestamp()
+        });
+      } catch (e) {
+        console.error('❌ Error saving learned word:', e);
+      }
+    })();
   };
 
   /**
@@ -276,9 +301,27 @@ export default function WordsCourse() {
     setProcessedWords([]);
     setWordsToReview([]);
     setCurrentWordIndex(0);
-    // Reload learned words count
-    const wordsProgress = getCourseProgress('words');
-    setLearnedWords(Array.from(wordsProgress.learnedItems).map(Number));
+    const user = auth.currentUser;
+    if (!user) {
+      setLearnedWords([]);
+      return;
+    }
+    (async () => {
+      try {
+        const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+        const progressSnap = await getDoc(progressRef);
+        if (progressSnap.exists()) {
+          const data = progressSnap.data() as any;
+          const learnedItemIds: string[] = data.learnedItemIds || [];
+          setLearnedWords(learnedItemIds.map(id => parseInt(id)));
+        } else {
+          setLearnedWords([]);
+        }
+      } catch (e) {
+        console.error('❌ Error reloading user progress:', e);
+        setLearnedWords([]);
+      }
+    })();
   };
 
   // Main words page

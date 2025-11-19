@@ -6,8 +6,6 @@ console.log(course_id);
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
-import { useProgressStore, useStoreHydration } from '@/stores/progressStore';
-import { EnhancedFirebaseService } from '@/services/enhancedFirebase';
 import { NumberItem, PendingNumberAction } from '@/types';
 import FlashcardNumber from '@/components/FlashcardNumber/FlashcardNumber';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
@@ -17,6 +15,8 @@ import PageTransition from '@/components/PageTransition';
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { db, auth } from '@root/firebaseConfig';
 
 export default function NumbersCourse() {
   useBackToHomeNavigation();
@@ -40,14 +40,6 @@ export default function NumbersCourse() {
   const [pendingLearnedAction, setPendingLearnedAction] = useState<PendingNumberAction | null>(null);
 
   // const isHydrated = useStoreHydration();
-  
-  const { 
-    getCourseProgress, 
-    addLearnedItem, 
-    // isItemLearned, 
-    initializeCourse,
-
-  } = useProgressStore();
 
   // Fetch numbers data from Firebase
   useEffect(() => {
@@ -56,17 +48,15 @@ export default function NumbersCourse() {
         setNumbersLoading(true);
         setNumbersError(null);
         
-        // Fetch course items for numbers
-        const items = await EnhancedFirebaseService.getCourseItems(String(course_id));
-        
-        // Transform the data to match NumberItem interface
-        const numberItems: NumberItem[] = items.map(item => ({
-          id: typeof item.id === 'string' ? parseInt(item.id) : item.id,
-          number: (item as any).number,
-          translation: (item as any).translation,
-          translationLatin: (item as any).translationLatin
+        const itemsRef = collection(db, 'courses', String(course_id), 'items');
+        const qItems = query(itemsRef, orderBy('order', 'asc'));
+        const snapshot = await getDocs(qItems);
+        const numberItems: NumberItem[] = snapshot.docs.map(docSnap => ({
+          id: typeof docSnap.id === 'string' ? parseInt(docSnap.id) : (docSnap.id as unknown as number),
+          number: (docSnap.data() as any).number,
+          translation: (docSnap.data() as any).translation,
+          translationLatin: (docSnap.data() as any).translationLatin
         }));
-        
         setNumbers(numberItems);
         
       } catch (error) {
@@ -82,15 +72,31 @@ export default function NumbersCourse() {
   }, []);
 
   useEffect(() => {
-    // Initialize course when numbers data is loaded
     if (!numbersLoading && numbers.length > 0) {
-      initializeCourse('numbers', numbers.length);
-      
-      // Load learned numbers from the store
-      const numbersProgress = getCourseProgress('numbers');
-      setLearnedNumbers(Array.from(numbersProgress.learnedItems).map(Number));
+      const loadProgress = async () => {
+        try {
+          const user = auth.currentUser;
+          if (!user) {
+            setLearnedNumbers([]);
+            return;
+          }
+          const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+          const progressSnap = await getDoc(progressRef);
+          if (progressSnap.exists()) {
+            const data = progressSnap.data() as any;
+            const learnedItemIds: string[] = data.learnedItemIds || [];
+            setLearnedNumbers(learnedItemIds.map(id => parseInt(id)));
+          } else {
+            setLearnedNumbers([]);
+          }
+        } catch (e) {
+          console.error('❌ Error loading user progress:', e);
+          setLearnedNumbers([]);
+        }
+      };
+      loadProgress();
     }
-  }, [numbersLoading, numbers.length, initializeCourse, getCourseProgress]);
+  }, [numbersLoading, numbers.length]);
 
   // Check if all cards have been reviewed - moved to top level to avoid hooks order issues
   useEffect(() => {
@@ -156,16 +162,11 @@ export default function NumbersCourse() {
    * 4. Sets up the UI for the learning experience
    */
   const startGameplay = () => {
-    // Get previously learned numbers from progress store
-    const numbersProgress = getCourseProgress('numbers');
-    const learnedNumbersInLocal = Array.from(numbersProgress.learnedItems).map(Number);
-    
-    // Filter out numbers that have already been learned
+    const learnedNumbersInLocal = learnedNumbers;
     const numbersMissingInLocal = numbers.filter((number: any) => !learnedNumbersInLocal.includes(number.id)) as NumberItem[];
     
     // Reset session state
     setProcessedNumbers([]);
-    setLearnedNumbers(learnedNumbersInLocal);
     setSlideWidth(0);
 
     // Select a subset of numbers for this session (without shuffling)
@@ -219,8 +220,27 @@ export default function NumbersCourse() {
    * @param numberId - The ID of the number to save as learned
    */
   const saveNumberToLocal = (numberId: number) => {
-    // Add the learned number to the progress store
-    addLearnedItem('numbers', String(numberId));
+    const user = auth.currentUser;
+    if (!user) return;
+    (async () => {
+      try {
+        const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+        const snap = await getDoc(progressRef);
+        const current = snap.exists() ? (snap.data() as any) : null;
+        const currentIds: string[] = current?.learnedItemIds || [];
+        if (currentIds.includes(String(numberId))) return;
+        const updatedIds = [...currentIds, String(numberId)];
+        await setDoc(progressRef, {
+          userId: user.uid,
+          courseId: String(course_id),
+          learnedItemIds: updatedIds,
+          lastUpdated: serverTimestamp(),
+          createdAt: current?.createdAt || serverTimestamp()
+        });
+      } catch (e) {
+        console.error('❌ Error saving learned number:', e);
+      }
+    })();
   };
 
   /**
@@ -292,9 +312,27 @@ export default function NumbersCourse() {
     setAllCardsReviewed(false);
     setProcessedNumbers([]);
     setNumbersToReview([]);
-    // Reload learned numbers count
-    const numbersProgress = getCourseProgress('numbers');
-    setLearnedNumbers(Array.from(numbersProgress.learnedItems).map(Number));
+    const user = auth.currentUser;
+    if (!user) {
+      setLearnedNumbers([]);
+      return;
+    }
+    (async () => {
+      try {
+        const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+        const progressSnap = await getDoc(progressRef);
+        if (progressSnap.exists()) {
+          const data = progressSnap.data() as any;
+          const learnedItemIds: string[] = data.learnedItemIds || [];
+          setLearnedNumbers(learnedItemIds.map(id => parseInt(id)));
+        } else {
+          setLearnedNumbers([]);
+        }
+      } catch (e) {
+        console.error('❌ Error reloading user progress:', e);
+        setLearnedNumbers([]);
+      }
+    })();
   };
 
   // Main numbers page

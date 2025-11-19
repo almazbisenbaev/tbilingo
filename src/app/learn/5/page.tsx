@@ -6,12 +6,10 @@ console.log(course_id);
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
-import { useProgressStore } from '@/stores/progressStore';
 import { PhraseAdvancedItem, PhraseAdvancedMemory } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
-import { MemoryProgressService } from '@/services/memoryProgressService';
-import { useAuth } from '@/contexts/AuthContext';
-import { EnhancedFirebaseService } from '@/services/enhancedFirebase';
+import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { db, auth } from '@root/firebaseConfig';
 // UI Components
 import CoursePageLoading from '@/components/CoursePageLoading';
 import PageTransition from '@/components/PageTransition';
@@ -35,8 +33,7 @@ const COURSE_DESCRIPTION = 'Professional Georgian phrases for business and work 
 export default function BusinessWorkPage() {
   useBackToHomeNavigation();
   
-  const { currentUser } = useAuth();
-  const { getCourseProgress, addLearnedItem, initializeCourse } = useProgressStore();
+  
   
   // State for phrases data fetching
   const [phrases, setPhrases] = useState<PhraseAdvancedItem[]>([]);
@@ -59,16 +56,14 @@ export default function BusinessWorkPage() {
         setPhrasesLoading(true);
         setPhrasesError(null);
         
-        // Fetch course items for phrases
-        const items = await EnhancedFirebaseService.getCourseItems(String(course_id));
-        
-        // Transform the data to match PhraseAdvancedItem interface
-        const phraseItems: PhraseAdvancedItem[] = items.map(item => ({
-          id: typeof item.id === 'string' ? parseInt(item.id) : item.id,
-          english: (item as any).english,
-          georgian: (item as any).georgian
+        const itemsRef = collection(db, 'courses', String(course_id), 'items');
+        const qItems = query(itemsRef, orderBy('order', 'asc'));
+        const snapshot = await getDocs(qItems);
+        const phraseItems: PhraseAdvancedItem[] = snapshot.docs.map(docSnap => ({
+          id: typeof docSnap.id === 'string' ? parseInt(docSnap.id) : (docSnap.id as unknown as number),
+          english: (docSnap.data() as any).english,
+          georgian: (docSnap.data() as any).georgian
         }));
-        
         setPhrases(phraseItems);
         
       } catch (error) {
@@ -85,62 +80,41 @@ export default function BusinessWorkPage() {
 
   // Initialize course memory
   useEffect(() => {
-    if (!phrasesLoading && phrases.length > 0 && currentUser && !isInitialized) {
-      initializeCourse(COURSE_STORE_KEY, phrases.length);
-      
-      const loadMemoryProgress = async () => {
+    if (!phrasesLoading && phrases.length > 0 && !isInitialized) {
+      const loadProgress = async () => {
         try {
-          const memoryProgress = await MemoryProgressService.getMemoryProgress(COURSE_ID);
-          
+          const user = auth.currentUser;
           const initialMemory: Record<number, PhraseAdvancedMemory> = {};
-          const learnedIds: number[] = [];
-          
-          phrases.forEach(phrase => {
-            if (memoryProgress && memoryProgress.items) {
-              const savedItem = memoryProgress.items.find(item => item.id === String(phrase.id));
-              if (savedItem) {
-                initialMemory[phrase.id] = savedItem.memory;
-                if (savedItem.isLearned) {
-                  learnedIds.push(phrase.id);
-                }
-              } else {
-                initialMemory[phrase.id] = { correctAnswers: 0, isLearned: false };
-              }
-            } else {
-              initialMemory[phrase.id] = { correctAnswers: 0, isLearned: false };
+          let learnedIds: number[] = [];
+          if (user) {
+            const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+            const progressSnap = await getDoc(progressRef);
+            if (progressSnap.exists()) {
+              const data = progressSnap.data() as any;
+              const learnedItemIds: string[] = data.learnedItemIds || [];
+              learnedIds = learnedItemIds.map(id => parseInt(id));
             }
+          }
+          phrases.forEach(phrase => {
+            const isLearned = learnedIds.includes(phrase.id);
+            initialMemory[phrase.id] = { correctAnswers: isLearned ? 3 : 0, isLearned };
           });
-          
           setPhrasesMemory(initialMemory);
           setLearnedPhrases(learnedIds);
-          
-          learnedIds.forEach(phraseId => {
-            addLearnedItem(COURSE_STORE_KEY, String(phraseId));
-          });
-          
         } catch (error) {
-          console.error('Error loading memory progress:', error);
-          
-          const phrasesProgress = getCourseProgress(COURSE_STORE_KEY);
-          const learnedList = Array.from(phrasesProgress.learnedItems).map(Number);
-          setLearnedPhrases(learnedList);
-          
+          console.error('Error loading progress:', error);
           const initialMemory: Record<number, PhraseAdvancedMemory> = {};
           phrases.forEach(phrase => {
-            const isLearned = phrasesProgress.learnedItems.has(String(phrase.id));
-            initialMemory[phrase.id] = {
-              correctAnswers: isLearned ? 3 : 0,
-              isLearned
-            };
+            initialMemory[phrase.id] = { correctAnswers: 0, isLearned: false };
           });
           setPhrasesMemory(initialMemory);
+          setLearnedPhrases([]);
         }
       };
-      
-      loadMemoryProgress();
+      loadProgress();
       setIsInitialized(true);
     }
-  }, [phrasesLoading, phrases.length, currentUser, initializeCourse, getCourseProgress, addLearnedItem, isInitialized]);
+  }, [phrasesLoading, phrases.length, isInitialized]);
 
   // Check if all cards reviewed
   useEffect(() => {
@@ -152,52 +126,59 @@ export default function BusinessWorkPage() {
   }, [processedPhrases, phrasesToReview]);
 
   const handleCorrectAnswer = async (phraseId: number) => {
-    try {
-  const updatedMemory = await MemoryProgressService.incrementCorrectAnswers(COURSE_ID, String(phraseId));
-      
-      setPhrasesMemory(prev => {
-        const currentMemory = prev[phraseId] || { correctAnswers: 0, isLearned: false };
-        
-        if (updatedMemory.isLearned && !currentMemory.isLearned) {
-          addLearnedItem(COURSE_STORE_KEY, String(phraseId));
-          setLearnedPhrases(prevLearned => {
-            if (!prevLearned.includes(phraseId)) {
-              return [...prevLearned, phraseId];
+    setPhrasesMemory(prev => {
+      const current = prev[phraseId] || { correctAnswers: 0, isLearned: false };
+      const nextCorrect = Math.min(3, current.correctAnswers + 1);
+      const nextLearned = nextCorrect >= 3;
+      const updated = { correctAnswers: nextCorrect, isLearned: nextLearned };
+      if (nextLearned && !learnedPhrases.includes(phraseId)) {
+        setLearnedPhrases(lp => lp.includes(phraseId) ? lp : [...lp, phraseId]);
+        const user = auth.currentUser;
+        if (user) {
+          (async () => {
+            try {
+              const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+              const snap = await getDoc(progressRef);
+              const currentDoc = snap.exists() ? (snap.data() as any) : null;
+              const currentIds: string[] = currentDoc?.learnedItemIds || [];
+              if (!currentIds.includes(String(phraseId))) {
+                const updatedIds = [...currentIds, String(phraseId)];
+                await setDoc(progressRef, {
+                  userId: user.uid,
+                  courseId: String(course_id),
+                  learnedItemIds: updatedIds,
+                  lastUpdated: serverTimestamp(),
+                  createdAt: currentDoc?.createdAt || serverTimestamp()
+                });
+              }
+            } catch (e) {
+              console.error('❌ Error saving learned phrase:', e);
             }
-            return prevLearned;
-          });
+          })();
         }
-        
-        return { ...prev, [phraseId]: updatedMemory };
-      });
-    } catch (error) {
-      console.error('Error updating memory progress:', error);
-    }
+      }
+      return { ...prev, [phraseId]: updated };
+    });
   };
 
   const handleWrongAnswer = async (phraseId: number) => {
-    try {
-  const updatedMemory = await MemoryProgressService.decrementCorrectAnswers(COURSE_ID, String(phraseId));
-      
-      setPhrasesMemory(prev => ({
-        ...prev,
-        [phraseId]: updatedMemory
-      }));
-      
-      if (updatedMemory.correctAnswers < 3) {
+    setPhrasesMemory(prev => {
+      const current = prev[phraseId] || { correctAnswers: 0, isLearned: false };
+      const nextCorrect = Math.max(0, current.correctAnswers - 1);
+      const nextLearned = nextCorrect >= 3;
+      const updated = { correctAnswers: nextCorrect, isLearned: nextLearned };
+      if (!nextLearned) {
         setLearnedPhrases(prevLearned => prevLearned.filter(id => id !== phraseId));
       }
-    } catch (error) {
-      console.error('Error updating memory progress:', error);
-    }
+      return { ...prev, [phraseId]: updated };
+    });
   };
 
   const startGameplay = () => {
     setProcessedPhrases([]);
     setAllCardsReviewed(false);
 
-    const phrasesProgress = getCourseProgress(COURSE_STORE_KEY);
-    const learnedPhrasesInLocal = Array.from(phrasesProgress.learnedItems).map(Number);
+    const learnedPhrasesInLocal = learnedPhrases;
     
     let phrasesMissingInLocal = phrases.filter((phrase) => !learnedPhrasesInLocal.includes(phrase.id));
     
