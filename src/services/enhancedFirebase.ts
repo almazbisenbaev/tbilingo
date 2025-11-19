@@ -42,7 +42,7 @@ export interface CourseDefinition {
   id: string;
   title: string;
   description: string;
-  type: 'alphabet' | 'numbers' | 'words' | 'phrases' | 'grammar' | 'listening' | 'custom';
+  type: 'flashcards' | 'words' | 'phrases' | 'grammar' | 'listening' | 'custom';
   isActive: boolean;
   totalItems?: number;
   estimatedTime: number; // minutes

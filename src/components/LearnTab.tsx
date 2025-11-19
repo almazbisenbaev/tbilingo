@@ -114,7 +114,7 @@ export default function LearnTab() {
             href="/learn/1"
             title="Alphabet"
             icon="/images/icon-alphabet.svg"
-            disabled={alphabetData.length === 0}
+            disabled={false}
             progress={alphabetProgress}
             completedItems={alphabetLearnedCount ?? 0}
             totalItems={alphabetData.length}
@@ -129,7 +129,7 @@ export default function LearnTab() {
             href="/learn/2"
             title="Numbers"
             icon="/images/icon-numbers.svg"
-            disabled={numbersData.length === 0}
+            disabled={false}
             locked={!isAlphabetCompleted}
             progress={numbersProgress}
             completedItems={numbersLearnedCount ?? 0}
@@ -147,7 +147,7 @@ export default function LearnTab() {
             href="/learn/3"
             title="Words & Phrases - Basic"
             icon="/images/icon-phrases.svg"
-            disabled={wordsData.length === 0}
+            disabled={false}
             locked={!isNumbersCompleted}
             progress={wordsProgress}
             completedItems={wordsLearnedCount ?? 0}
@@ -164,7 +164,7 @@ export default function LearnTab() {
             href="/learn/4"
             title="Phrases Advanced"
             icon="/images/icon-phrases.svg"
-            disabled={phrasesAdvancedData.length === 0}
+            disabled={false}
             locked={!isWordsCompleted}
             progress={phrasesAdvancedProgress}
             completedItems={phrasesAdvancedLearnedCount ?? 0}
@@ -181,7 +181,7 @@ export default function LearnTab() {
             href="/learn/5"
             title="Business Georgian"
             icon="/images/icon-phrases.svg"
-            disabled={businessData.length === 0}
+            disabled={false}
             locked={!isPhrasesAdvancedCompleted}
             progress={businessProgress}
             completedItems={businessLearnedCount ?? 0}

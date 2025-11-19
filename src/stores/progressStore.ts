@@ -54,13 +54,11 @@ export interface ProgressState {
 // Convert local course type to Firebase course ID
 const mapCourseType = (courseType: CourseType): string | null => {
   const courseMapping: Record<string, string> = {
-    'alphabet': 'alphabet',
-    'numbers': 'numbers', 
-    'words': 'phrases-1',  // Note: words course uses phrases-1 ID
-    'phrases': 'phrases-1',
+    '1': 'alphabet',
+    '2': 'numbers', 
+    '3': 'phrases-1',  // Note: words course uses phrases-1 ID
     '4': 'phrases-2',  // Course 4 learning data uses '4', but progress uses 'phrases-2'
-    'phrases-2': 'phrases-2',
-    'vocabulary': 'vocabulary'
+    '5': 'phrases-business'
   };
   
   // If it's a known mapping, use it, otherwise use the courseType as-is
