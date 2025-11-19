@@ -17,26 +17,6 @@
 - **Backend**: Firebase (Firestore + Auth)
 - **PWA**: Custom service worker for offline support
 
-### Project Structure
-```
-src/
-├── app/                      # Next.js App Router
-│   ├── (courses)/           # Course routes (alphabet, numbers, phrases, etc.)
-│   ├── layout.tsx           # Root layout with providers
-│   └── page.tsx             # Home page
-├── components/              # React components
-│   ├── auth/                # Authentication UI
-│   ├── course/              # Course-specific components
-│   ├── common/              # Shared components
-│   └── GoogleSignInButton/  # Google auth button (isolated CSS)
-├── contexts/                # React contexts (AuthContext)
-├── stores/                  # Zustand stores (progress, settings)
-├── services/                # Firebase services
-├── hooks/                   # Custom React hooks
-├── constants/               # App configuration & course data
-└── utils/                   # Helper functions
-```
-
 ---
 
 ## Auth
@@ -158,16 +138,14 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 #### `/courses/{courseId}` - Course Definitions
 ```typescript
 interface CourseDefinition {
-  id: string;                    // e.g., "alphabet", "numbers"
+  id: string;                    // e.g., "1", "2", ...
   title: string;                 // "Georgian Alphabet"
   description: string;
-  type: 'alphabet' | 'numbers' | 'phrases' | 'words';
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  type: 'flashcards' | 'phrases' | 'words';
   isActive: boolean;
   totalItems: number;
   estimatedTime: number;         // minutes
   prerequisites: string[];       // required course IDs
-  tags: string[];
   icon: string;                  // icon path
   version: number;
   createdAt: Timestamp;
@@ -239,7 +217,6 @@ interface DetailedItemProgress {
   attempts: number;
   correctAttempts: number;
   lastReviewed: Timestamp;
-  difficultyRating?: number;     // 1-5
   notes?: string;
 }
 ```
@@ -279,9 +256,7 @@ interface CourseConfig {
   id: string;                    // unique identifier
   title: string;                 // display name
   description: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
   prerequisites: string[];       // required course IDs
-  tags: string[];
   icon: string;                  // icon path
   estimatedTime: number;         // minutes
   order: number;                 // display order
@@ -609,9 +584,7 @@ npm run update-version # update app version
   id: 'phrases-hobbies',
   title: 'Hobbies & Interests',
   description: 'Talk about hobbies in Georgian',
-  difficulty: 'beginner',
   prerequisites: ['phrases-1'],
-  tags: ['hobbies', 'conversation'],
   icon: '/images/icon-hobbies.svg',
   estimatedTime: 25,
   order: 16,

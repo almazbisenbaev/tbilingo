@@ -43,12 +43,10 @@ export interface CourseDefinition {
   title: string;
   description: string;
   type: 'alphabet' | 'numbers' | 'words' | 'phrases' | 'grammar' | 'listening' | 'custom';
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
   isActive: boolean;
   totalItems: number;
   estimatedTime: number; // minutes
   prerequisites: string[]; // course IDs that should be completed first
-  tags: string[];
   icon: string;
   version: number;
   createdAt: any;
@@ -85,7 +83,6 @@ export interface WordsCourseItem extends BaseCourseItem {
   georgian: string;
   latin: string;
   category: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
   audioUrl?: string;
   examples?: Array<{
     english: string;

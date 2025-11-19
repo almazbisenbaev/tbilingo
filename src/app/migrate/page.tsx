@@ -32,12 +32,10 @@ export default function MigratePage() {
           title: course.title,
           description: course.description,
           type: 'phrases' as const,
-          difficulty: course.difficulty as 'beginner' | 'intermediate' | 'advanced',
           isActive: true,
           totalItems: sampleData.length,
           estimatedTime: course.estimatedTime,
           prerequisites: course.prerequisites,
-          tags: course.tags,
           icon: course.icon,
           version: 1,
           itemSchema: {

@@ -212,7 +212,6 @@ interface CourseConfig {
   id: string;              // e.g., 'phrases-business'
   title: string;           // Display name
   description: string;
-  difficulty: string;      // 'beginner' | 'intermediate' | 'advanced'
   prerequisites: string[]; // Array of prerequisite course IDs
   order: number;           // Display order
   route: string;           // Navigation path
