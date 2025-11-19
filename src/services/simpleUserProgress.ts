@@ -35,6 +35,17 @@ export interface SimpleUserProgress {
 
 
 export class SimpleUserProgressService {
+  // Map any course key to numeric progress doc id
+  private static toProgressDocId(courseId: string): string {
+    const mapping: Record<string, string> = {
+      '1': '1',
+      '2': '2',
+      '3': '3',
+      '4': '4',
+      '5': '5',
+    };
+    return mapping[courseId] || courseId;
+  }
   
   /**
    * Get user progress for a specific course
@@ -46,18 +57,19 @@ export class SimpleUserProgressService {
         throw new Error('No authenticated user found');
       }
 
-      debugLog(`Getting progress for course ${courseId}`);
+      const progressDocId = this.toProgressDocId(courseId);
+      debugLog(`Getting progress for course ${courseId} (doc ${progressDocId})`);
       
-      const docRef = doc(db, 'users', user.uid, 'progress', courseId);
+      const docRef = doc(db, 'users', user.uid, 'progress', progressDocId);
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {
         const data = docSnap.data() as SimpleUserProgress;
-        debugLog(`Found progress for ${courseId}:`, data);
+        debugLog(`Found progress for ${progressDocId}:`, data);
         return data;
       }
       
-      debugLog(`No progress found for ${courseId}`);
+      debugLog(`No progress found for ${progressDocId}`);
       return null;
       
     } catch (error) {
@@ -76,7 +88,8 @@ export class SimpleUserProgressService {
         throw new Error('No authenticated user found');
       }
 
-      debugLog(`Adding learned item ${itemId} to course ${courseId}`);
+      const progressDocId = this.toProgressDocId(courseId);
+      debugLog(`Adding learned item ${itemId} to course ${courseId} (doc ${progressDocId})`);
       
       // Get current progress
       const currentProgress = await this.getUserProgress(courseId);
@@ -92,10 +105,10 @@ export class SimpleUserProgressService {
       const updatedLearnedItems = [...currentLearnedItems, itemId];
 
       // Update progress document (no longer storing totalItems or completionPercentage)
-      const progressRef = doc(db, 'users', user.uid, 'progress', courseId);
+      const progressRef = doc(db, 'users', user.uid, 'progress', progressDocId);
       const progressUpdate: SimpleUserProgress = {
         userId: user.uid,
-        courseId,
+        courseId: progressDocId,
         learnedItemIds: updatedLearnedItems,
         lastUpdated: serverTimestamp(),
         createdAt: currentProgress?.createdAt || serverTimestamp()
@@ -103,7 +116,7 @@ export class SimpleUserProgressService {
 
       await setDoc(progressRef, progressUpdate);
       
-      debugLog(`Successfully added learned item ${itemId} to ${courseId}`);
+      debugLog(`Successfully added learned item ${itemId} to ${progressDocId}`);
       
     } catch (error) {
       console.error(`❌ Error adding learned item ${itemId} to ${courseId}:`, error);
@@ -121,7 +134,8 @@ export class SimpleUserProgressService {
         throw new Error('No authenticated user found');
       }
 
-      debugLog(`Removing learned item ${itemId} from course ${courseId}`);
+      const progressDocId = this.toProgressDocId(courseId);
+      debugLog(`Removing learned item ${itemId} from course ${courseId} (doc ${progressDocId})`);
       
       // Get current progress
       const currentProgress = await this.getUserProgress(courseId);
@@ -130,13 +144,13 @@ export class SimpleUserProgressService {
       const updatedLearnedItems = currentProgress.learnedItemIds.filter(id => id !== itemId);
 
       // Update progress document (no longer storing totalItems or completionPercentage)
-      const progressRef = doc(db, 'users', user.uid, 'progress', courseId);
+      const progressRef = doc(db, 'users', user.uid, 'progress', progressDocId);
       await updateDoc(progressRef, {
         learnedItemIds: updatedLearnedItems,
         lastUpdated: serverTimestamp()
       });
       
-      debugLog(`Successfully removed learned item ${itemId} from ${courseId}`);
+      debugLog(`Successfully removed learned item ${itemId} from ${progressDocId}`);
       
     } catch (error) {
       console.error(`❌ Error removing learned item ${itemId} from ${courseId}:`, error);
@@ -171,19 +185,20 @@ export class SimpleUserProgressService {
         throw new Error('No authenticated user found');
       }
 
-      debugLog(`Resetting progress for course ${courseId}`);
+      const progressDocId = this.toProgressDocId(courseId);
+      debugLog(`Resetting progress for course ${courseId} (doc ${progressDocId})`);
       
       // Reset main progress
-      const progressRef = doc(db, 'users', user.uid, 'progress', courseId);
+      const progressRef = doc(db, 'users', user.uid, 'progress', progressDocId);
       await setDoc(progressRef, {
         userId: user.uid,
-        courseId,
+        courseId: progressDocId,
         learnedItemIds: [],
         lastUpdated: serverTimestamp(),
         createdAt: serverTimestamp()
       });
       
-      debugLog(`Successfully reset progress for course ${courseId}`);
+      debugLog(`Successfully reset progress for course ${progressDocId}`);
       
     } catch (error) {
       console.error(`❌ Error resetting progress for course ${courseId}:`, error);

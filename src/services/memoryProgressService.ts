@@ -39,6 +39,16 @@ export interface MemoryBasedProgress {
 }
 
 export class MemoryProgressService {
+  // Map to numeric progress doc id
+  private static toProgressDocId(courseId: string): string {
+    const mapping: Record<string, string> = {
+      'phrases-2': '4',
+      '4': '4',
+      'phrases-business': '5',
+      '5': '5'
+    };
+    return mapping[courseId] || courseId;
+  }
   
   /**
    * Get memory-based progress for phrases-2 course from existing progress collection
@@ -50,18 +60,19 @@ export class MemoryProgressService {
         throw new Error('No authenticated user found');
       }
 
-      debugLog(`Getting memory progress for course ${courseId}`);
+      const progressDocId = this.toProgressDocId(courseId);
+      debugLog(`Getting memory progress for course ${courseId} (doc ${progressDocId})`);
       
-      const docRef = doc(db, 'users', user.uid, 'progress', courseId);
+      const docRef = doc(db, 'users', user.uid, 'progress', progressDocId);
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {
         const data = docSnap.data() as MemoryBasedProgress;
-        debugLog(`Found memory progress for ${courseId}:`, data);
+        debugLog(`Found memory progress for ${progressDocId}:`, data);
         return data;
       }
       
-      debugLog(`No memory progress found for ${courseId}`);
+      debugLog(`No memory progress found for ${progressDocId}`);
       return null;
       
     } catch (error) {
@@ -84,7 +95,8 @@ export class MemoryProgressService {
         throw new Error('No authenticated user found');
       }
 
-      debugLog(`Updating memory for item ${itemId} in course ${courseId}:`, memory);
+      const progressDocId = this.toProgressDocId(courseId);
+      debugLog(`Updating memory for item ${itemId} in course ${courseId} (doc ${progressDocId}):`, memory);
       
       // Get current progress
       const currentProgress = await this.getMemoryProgress(courseId);
@@ -112,10 +124,10 @@ export class MemoryProgressService {
         .map(item => item.id);
 
       // Create or update progress document in existing progress collection
-      const progressRef = doc(db, 'users', user.uid, 'progress', courseId);
+      const progressRef = doc(db, 'users', user.uid, 'progress', progressDocId);
       const progressUpdate: MemoryBasedProgress = {
         userId: user.uid,
-        courseId,
+        courseId: progressDocId,
         items: updatedItems,
         learnedItemIds: updatedLearnedItems,
         lastUpdated: serverTimestamp(),
@@ -218,7 +230,8 @@ export class MemoryProgressService {
         return;
       }
 
-      debugLog(`Initializing memory progress for course ${courseId} with ${itemIds.length} items`);
+      const progressDocId = this.toProgressDocId(courseId);
+      debugLog(`Initializing memory progress for course ${courseId} (doc ${progressDocId}) with ${itemIds.length} items`);
       
       // Initialize items array with memory data
       const initialItems = itemIds.map(itemId => ({
@@ -227,10 +240,10 @@ export class MemoryProgressService {
         isLearned: false
       }));
 
-      const progressRef = doc(db, 'users', user.uid, 'progress', courseId);
+      const progressRef = doc(db, 'users', user.uid, 'progress', progressDocId);
       const initialProgress: MemoryBasedProgress = {
         userId: user.uid,
-        courseId,
+        courseId: progressDocId,
         items: initialItems,
         learnedItemIds: [],
         lastUpdated: serverTimestamp(),
@@ -257,19 +270,20 @@ export class MemoryProgressService {
         throw new Error('No authenticated user found');
       }
 
-      debugLog(`Resetting memory progress for course ${courseId}`);
+      const progressDocId = this.toProgressDocId(courseId);
+      debugLog(`Resetting memory progress for course ${courseId} (doc ${progressDocId})`);
       
-      const progressRef = doc(db, 'users', user.uid, 'progress', courseId);
+      const progressRef = doc(db, 'users', user.uid, 'progress', progressDocId);
       await setDoc(progressRef, {
         userId: user.uid,
-        courseId,
+        courseId: progressDocId,
         items: [],
         learnedItemIds: [],
         lastUpdated: serverTimestamp(),
         createdAt: serverTimestamp()
       });
       
-      debugLog(`Successfully reset memory progress for course ${courseId}`);
+      debugLog(`Successfully reset memory progress for course ${progressDocId}`);
       
     } catch (error) {
       console.error(`❌ Error resetting memory progress for course ${courseId}:`, error);

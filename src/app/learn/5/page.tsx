@@ -25,8 +25,10 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-// const COURSE_DATA_ID = '5'; // Learning data collection
-const COURSE_PROGRESS_ID = 'phrases-business'; // Progress tracking collection
+// Numeric course id for data and memory progress
+const COURSE_ID = '5';
+// Store key for local progress state (UI uses slug)
+const COURSE_STORE_KEY = 'phrases-business';
 const COURSE_TITLE = 'Business & Work';
 const COURSE_DESCRIPTION = 'Professional Georgian phrases for business and work settings';
 
@@ -84,11 +86,11 @@ export default function BusinessWorkPage() {
   // Initialize course memory
   useEffect(() => {
     if (!phrasesLoading && phrases.length > 0 && currentUser && !isInitialized) {
-      initializeCourse(COURSE_PROGRESS_ID, phrases.length);
+      initializeCourse(COURSE_STORE_KEY, phrases.length);
       
       const loadMemoryProgress = async () => {
         try {
-          const memoryProgress = await MemoryProgressService.getMemoryProgress(COURSE_PROGRESS_ID);
+          const memoryProgress = await MemoryProgressService.getMemoryProgress(COURSE_ID);
           
           const initialMemory: Record<number, PhraseAdvancedMemory> = {};
           const learnedIds: number[] = [];
@@ -113,13 +115,13 @@ export default function BusinessWorkPage() {
           setLearnedPhrases(learnedIds);
           
           learnedIds.forEach(phraseId => {
-            addLearnedItem(COURSE_PROGRESS_ID, String(phraseId));
+            addLearnedItem(COURSE_STORE_KEY, String(phraseId));
           });
           
         } catch (error) {
           console.error('Error loading memory progress:', error);
           
-          const phrasesProgress = getCourseProgress(COURSE_PROGRESS_ID);
+          const phrasesProgress = getCourseProgress(COURSE_STORE_KEY);
           const learnedList = Array.from(phrasesProgress.learnedItems).map(Number);
           setLearnedPhrases(learnedList);
           
@@ -151,13 +153,13 @@ export default function BusinessWorkPage() {
 
   const handleCorrectAnswer = async (phraseId: number) => {
     try {
-      const updatedMemory = await MemoryProgressService.incrementCorrectAnswers(COURSE_PROGRESS_ID, String(phraseId));
+  const updatedMemory = await MemoryProgressService.incrementCorrectAnswers(COURSE_ID, String(phraseId));
       
       setPhrasesMemory(prev => {
         const currentMemory = prev[phraseId] || { correctAnswers: 0, isLearned: false };
         
         if (updatedMemory.isLearned && !currentMemory.isLearned) {
-          addLearnedItem(COURSE_PROGRESS_ID, String(phraseId));
+          addLearnedItem(COURSE_STORE_KEY, String(phraseId));
           setLearnedPhrases(prevLearned => {
             if (!prevLearned.includes(phraseId)) {
               return [...prevLearned, phraseId];
@@ -175,7 +177,7 @@ export default function BusinessWorkPage() {
 
   const handleWrongAnswer = async (phraseId: number) => {
     try {
-      const updatedMemory = await MemoryProgressService.decrementCorrectAnswers(COURSE_PROGRESS_ID, String(phraseId));
+  const updatedMemory = await MemoryProgressService.decrementCorrectAnswers(COURSE_ID, String(phraseId));
       
       setPhrasesMemory(prev => ({
         ...prev,
@@ -194,7 +196,7 @@ export default function BusinessWorkPage() {
     setProcessedPhrases([]);
     setAllCardsReviewed(false);
 
-    const phrasesProgress = getCourseProgress(COURSE_PROGRESS_ID);
+    const phrasesProgress = getCourseProgress(COURSE_STORE_KEY);
     const learnedPhrasesInLocal = Array.from(phrasesProgress.learnedItems).map(Number);
     
     let phrasesMissingInLocal = phrases.filter((phrase) => !learnedPhrasesInLocal.includes(phrase.id));

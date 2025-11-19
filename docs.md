@@ -546,18 +546,6 @@ function MyComponent() {
 
 ## Common Patterns
 
-### Fetching User Progress
-```tsx
-import { useProgressStore } from '@/stores/progressStore';
-
-function MyCourse() {
-  const { getCompletionPercentage, addLearnedItem } = useProgressStore();
-  
-  const completion = getCompletionPercentage('alphabet', 33);
-  // Returns 0-100
-}
-```
-
 ### Handling Authentication State
 ```tsx
 import { useAuth } from '@/contexts/AuthContext';

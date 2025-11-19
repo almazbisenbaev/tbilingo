@@ -33,22 +33,22 @@ export default function LearnTab() {
   
 
   // Use safe progress store hooks that return undefined during SSR  
-  const alphabetLearnedCount = useSafeProgressStore(state => state.getLearnedCount('alphabet'));
-  const numbersLearnedCount = useSafeProgressStore(state => state.getLearnedCount('numbers'));
-  const wordsLearnedCount = useSafeProgressStore(state => state.getLearnedCount('words'));
+  const alphabetLearnedCount = useSafeProgressStore(state => state.getLearnedCount('1'));
+  const numbersLearnedCount = useSafeProgressStore(state => state.getLearnedCount('2'));
+  const wordsLearnedCount = useSafeProgressStore(state => state.getLearnedCount('3'));
   
   // Phrase courses learned counts (using old slugs for progress tracking)
-  const phrasesAdvancedLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-2'));
-  const businessLearnedCount = useSafeProgressStore(state => state.getLearnedCount('phrases-business'));
+  const phrasesAdvancedLearnedCount = useSafeProgressStore(state => state.getLearnedCount('4'));
+  const businessLearnedCount = useSafeProgressStore(state => state.getLearnedCount('5'));
   
   const getCompletionPercentage = useProgressStore(state => state.getCompletionPercentage);
   
   // Calculate completion percentages for the main courses
-  const alphabetProgress = getCompletionPercentage('alphabet', alphabetData.length);
-  const numbersProgress = getCompletionPercentage('numbers', numbersData.length);
-  const wordsProgress = getCompletionPercentage('words', wordsData.length);
-  const phrasesAdvancedProgress = getCompletionPercentage('phrases-2', phrasesAdvancedData.length);
-  const businessProgress = getCompletionPercentage('phrases-business', businessData.length);
+  const alphabetProgress = getCompletionPercentage('1', alphabetData.length);
+  const numbersProgress = getCompletionPercentage('2', numbersData.length);
+  const wordsProgress = getCompletionPercentage('3', wordsData.length);
+  const phrasesAdvancedProgress = getCompletionPercentage('4', phrasesAdvancedData.length);
+  const businessProgress = getCompletionPercentage('5', businessData.length);
   
   // Check if each course is completed (or bypass if testing flag is enabled)
   const isAlphabetCompleted = UNLOCK_ALL_COURSES_FOR_TESTING || isCourseCompleted(alphabetProgress);
@@ -65,32 +65,32 @@ export default function LearnTab() {
   // Initialize courses with their total item counts when data is loaded
   useEffect(() => {
     if (!alphabetLoading && alphabetData.length > 0) {
-      initializeCourse('alphabet', alphabetData.length);
+      initializeCourse('1', alphabetData.length);
     }
   }, [alphabetLoading, alphabetData.length, initializeCourse]);
   
   useEffect(() => {
     if (!numbersLoading && numbersData.length > 0) {
-      initializeCourse('numbers', numbersData.length);
+      initializeCourse('2', numbersData.length);
     }
   }, [numbersLoading, numbersData.length, initializeCourse]);
   
   useEffect(() => {
     if (!wordsLoading && wordsData.length > 0) {
-      initializeCourse('words', wordsData.length);
+      initializeCourse('3', wordsData.length);
     }
   }, [wordsLoading, wordsData.length, initializeCourse]);
   
   // Initialize phrase courses (using old slugs for progress)
   useEffect(() => {
     if (!phrasesAdvancedLoading && phrasesAdvancedData.length > 0) {
-      initializeCourse('phrases-2', phrasesAdvancedData.length);
+      initializeCourse('4', phrasesAdvancedData.length);
     }
   }, [phrasesAdvancedLoading, phrasesAdvancedData.length, initializeCourse]);
   
   useEffect(() => {
     if (!businessLoading && businessData.length > 0) {
-      initializeCourse('phrases-business', businessData.length);
+      initializeCourse('5', businessData.length);
     }
   }, [businessLoading, businessData.length, initializeCourse]);
   

@@ -26,7 +26,7 @@ export default function AlphabetCourse() {
   useBackToHomeNavigation();
 
   // State for alphabet data fetching
-  const [alphabet, setAlphabet] = useState<AlphabetItem[]>([]);
+  const [allAlphabetItems, setAllAlphabetItems] = useState<AlphabetItem[]>([]);
   const [alphabetLoading, setAlphabetLoading] = useState<boolean>(true);
   const [alphabetError, setAlphabetError] = useState<string | null>(null);
 
@@ -72,7 +72,7 @@ export default function AlphabetCourse() {
           audioUrl: (item as any).audioUrl || ''
         }));
         
-        setAlphabet(alphabetItems);
+        setAllAlphabetItems(alphabetItems);
         
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -95,14 +95,14 @@ export default function AlphabetCourse() {
 
   useEffect(() => {
     // Initialize course when alphabet data is loaded
-    if (!alphabetLoading && alphabet.length > 0) {
-      initializeCourse('alphabet', alphabet.length);
+    if (!alphabetLoading && allAlphabetItems.length > 0) {
+      initializeCourse('1', allAlphabetItems.length);
       
       // Load learned characters from the store
       const alphabetProgress = getCourseProgress('alphabet');
       setLearnedCharacters(Array.from(alphabetProgress.learnedItems).map(Number));
     }
-  }, [alphabetLoading, alphabet.length, initializeCourse, getCourseProgress]);
+  }, [alphabetLoading, allAlphabetItems.length, initializeCourse, getCourseProgress]);
 
   // Show loading state
   if (alphabetLoading) {
@@ -135,7 +135,7 @@ export default function AlphabetCourse() {
   }
 
   // Show empty state
-  if (alphabet.length === 0) {
+  if (allAlphabetItems.length === 0) {
     return (
       <PageTransition>
         <div style={{ 
@@ -166,7 +166,7 @@ export default function AlphabetCourse() {
     const learnedCharactersInFirestore = Array.from(alphabetProgress.learnedItems).map(Number);
     
     // Filter out characters that have already been learned
-    const unlearnedCharacters = alphabet.filter((letter: any) => !learnedCharactersInFirestore.includes(letter.id)) as AlphabetItem[];
+    const unlearnedCharacters = allAlphabetItems.filter((letter: any) => !learnedCharactersInFirestore.includes(letter.id)) as AlphabetItem[];
     
     // Reset session state
     setProcessedCharacters([]);
@@ -329,7 +329,7 @@ export default function AlphabetCourse() {
         </div>
 
         <div className='w-full max-w-2xl mx-auto p-4'>
-          <div className='text-center'>Learned <b>{learnedCharacters.length}</b> out of <b>{alphabet.length}</b> characters</div>
+          <div className='text-center'>Learned <b>{learnedCharacters.length}</b> out of <b>{allAlphabetItems.length}</b> characters</div>
         </div>
 
         <div className='w-full max-w-2xl mx-auto p-4'>
