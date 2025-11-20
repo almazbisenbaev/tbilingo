@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import TabBar, { TabType } from '@/components/TabBar';
-import AuthWrapper from '@/components/AuthWrapper';
+import AuthWrapper from '@/components/screens/AuthWrapper';
 import SettingsTab from '@/components/SettingsTab';
 import AnimatedTabContent from '@/components/AnimatedTabContent';
 import LoadingScreen from '@/components/common/LoadingScreen';

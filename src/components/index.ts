@@ -8,4 +8,4 @@ export { default as ErrorState } from './common/ErrorState';
 export { default as ProgressStats } from './common/ProgressStats';
 
 // Auth Components
-export { default as WelcomeScreen } from './welcome-screen/welcome-screen';
+export { default as WelcomeScreen } from './screens/welcome-screen/welcome-screen';

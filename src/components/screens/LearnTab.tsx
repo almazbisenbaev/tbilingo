@@ -7,7 +7,7 @@ import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { useProgressStore, useSafeProgressStore } from '@/stores/progressStore';
 import { useAlphabet, useNumbers, useWords, usePhrasesCourse } from '@/hooks/useEnhancedLearningContent';
 import { FirebaseErrorBoundary } from '@/components/FirebaseErrorBoundary';
-import Brand from './Brand/Brand';
+import Brand from '../Brand/Brand';
 import { ConfirmationDialog } from '@/components/ShadcnConfirmationDialog';
 import { isCourseCompleted } from '@/utils/course-unlock-utils';
 

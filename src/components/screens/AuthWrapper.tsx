@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import LoginPage from '@/components/LoginPage';
+import LoginPage from '@/components/screens/LoginPage';
 import SignupPage from '@/components/SignupPage';
-import LearnTab from '@/components/LearnTab';
-import WelcomeScreen from '@/components/welcome-screen/welcome-screen';
+import LearnTab from '@/components/screens/LearnTab';
+import WelcomeScreen from '@/components/screens/welcome-screen/welcome-screen';
 
 type AuthMode = 'login' | 'signup' | null;
 
