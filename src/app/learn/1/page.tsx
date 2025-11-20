@@ -17,7 +17,6 @@ import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import FlashcardLetter from '@/components/FlashcardLetter/FlashcardLetter';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
-// import CoursePageLoading from '@/components/CoursePageLoading';
  
 
 import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';

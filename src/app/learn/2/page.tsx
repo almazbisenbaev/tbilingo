@@ -10,7 +10,6 @@ import { NumberItem, PendingNumberAction } from '@/types';
 import FlashcardNumber from '@/components/FlashcardNumber/FlashcardNumber';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 // import SuccessModal from '@/components/ShadcnSuccessModal';
-import CoursePageLoading from '@/components/CoursePageLoading';
  
 
 import Image from 'next/image';
@@ -108,10 +107,7 @@ export default function NumbersCourse() {
   // Show loading state
   if (numbersLoading) {
     return (
-        <CoursePageLoading 
-          courseTitle="Learn numbers"
-          message="Loading Georgian numbers..."
-        />
+        <div className='h-screen w-screen flex items-center justify-center'>Loading...</div>
     );
   }
 

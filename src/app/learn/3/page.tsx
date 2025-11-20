@@ -14,7 +14,6 @@ import WordsComponent from '@/components/WordsComponent/WordsComponent';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 // import SuccessModal from '@/components/ShadcnSuccessModal';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
-import CoursePageLoading from '@/components/CoursePageLoading';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -114,10 +113,7 @@ export default function WordsCourse() {
   // Show loading state
   if (wordsLoading) {
     return (
-        <CoursePageLoading 
-          courseTitle="Words & phrases"
-          message="Loading Georgian words and phrases..."
-        />
+        <div className='h-screen w-screen flex items-center justify-center'>Loading...</div>
     );
   }
 

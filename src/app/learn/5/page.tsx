@@ -10,8 +10,6 @@ import { PhraseAdvancedItem, PhraseAdvancedMemory } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
 import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
-// UI Components
-import CoursePageLoading from '@/components/CoursePageLoading';
  
 import ErrorState from '@/components/common/ErrorState';
 import AppHeader from '@/components/layout/AppHeader';
@@ -211,10 +209,7 @@ export default function BusinessWorkPage() {
   // Show loading state
   if (phrasesLoading) {
     return (
-        <CoursePageLoading 
-          courseTitle={COURSE_TITLE}
-          message={`Loading ${COURSE_TITLE.toLowerCase()}...`}
-        />
+        <div className='h-screen w-screen flex items-center justify-center'>Loading...</div>
     );
   }
 

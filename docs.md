@@ -381,7 +381,6 @@ All courses follow this pattern:
 
 **UI Components:**
 - `PageTransition` - Animation wrapper
-- `CoursePageLoading` - Loading state
 - `ErrorState` - Error display
 - `AppHeader` - Navigation header
 - `PageLayout` - Page structure
