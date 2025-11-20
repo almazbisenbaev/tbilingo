@@ -248,22 +248,6 @@ match /users/{userId} {
 
 ## Course System
 
-### Course Configuration
-Courses are defined in `src/constants/courseData.ts`:
-
-```typescript
-interface CourseConfig {
-  id: string;                    // unique identifier
-  title: string;                 // display name
-  description: string;
-  prerequisites: string[];       // required course IDs
-  icon: string;                  // icon path
-  estimatedTime: number;         // minutes
-  order: number;                 // display order
-  route: string;                 // URL route
-}
-```
-
 ### Memory System
 The app uses **spaced repetition** for learning:
 
@@ -439,52 +423,6 @@ All courses follow this pattern:
 6. **Import required styles** - For phrase courses, import `PhraseAdvancedComponent.css`
 
 
-
-### Adding a New Course
-
-1. **Define course in `constants/courseData.ts`:**
-```typescript
-{
-  id: 'phrases-hobbies',
-  title: 'Hobbies & Interests',
-  description: 'Talk about hobbies in Georgian',
-  prerequisites: ['phrases-1'],
-  icon: '/images/icon-hobbies.svg',
-  estimatedTime: 25,
-  order: 16,
-  route: '/hobbies'
-}
-```
-
-2. **Add sample data (same file):**
-```typescript
-'phrases-hobbies': [
-  { 
-    id: "1", 
-    english: "What are your hobbies?", 
-    georgian: "რა გაქვთ ჰობი?",
-    latin: "ra gaqvt hobi?",
-    order: 1
-  },
-  // ... more phrases
-]
-```
-
-3. **Create route at `app/(courses)/hobbies/page.tsx`:**
-```tsx
-import { GenericCourse } from '@/features/course/components/GenericCourse';
-
-export default function HobbiesPage() {
-  return (
-    <GenericCourse 
-      courseId="phrases-hobbies"
-      courseTitle="Hobbies & Interests"
-      courseDescription="Talk about hobbies in Georgian"
-    />
-  );
-}
-```
-
 ### Adding Google Sign-In to a New Component
 
 ```tsx
@@ -539,7 +477,6 @@ function MyComponent() {
 - `src/features/course/components/GenericCourse.tsx` - Course container
 - `src/hooks/course/useCourseMemory.tsx` - Learning memory system
 - `src/stores/progressStore.ts` - Global progress state
-- `src/constants/courseData.ts` - All course configurations
 
 
 ---

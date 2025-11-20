@@ -22,7 +22,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Tbilingo – Learn Georgian alphabet with flashcards",
-  description: "An easy way to learn the Georgian alphabet",
+  description: "Learn Georgian alphabet, words and phrases",
 };
 
 export default function RootLayout({

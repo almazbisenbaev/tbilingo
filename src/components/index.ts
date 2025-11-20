@@ -10,7 +10,6 @@ export { default as ErrorState } from './common/ErrorState';
 export { default as ProgressStats } from './common/ProgressStats';
 
 // Course Components
-export { default as PhraseCourseItem } from './course/PhraseCourseItem';
 export { default as CourseIntro } from './course/CourseIntro';
 export { default as CourseCompletion } from './course/CourseCompletion';
 

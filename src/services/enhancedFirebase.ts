@@ -9,14 +9,11 @@ import {
   getDocs, 
   setDoc, 
   updateDoc, 
-  deleteDoc, 
   query, 
   orderBy, 
-  onSnapshot, 
   writeBatch,
   serverTimestamp,
-  getDoc,
-  addDoc
+  getDoc
 } from 'firebase/firestore';
 import { db } from '@root/firebaseConfig';
 

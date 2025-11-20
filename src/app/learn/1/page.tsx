@@ -1,27 +1,30 @@
 "use client";
 
 const course_id = 1;
-console.log('Course ID: ' + course_id);
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
-import { useFontTypeStore } from '@/stores/fontTypeStore';
+
 import { AlphabetItem } from '@/types';
+import { useFontTypeStore } from '@/stores/fontTypeStore';
+
 import { shuffleArray } from '@/utils/shuffle-array';
-import FlashcardLetter from '@/components/FlashcardLetter/FlashcardLetter';
-import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
-// import SuccessModal from '@/components/ShadcnSuccessModal';
-import ProgressBar from '@/components/ProgressBar/ProgressBar';
-import CoursePageLoading from '@/components/CoursePageLoading';
-import PageTransition from '@/components/PageTransition';
 
 import Image from 'next/image';
 import Link from 'next/link';
+
+import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
+import FlashcardLetter from '@/components/FlashcardLetter/FlashcardLetter';
+import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
+import ProgressBar from '@/components/ProgressBar/ProgressBar';
+// import CoursePageLoading from '@/components/CoursePageLoading';
+import PageTransition from '@/components/PageTransition';
+
 import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
 
 export default function AlphabetCourse() {
+
   // All hooks must be at the top level and called in the same order every time
   useBackToHomeNavigation();
 
@@ -115,10 +118,7 @@ export default function AlphabetCourse() {
   if (alphabetLoading) {
     return (
       <PageTransition>
-        <CoursePageLoading 
-          courseTitle="Learn alphabet"
-          message="Loading Georgian alphabet..."
-        />
+        Loading...
       </PageTransition>
     );
   }
@@ -149,7 +149,7 @@ export default function AlphabetCourse() {
           display: 'flex', 
           justifyContent: 'center', 
           alignItems: 'center', 
-          minHeight: '100vh',
+          minHeight: '100dvh',
           flexDirection: 'column'
         }}>
           <p>No alphabet data found. Please check the manual data entry guide.</p>
@@ -168,8 +168,8 @@ export default function AlphabetCourse() {
    * 4. Sets up the UI for the learning experience
    */
   const startGameplay = () => {
-    const learnedCharactersInLocal = learnedCharacters;
-    const unlearnedCharacters = allAlphabetItems.filter((letter: any) => !learnedCharactersInLocal.includes(letter.id)) as AlphabetItem[];
+    const learnedCharactersInFirebase = learnedCharacters;
+    const unlearnedCharacters = allAlphabetItems.filter((letter: any) => !learnedCharactersInFirebase.includes(letter.id)) as AlphabetItem[];
     
     // Reset session state
     setProcessedCharacters([]);
