@@ -369,7 +369,7 @@ input[type=submit]:focus {
   overflow: hidden;
   width: 100%;
   max-width: 100%;
-  min-height: 100vh;
+  min-height: 100svh;
 }
 
 .gameplay-game {
@@ -620,7 +620,7 @@ input[type=submit]:focus {
 .app-with-tabs {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100svh;
 }
 
 .tab-content {
@@ -645,7 +645,7 @@ input[type=submit]:focus {
 .page-transition-wrapper {
   width: 100%;
   height: 100%;
-  min-height: 100vh;
+  min-height: 100svh;
   position: relative;
   z-index: 1;
   transform-origin: center center;
@@ -660,7 +660,7 @@ input[type=submit]:focus {
   /* width: 640px; */
   /* max-width: 100%; */
   /* margin: 0 auto; */
-  min-height: 100vh;
+  min-height: 100svh;
 }
 
 @media (max-width: 640px) {
@@ -763,7 +763,7 @@ input[type=submit]:focus {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  min-height: calc(100vh - 80px);
+  min-height: calc(100svh - 80px);
   padding-top: 32px;
   padding-right: 32px;
   padding-left: 32px;
@@ -786,7 +786,7 @@ input[type=submit]:focus {
   padding: 32px;
   max-width: 480px;
   margin: auto;
-  min-height: calc(100vh - 80px);
+  min-height: calc(100svh - 80px);
 }
 
 .settings-header {

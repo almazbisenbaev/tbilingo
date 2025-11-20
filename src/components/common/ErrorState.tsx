@@ -63,7 +63,7 @@ export default function ErrorState({
           display: flex;
           align-items: center;
           justify-content: center;
-          min-height: 100vh;
+          min-height: 100svh;
           padding: 1rem;
           background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }

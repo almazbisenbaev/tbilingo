@@ -125,7 +125,7 @@ export default function NumbersCourse() {
           display: 'flex', 
           justifyContent: 'center', 
           alignItems: 'center', 
-          minHeight: '100vh',
+          minHeight: '100svh',
           flexDirection: 'column'
         }}>
           <p>Error loading numbers: {numbersError}</p>
@@ -143,7 +143,7 @@ export default function NumbersCourse() {
           display: 'flex', 
           justifyContent: 'center', 
           alignItems: 'center', 
-          minHeight: '100vh',
+          minHeight: '100svh',
           flexDirection: 'column'
         }}>
           <p>No numbers data found. Please check the manual data entry guide.</p>

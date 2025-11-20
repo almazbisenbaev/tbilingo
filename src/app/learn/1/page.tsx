@@ -22,6 +22,7 @@ import PageTransition from '@/components/PageTransition';
 
 import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
+import { div } from 'framer-motion/client';
 
 export default function AlphabetCourse() {
 
@@ -117,9 +118,7 @@ export default function AlphabetCourse() {
   // Show loading state
   if (alphabetLoading) {
     return (
-      <PageTransition>
-        Loading...
-      </PageTransition>
+      <div className='h-screen w-screen flex items-center justify-center'>Loading...</div>
     );
   }
 
@@ -131,7 +130,7 @@ export default function AlphabetCourse() {
           display: 'flex', 
           justifyContent: 'center', 
           alignItems: 'center', 
-          minHeight: '100vh',
+          minHeight: '100svh',
           flexDirection: 'column'
         }}>
           <p>Error loading alphabet: {alphabetError}</p>
