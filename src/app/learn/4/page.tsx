@@ -34,6 +34,7 @@ export default function PhrasesAdvancedPage() {
   const [phrasesError, setPhrasesError] = useState<string | null>(null);
 
   const [learnedPhrases, setLearnedPhrases] = useState<number[]>([]);
+  const [progressLoaded, setProgressLoaded] = useState(false);
   const [phrasesMemory, setPhrasesMemory] = useState<Record<number, PhraseAdvancedMemory>>({});
   const [isInitialized, setIsInitialized] = useState(false);
   
@@ -94,6 +95,7 @@ export default function PhrasesAdvancedPage() {
           });
           setPhrasesMemory(initialMemory);
           setLearnedPhrases(learnedIds);
+          setProgressLoaded(true);
         } catch (error) {
           console.error('Error loading progress:', error);
           const initialMemory: Record<number, PhraseAdvancedMemory> = {};
@@ -102,6 +104,7 @@ export default function PhrasesAdvancedPage() {
           });
           setPhrasesMemory(initialMemory);
           setLearnedPhrases([]);
+          setProgressLoaded(true);
         }
       };
       loadProgress();
@@ -258,9 +261,11 @@ export default function PhrasesAdvancedPage() {
                 <p className="text-gray-600">{COURSE_DESCRIPTION}</p>
               </div>
             )}
-            <div className='text-center'>
-              Learned <b>{learnedPhrases.length}</b> out of <b>{phrases.length}</b> phrases
-            </div>
+            {progressLoaded && (
+              <div className='text-center'>
+                Learned <b>{learnedPhrases.length}</b> out of <b>{phrases.length}</b> phrases
+              </div>
+            )}
           </div>
 
           <div className='w-full max-w-2xl mx-auto p-4'>

@@ -27,6 +27,7 @@ export default function WordsCourse() {
   const [wordsError, setWordsError] = useState<string | null>(null);
 
   const [learnedWords, setLearnedWords] = useState<number[]>([]); // Store words that the user has learned
+  const [progressLoaded, setProgressLoaded] = useState(false);
   
   // Gameplay states
   const [isGameplayActive, setIsGameplayActive] = useState<boolean>(false);
@@ -81,6 +82,7 @@ export default function WordsCourse() {
           const user = auth.currentUser;
           if (!user) {
             setLearnedWords([]);
+            setProgressLoaded(true);
             return;
           }
           const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
@@ -92,9 +94,11 @@ export default function WordsCourse() {
           } else {
             setLearnedWords([]);
           }
+          setProgressLoaded(true);
         } catch (e) {
           console.error('❌ Error loading user progress:', e);
           setLearnedWords([]);
+          setProgressLoaded(true);
         }
       };
       loadProgress();
@@ -334,9 +338,11 @@ export default function WordsCourse() {
           </div>
         </div>
 
-        <div className='w-full max-w-2xl mx-auto p-4'>
-          <div className='text-center'>Learned <b>{learnedWords.length}</b> out of <b>{words.length}</b> words & phrases</div>
-        </div>
+        {progressLoaded && (
+          <div className='w-full max-w-2xl mx-auto p-4'>
+            <div className='text-center'>Learned <b>{learnedWords.length}</b> out of <b>{words.length}</b> words & phrases</div>
+          </div>
+        )}
 
         <div className='w-full max-w-2xl mx-auto p-4'>
           <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>

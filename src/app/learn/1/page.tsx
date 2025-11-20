@@ -28,6 +28,7 @@ export default function AlphabetCourse() {
   const [alphabetError, setAlphabetError] = useState<string | null>(null);
 
   const [learnedCharacters, setLearnedCharacters] = useState<number[]>([]); // Store characters that the viewers has seen during the gameplay
+  const [progressLoaded, setProgressLoaded] = useState(false);
   
   // Gameplay states
   const [isGameplayActive, setIsGameplayActive] = useState<boolean>(false);
@@ -88,6 +89,7 @@ export default function AlphabetCourse() {
           const user = auth.currentUser;
           if (!user) {
             setLearnedCharacters([]);
+            setProgressLoaded(true);
             return;
           }
           const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
@@ -99,9 +101,11 @@ export default function AlphabetCourse() {
           } else {
             setLearnedCharacters([]);
           }
+          setProgressLoaded(true);
         } catch (e) {
           console.error('❌ Error loading user progress:', e);
           setLearnedCharacters([]);
+          setProgressLoaded(true);
         }
       };
       loadProgress();
@@ -354,9 +358,11 @@ export default function AlphabetCourse() {
           </div>
         </div>
 
-        <div className='w-full max-w-2xl mx-auto p-4'>
-          <div className='text-center'>Learned <b>{learnedCharacters.length}</b> out of <b>{allAlphabetItems.length}</b> characters</div>
-        </div>
+        {progressLoaded && (
+          <div className='w-full max-w-2xl mx-auto p-4'>
+            <div className='text-center'>Learned <b>{learnedCharacters.length}</b> out of <b>{allAlphabetItems.length}</b> characters</div>
+          </div>
+        )}
 
         <div className='w-full max-w-2xl mx-auto p-4'>
           <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>

@@ -25,6 +25,7 @@ export default function NumbersCourse() {
   const [numbersError, setNumbersError] = useState<string | null>(null);
 
   const [learnedNumbers, setLearnedNumbers] = useState<number[]>([]); // Store numbers that the viewers has seen during the gameplay
+  const [progressLoaded, setProgressLoaded] = useState(false);
   
   // Gameplay states
   const [isGameplayActive, setIsGameplayActive] = useState<boolean>(false);
@@ -76,6 +77,7 @@ export default function NumbersCourse() {
           const user = auth.currentUser;
           if (!user) {
             setLearnedNumbers([]);
+            setProgressLoaded(true);
             return;
           }
           const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
@@ -87,9 +89,11 @@ export default function NumbersCourse() {
           } else {
             setLearnedNumbers([]);
           }
+          setProgressLoaded(true);
         } catch (e) {
           console.error('❌ Error loading user progress:', e);
           setLearnedNumbers([]);
+          setProgressLoaded(true);
         }
       };
       loadProgress();
@@ -348,9 +352,11 @@ export default function NumbersCourse() {
           </div>
         </div>
 
-        <div className='w-full max-w-2xl mx-auto p-4'>
-          <div className='text-center'>Learned <b>{learnedNumbers.length}</b> out of <b>{numbers.length}</b> numbers</div>
-        </div>
+        {progressLoaded && (
+          <div className='w-full max-w-2xl mx-auto p-4'>
+            <div className='text-center'>Learned <b>{learnedNumbers.length}</b> out of <b>{numbers.length}</b> numbers</div>
+          </div>
+        )}
 
         <div className='w-full max-w-2xl mx-auto p-4'>
           <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>
