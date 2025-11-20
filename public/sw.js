@@ -81,7 +81,7 @@ self.addEventListener('fetch', (event) => {
   if (request.method === 'GET' && 
       (request.headers.get('accept')?.includes('text/html') || 
        url.pathname === '/' || 
-       url.pathname.startsWith('/learn/1'))) {
+       url.pathname.startsWith('/learn'))) {
     
     event.respondWith(
       fetch(request)

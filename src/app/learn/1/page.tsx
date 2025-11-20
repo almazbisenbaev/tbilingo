@@ -176,7 +176,7 @@ export default function AlphabetCourse() {
           flexDirection: 'column'
         }}>
           <p>No alphabet data found. Please check the manual data entry guide.</p>
-          <Link href="/">Go back to home</Link>
+          <Link href="/learn">Go back to home</Link>
         </div>
     );
   }
@@ -373,7 +373,7 @@ export default function AlphabetCourse() {
           <div className="navbar">
               <div className="navbar-row">
                   <div className="navbar-aside">
-                  <Link href="/" className='navbar-button'>
+                  <Link href="/learn" className='navbar-button'>
                       <Image
                       src="/images/icon-back.svg"
                       alt="Back"

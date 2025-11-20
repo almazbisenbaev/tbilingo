@@ -275,7 +275,7 @@ export default function PhrasesAdvancedPage() {
             <div className="navbar">
               <div className="navbar-row">
                 <div className="navbar-aside">
-                  <Link href="/" className='navbar-button'>
+                  <Link href="/learn" className='navbar-button'>
                     <Image src="/images/icon-back.svg" alt="Back" width={24} height={24} />
                   </Link>
                 </div>

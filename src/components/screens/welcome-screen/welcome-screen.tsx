@@ -4,7 +4,6 @@ import "./welcome-screen.css";
 
 import { useState } from 'react';
 import Brand from '@/components/Brand/Brand';
-import ScopePreview from '@/components/ScopePreview/scope-preview';
 import { useAuth } from '@/contexts/AuthContext';
 import GoogleSignInButton from '@/components/GoogleSignInButton/GoogleSignInButton';
 
@@ -78,7 +77,6 @@ export default function WelcomeScreen({ onSignUp, onSignIn }: WelcomeScreenProps
           </button>
         </div>
 
-        <ScopePreview />
       </div>
     </div>
   );
