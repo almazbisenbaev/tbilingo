@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import LoginPage from '@/components/LoginPage';
 import SignupPage from '@/components/SignupPage';
 import LearnTab from '@/components/LearnTab';
-import WelcomeScreen from '@/components/auth/WelcomeScreen';
+import WelcomeScreen from '@/components/welcome-screen/welcome-screen';
 
 type AuthMode = 'login' | 'signup' | null;
 

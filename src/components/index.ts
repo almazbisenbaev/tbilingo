@@ -14,4 +14,4 @@ export { default as CourseIntro } from './course/CourseIntro';
 export { default as CourseCompletion } from './course/CourseCompletion';
 
 // Auth Components
-export { default as WelcomeScreen } from './auth/WelcomeScreen';
+export { default as WelcomeScreen } from './welcome-screen/welcome-screen';

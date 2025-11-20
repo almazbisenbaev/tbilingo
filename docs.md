@@ -88,7 +88,7 @@ Orchestrates the authentication flow. Shows:
 - `LoginPage` or `SignupPage` when user chooses auth method
 - `LearnTab` when authenticated
 
-#### WelcomeScreen (`src/components/auth/WelcomeScreen.tsx`)
+#### WelcomeScreen (`src/components/welcome-screen/welcome-screen.tsx`)
 Landing page with authentication options:
 - **Primary**: "Continue with Google" button
 - **Secondary**: "Sign Up with Email" and "Sign In with Email"

@@ -12,6 +12,8 @@
     min-height: 96px;
     padding: 28px;
     padding-right: 32px;
+
+    cursor: pointer;
 }
 
 .course-link:hover {

@@ -45,8 +45,7 @@ export default function CourseLink({
                 className={`course-link ${disabled ? 'course-link-disabled' : ''}`}
                 style={{
                     pointerEvents: (disabled) ? "none" : "auto",
-                    opacity: locked ? 0.5 : 1,
-                    cursor: locked ? 'pointer' : 'default'
+                    opacity: locked ? 0.3 : 1
                 }}
                 onClick={handleClick}
             >
