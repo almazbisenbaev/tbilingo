@@ -121,6 +121,36 @@ export default function PhrasesAdvancedPage() {
     }
   }, [processedPhrases, phrasesToReview]);
 
+  useEffect(() => {
+    if (allCardsReviewed) {
+      (async () => {
+        try {
+          const user = auth.currentUser;
+          if (!user) return;
+          const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+          const snap = await getDoc(progressRef);
+          const learnedItemIds: string[] = snap.exists() ? ((snap.data() as any).learnedItemIds || []) : [];
+          const totalItems = phrases.length;
+          if (totalItems > 0 && learnedItemIds.length >= totalItems) {
+            await setDoc(
+              progressRef,
+              {
+                userId: user.uid,
+                courseId: String(course_id),
+                isFinished: true,
+                lastUpdated: serverTimestamp(),
+                createdAt: snap.exists() ? ((snap.data() as any).createdAt || serverTimestamp()) : serverTimestamp()
+              },
+              { merge: true }
+            );
+          }
+        } catch (e) {
+          console.error('❌ Error marking course finished:', e);
+        }
+      })();
+    }
+  }, [allCardsReviewed, phrases.length]);
+
   const handleCorrectAnswer = async (phraseId: number) => {
     setPhrasesMemory(prev => {
       const current = prev[phraseId] || { correctAnswers: 0, isLearned: false };

@@ -9,7 +9,8 @@ import { useAlphabet, useNumbers, useWords, usePhrasesCourse } from '@/hooks/use
 import { FirebaseErrorBoundary } from '@/components/FirebaseErrorBoundary';
 import Brand from '../Brand/Brand';
 import { ConfirmationDialog } from '@/components/ShadcnConfirmationDialog';
-import { isCourseCompleted } from '@/utils/course-unlock-utils';
+import { doc, getDoc } from 'firebase/firestore';
+import { db, auth } from '@root/firebaseConfig';
 
 // Unlocks all courses for testing
 const UNLOCK_ALL_COURSES_FOR_TESTING = false;
@@ -52,10 +53,40 @@ export default function LearnTab() {
   const businessProgress = getCompletionPercentage('5', businessData.length);
   
   // Check if each course is completed (or bypass if testing flag is enabled)
-  const isAlphabetCompleted = UNLOCK_ALL_COURSES_FOR_TESTING || isCourseCompleted(alphabetProgress);
-  const isNumbersCompleted = UNLOCK_ALL_COURSES_FOR_TESTING || isCourseCompleted(numbersProgress);
-  const isWordsCompleted = UNLOCK_ALL_COURSES_FOR_TESTING || isCourseCompleted(wordsProgress);
-  const isPhrasesAdvancedCompleted = UNLOCK_ALL_COURSES_FOR_TESTING || isCourseCompleted(phrasesAdvancedProgress);
+  const [isAlphabetCompleted, setIsAlphabetCompleted] = useState<boolean>(false);
+  const [isNumbersCompleted, setIsNumbersCompleted] = useState<boolean>(false);
+  const [isWordsCompleted, setIsWordsCompleted] = useState<boolean>(false);
+  const [isPhrasesAdvancedCompleted, setIsPhrasesAdvancedCompleted] = useState<boolean>(false);
+
+  useEffect(() => {
+    let mounted = true;
+    const loadFinishFlags = async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          if (mounted) {
+            setIsAlphabetCompleted(false);
+            setIsNumbersCompleted(false);
+            setIsWordsCompleted(false);
+            setIsPhrasesAdvancedCompleted(false);
+          }
+          return;
+        }
+        const ids = ['1', '2', '3', '4', '5'];
+        const refs = ids.map(id => doc(db, 'users', user.uid, 'progress', id));
+        const snaps = await Promise.all(refs.map(r => getDoc(r)));
+        const flags = snaps.map(s => (s.exists() ? Boolean((s.data() as any).isFinished) : false));
+        if (mounted) {
+          setIsAlphabetCompleted(UNLOCK_ALL_COURSES_FOR_TESTING || flags[0]);
+          setIsNumbersCompleted(UNLOCK_ALL_COURSES_FOR_TESTING || flags[1]);
+          setIsWordsCompleted(UNLOCK_ALL_COURSES_FOR_TESTING || flags[2]);
+          setIsPhrasesAdvancedCompleted(UNLOCK_ALL_COURSES_FOR_TESTING || flags[3]);
+        }
+      } catch {}
+    };
+    loadFinishFlags();
+    return () => { mounted = false };
+  }, [alphabetProgress, numbersProgress, wordsProgress, phrasesAdvancedProgress, businessProgress]);
   
   // Handler for locked course click
   const handleLockedClick = (courseTitle: string) => {

@@ -28,6 +28,7 @@ export interface SimpleUserProgress {
   userId: string;
   courseId: string;
   learnedItemIds: string[];           // Array of learned item IDs (e.g., ["1", "2", "3"])
+  isFinished?: boolean;
   lastUpdated: any;                   // Firestore timestamp
   createdAt: any;                     // Firestore timestamp
 }
@@ -110,6 +111,7 @@ export class SimpleUserProgressService {
         userId: user.uid,
         courseId: progressDocId,
         learnedItemIds: updatedLearnedItems,
+        isFinished: currentProgress?.isFinished || false,
         lastUpdated: serverTimestamp(),
         createdAt: currentProgress?.createdAt || serverTimestamp()
       };
@@ -147,6 +149,7 @@ export class SimpleUserProgressService {
       const progressRef = doc(db, 'users', user.uid, 'progress', progressDocId);
       await updateDoc(progressRef, {
         learnedItemIds: updatedLearnedItems,
+        isFinished: false,
         lastUpdated: serverTimestamp()
       });
       
@@ -194,6 +197,7 @@ export class SimpleUserProgressService {
         userId: user.uid,
         courseId: progressDocId,
         learnedItemIds: [],
+        isFinished: false,
         lastUpdated: serverTimestamp(),
         createdAt: serverTimestamp()
       });
@@ -205,4 +209,6 @@ export class SimpleUserProgressService {
       throw error;
     }
   }
+
+  
 }
