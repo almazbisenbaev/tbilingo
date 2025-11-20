@@ -3,7 +3,7 @@
   "short_name": "Tbilingo",
   "description": "Learn the Georgian alphabet interactively with flashcards and audio pronunciation!",
   "version": "1.0.1",
-  "start_url": "/",
+  "start_url": "/learn",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1a202c",

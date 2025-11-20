@@ -11,7 +11,7 @@ const CACHE_NAME = `tbilingo-v${CACHE_VERSION}`;
 
 const urlsToCache = [
   '/',
-  '/1',
+  '/learn',
   '/manifest.json',
   '/icon-192x192.png',
   '/icon-512x512.png',

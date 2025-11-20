@@ -12,7 +12,7 @@ export default function LandingPage() {
           <p className="text-base text-gray-600">Short daily lessons designed for beginners</p>
         </div>
         <div className="flex justify-center">
-          <Link href="/learn" className="btn btn-primary">Learn now</Link>
+          <Link href="/learn" className="btn btn-primary">Learn online</Link>
         </div>
         <div className="mt-8">
           <ScopePreview />
