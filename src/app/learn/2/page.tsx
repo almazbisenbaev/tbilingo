@@ -11,7 +11,7 @@ import FlashcardNumber from '@/components/FlashcardNumber/FlashcardNumber';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 // import SuccessModal from '@/components/ShadcnSuccessModal';
 import CoursePageLoading from '@/components/CoursePageLoading';
-import PageTransition from '@/components/PageTransition';
+ 
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -108,19 +108,16 @@ export default function NumbersCourse() {
   // Show loading state
   if (numbersLoading) {
     return (
-      <PageTransition>
         <CoursePageLoading 
           courseTitle="Learn numbers"
           message="Loading Georgian numbers..."
         />
-      </PageTransition>
     );
   }
 
   // Show error state
   if (numbersError) {
     return (
-      <PageTransition>
         <div style={{ 
           display: 'flex', 
           justifyContent: 'center', 
@@ -131,14 +128,12 @@ export default function NumbersCourse() {
           <p>Error loading numbers: {numbersError}</p>
           <button onClick={() => window.location.reload()}>Retry</button>
         </div>
-      </PageTransition>
     );
   }
 
   // Show empty state
   if (numbers.length === 0) {
     return (
-      <PageTransition>
         <div style={{ 
           display: 'flex', 
           justifyContent: 'center', 
@@ -149,7 +144,6 @@ export default function NumbersCourse() {
           <p>No numbers data found. Please check the manual data entry guide.</p>
           <Link href="/">Go back to home</Link>
         </div>
-      </PageTransition>
     );
   }
 
@@ -338,7 +332,6 @@ export default function NumbersCourse() {
   // Main numbers page
   if (!isGameplayActive) {
     return (
-      <PageTransition>
         <div className='h-svh flex flex-col justify-between py-4'>
 
         <div className='w-full max-w-2xl mx-auto p-4'>
@@ -369,13 +362,11 @@ export default function NumbersCourse() {
         </div>
 
         </div>
-      </PageTransition>
     )
   }
 
   // Gameplay component
   return (
-    <PageTransition>
     <div className='h-svh flex flex-col justify-between py-4'>
 
         {!allCardsReviewed && (
@@ -472,6 +463,5 @@ export default function NumbersCourse() {
 
     
     </div>
-    </PageTransition>
   )
 }

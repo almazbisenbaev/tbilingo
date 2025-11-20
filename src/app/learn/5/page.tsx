@@ -12,7 +12,7 @@ import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimesta
 import { db, auth } from '@root/firebaseConfig';
 // UI Components
 import CoursePageLoading from '@/components/CoursePageLoading';
-import PageTransition from '@/components/PageTransition';
+ 
 import ErrorState from '@/components/common/ErrorState';
 import AppHeader from '@/components/layout/AppHeader';
 import PageLayout from '@/components/layout/PageLayout';
@@ -211,12 +211,10 @@ export default function BusinessWorkPage() {
   // Show loading state
   if (phrasesLoading) {
     return (
-      <PageTransition>
         <CoursePageLoading 
           courseTitle={COURSE_TITLE}
           message={`Loading ${COURSE_TITLE.toLowerCase()}...`}
         />
-      </PageTransition>
     );
   }
 
@@ -249,7 +247,6 @@ export default function BusinessWorkPage() {
   // Course intro page
   if (!isGameplayActive) {
     return (
-      <PageTransition>
         <div className='h-svh flex flex-col justify-between py-4'>
           <div className='w-full max-w-2xl mx-auto p-4'>
             <div className="navbar">
@@ -282,7 +279,6 @@ export default function BusinessWorkPage() {
             </button>
           </div>
         </div>
-      </PageTransition>
     );
   }
 
@@ -293,7 +289,6 @@ export default function BusinessWorkPage() {
     ).length;
     
     return (
-      <PageTransition>
         <motion.div 
           className='h-svh flex flex-col justify-between py-4'
           initial={{ opacity: 0, scale: 0.8, y: 20 }}
@@ -338,13 +333,11 @@ export default function BusinessWorkPage() {
             </button>
           </div>
         </motion.div>
-      </PageTransition>
     );
   }
 
   // Active gameplay
   return (
-    <PageTransition>
       <PageLayout className="phrases-advanced-course">
         <ContentContainer>
           <AppHeader 
@@ -378,6 +371,5 @@ export default function BusinessWorkPage() {
           })}
         </ContentContainer>
       </PageLayout>
-    </PageTransition>
   );
 }

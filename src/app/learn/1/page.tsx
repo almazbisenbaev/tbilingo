@@ -18,7 +18,7 @@ import FlashcardLetter from '@/components/FlashcardLetter/FlashcardLetter';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
 // import CoursePageLoading from '@/components/CoursePageLoading';
-import PageTransition from '@/components/PageTransition';
+ 
 
 import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
@@ -125,7 +125,6 @@ export default function AlphabetCourse() {
   // Show error state
   if (alphabetError) {
     return (
-      <PageTransition>
         <div style={{ 
           display: 'flex', 
           justifyContent: 'center', 
@@ -136,14 +135,12 @@ export default function AlphabetCourse() {
           <p>Error loading alphabet: {alphabetError}</p>
           <button onClick={() => window.location.reload()}>Retry</button>
         </div>
-      </PageTransition>
     );
   }
 
   // Show empty state
   if (allAlphabetItems.length === 0) {
     return (
-      <PageTransition>
         <div style={{ 
           display: 'flex', 
           justifyContent: 'center', 
@@ -154,7 +151,6 @@ export default function AlphabetCourse() {
           <p>No alphabet data found. Please check the manual data entry guide.</p>
           <Link href="/">Go back to home</Link>
         </div>
-      </PageTransition>
     );
   }
 
@@ -344,7 +340,6 @@ export default function AlphabetCourse() {
   // Main alphabet page
   if (!isGameplayActive) {
     return (
-      <PageTransition>
         <div className='h-svh flex flex-col justify-between py-4'>
 
         <div className='w-full max-w-2xl mx-auto p-4'>
@@ -375,13 +370,11 @@ export default function AlphabetCourse() {
         </div>
 
         </div>
-      </PageTransition>
     )
   }
 
   // Gameplay component
   return (
-    <PageTransition>
       <div className='h-svh flex flex-col justify-between py-4'>
 
         {!allCardsReviewed && (
@@ -483,8 +476,7 @@ export default function AlphabetCourse() {
             onCancel={cancelMarkAsLearned}
         />
 
-    
+        
       </div>
-    </PageTransition>
   )
 }

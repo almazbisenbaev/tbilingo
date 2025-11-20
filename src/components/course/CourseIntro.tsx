@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import PageTransition from '@/components/PageTransition';
 import AppHeader from '@/components/layout/AppHeader';
 import PageLayout from '@/components/layout/PageLayout';
 import ContentContainer from '@/components/layout/ContentContainer';
@@ -27,7 +26,6 @@ export default function CourseIntro({
   backHref = '/'
 }: CourseIntroProps) {
   return (
-    <PageTransition>
       <PageLayout>
         <ContentContainer>
           <AppHeader 
@@ -61,6 +59,5 @@ export default function CourseIntro({
           </button>
         </ContentContainer>
       </PageLayout>
-    </PageTransition>
   );
 }

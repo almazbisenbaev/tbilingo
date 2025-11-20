@@ -15,7 +15,6 @@ import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 // import SuccessModal from '@/components/ShadcnSuccessModal';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
 import CoursePageLoading from '@/components/CoursePageLoading';
-import PageTransition from '@/components/PageTransition';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -115,19 +114,16 @@ export default function WordsCourse() {
   // Show loading state
   if (wordsLoading) {
     return (
-      <PageTransition>
         <CoursePageLoading 
           courseTitle="Words & phrases"
           message="Loading Georgian words and phrases..."
         />
-      </PageTransition>
     );
   }
 
   // Show error state
   if (wordsError) {
     return (
-      <PageTransition>
         <div style={{ 
           display: 'flex', 
           justifyContent: 'center', 
@@ -138,14 +134,12 @@ export default function WordsCourse() {
           <p>Error loading words: {wordsError}</p>
           <button onClick={() => window.location.reload()}>Retry</button>
         </div>
-      </PageTransition>
     );
   }
 
   // Show empty state
   if (words.length === 0) {
     return (
-      <PageTransition>
         <div style={{ 
           display: 'flex', 
           justifyContent: 'center', 
@@ -156,7 +150,6 @@ export default function WordsCourse() {
           <p>No words data found. Please check the manual data entry guide.</p>
           <Link href="/">Go back to home</Link>
         </div>
-      </PageTransition>
     );
   }
 
@@ -327,7 +320,6 @@ export default function WordsCourse() {
   // Main words page
   if (!isGameplayActive) {
     return (
-      <PageTransition>
         <div className='h-svh flex flex-col justify-between py-4'>
         <div className='w-full max-w-2xl mx-auto p-4'>
           <div className="navbar">
@@ -356,13 +348,11 @@ export default function WordsCourse() {
           <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>
         </div>
         </div>
-      </PageTransition>
     )
   }
 
   // Gameplay component
   return (
-    <PageTransition>
     <div className='h-svh flex flex-col justify-between py-4'>
 
         {!allCardsReviewed && (
@@ -465,6 +455,5 @@ export default function WordsCourse() {
 
     
     </div>
-    </PageTransition>
   )
 }
