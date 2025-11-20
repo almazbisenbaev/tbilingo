@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { AlphabetItem } from '@/types';
-import { useFontTypeStore } from '@/stores/fontTypeStore';
 
 import { shuffleArray } from '@/utils/shuffle-array';
 
@@ -43,7 +42,7 @@ export default function AlphabetCourse() {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [pendingLearnedAction, setPendingLearnedAction] = useState<{characterId: number, index: number, element: HTMLElement | null} | null>(null);
 
-  const { fontType } = useFontTypeStore();
+  
   // const isHydrated = useStoreHydration();
 
   // Fetch alphabet data from Firebase
@@ -374,7 +373,7 @@ export default function AlphabetCourse() {
       <div className='h-svh flex flex-col justify-between py-4'>
 
         {!allCardsReviewed && (
-            <div className={`screen-gameplay font-type-${fontType}`}>
+            <div className={`screen-gameplay`}>
 
                 <div className='w-full max-w-2xl mx-auto p-4'>
                     <div className="navbar">

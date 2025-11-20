@@ -6,7 +6,6 @@ console.log(course_id);
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 // import { useStoreHydration } from '@/stores/progressStore';
-import { useFontTypeStore } from '@/stores/fontTypeStore';
 import { WordItem, PendingWordAction } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
 import WordsComponent from '@/components/WordsComponent/WordsComponent';

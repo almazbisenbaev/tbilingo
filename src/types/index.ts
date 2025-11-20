@@ -115,4 +115,3 @@ export interface PendingNumberAction {
 }
 
 // App configuration types
-export type FontType = 'sans' | 'serif';
