@@ -5,7 +5,6 @@ console.log(course_id);
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { PhraseAdvancedItem, PhraseAdvancedMemory } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
 import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
@@ -26,7 +25,7 @@ const COURSE_TITLE = 'Phrases Advanced';
 const COURSE_DESCRIPTION = 'Advanced Georgian phrases with sentence construction gameplay';
 
 export default function PhrasesAdvancedPage() {
-  useBackToHomeNavigation();
+  
   
   
   

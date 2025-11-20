@@ -13,7 +13,6 @@ import { shuffleArray } from '@/utils/shuffle-array';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import FlashcardLetter from '@/components/FlashcardLetter/FlashcardLetter';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
@@ -25,8 +24,6 @@ import { div } from 'framer-motion/client';
 
 export default function AlphabetCourse() {
 
-  // All hooks must be at the top level and called in the same order every time
-  useBackToHomeNavigation();
 
   // State for alphabet data fetching
   const [allAlphabetItems, setAllAlphabetItems] = useState<AlphabetItem[]>([]);

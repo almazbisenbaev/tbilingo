@@ -5,7 +5,6 @@ console.log(course_id);
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 import { NumberItem, PendingNumberAction } from '@/types';
 import FlashcardNumber from '@/components/FlashcardNumber/FlashcardNumber';
 import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
@@ -18,7 +17,7 @@ import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimesta
 import { db, auth } from '@root/firebaseConfig';
 
 export default function NumbersCourse() {
-  useBackToHomeNavigation();
+  
 
   // State for numbers data fetching
   const [numbers, setNumbers] = useState<NumberItem[]>([]);

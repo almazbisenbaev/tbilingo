@@ -5,7 +5,6 @@ console.log(course_id);
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useBackToHomeNavigation } from '@/utils/useBackButtonHandler';
 // import { useStoreHydration } from '@/stores/progressStore';
 import { useFontTypeStore } from '@/stores/fontTypeStore';
 import { WordItem, PendingWordAction } from '@/types';
@@ -21,7 +20,7 @@ import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimesta
 import { db, auth } from '@root/firebaseConfig';
 
 export default function WordsCourse() {
-  useBackToHomeNavigation();
+  
 
   // State for words data fetching
   const [words, setWords] = useState<WordItem[]>([]);
