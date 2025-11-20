@@ -16,6 +16,7 @@ const UNLOCK_ALL_COURSES_FOR_TESTING = false;
 
 export default function LearnTab() {
   const { initializeCourse } = useProgressStore();
+  const loadUserProgress = useProgressStore(state => state.loadUserProgress);
   
   // Fetch learning data from Firebase
   const { items: alphabetData, loading: alphabetLoading } = useAlphabet();
@@ -94,6 +95,22 @@ export default function LearnTab() {
     }
   }, [businessLoading, businessData.length, initializeCourse]);
   
+  // Refresh user progress when this screen mounts and on page focus/visibility
+  useEffect(() => {
+    loadUserProgress();
+    const onFocus = () => loadUserProgress();
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadUserProgress();
+      }
+    };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => {
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
+  }, [loadUserProgress]);
 
 
   return (
