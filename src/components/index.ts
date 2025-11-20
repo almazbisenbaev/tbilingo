@@ -1,6 +1,5 @@
 // Layout Components
 export { default as AppHeader } from './layout/AppHeader';
-export { default as PageLayout } from './layout/PageLayout';
 
 // Common Components
 export { default as LoadingSpinner } from './common/LoadingSpinner';
