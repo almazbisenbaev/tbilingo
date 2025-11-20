@@ -13,7 +13,7 @@ import { db, auth } from '@root/firebaseConfig';
 import ErrorState from '@/components/common/ErrorState';
 import AppHeader from '@/components/layout/AppHeader';
 import PageLayout from '@/components/layout/PageLayout';
-import ContentContainer from '@/components/layout/ContentContainer';
+ 
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
 import SentenceForm from '@/components/SentenceForm/SentenceForm';
 
@@ -333,7 +333,7 @@ export default function BusinessWorkPage() {
   // Active gameplay
   return (
       <PageLayout className="phrases-advanced-course">
-        <ContentContainer>
+        <div className="w-full max-w-2xl mx-auto p-4">
           <AppHeader 
             title={
               <ProgressBar 
@@ -345,9 +345,8 @@ export default function BusinessWorkPage() {
             showBackButton
             onBackClick={resetGameplay}
           />
-        </ContentContainer>
-
-        <ContentContainer>
+        </div>
+        <div className="w-full max-w-2xl mx-auto p-4">
           {phrasesToReview.map((item, index) => {
             if (index === processedPhrases.length) {
               return (
@@ -363,7 +362,7 @@ export default function BusinessWorkPage() {
             }
             return null;
           })}
-        </ContentContainer>
+        </div>
       </PageLayout>
   );
 }

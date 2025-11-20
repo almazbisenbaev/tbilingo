@@ -19,10 +19,8 @@ import ProgressBar from '@/components/ProgressBar/ProgressBar';
 
 import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
-import { div } from 'framer-motion/client';
 
 export default function AlphabetCourse() {
-
 
   // State for alphabet data fetching
   const [allAlphabetItems, setAllAlphabetItems] = useState<AlphabetItem[]>([]);
