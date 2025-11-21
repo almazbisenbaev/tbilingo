@@ -87,11 +87,13 @@ export default function AlphabetCourse() {
         try {
           const user = auth.currentUser;
           if (!user) return;
-          const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
-          const snap = await getDoc(progressRef);
-          const learnedItemIds: string[] = snap.exists() ? ((snap.data() as any).learnedItemIds || []) : [];
+
+          // Use local state to check for completion instead of fetching to avoid race conditions
           const totalItems = allAlphabetItems.length;
-          if (totalItems > 0 && learnedItemIds.length >= totalItems) {
+          const isFinished = totalItems > 0 && learnedCharacters.length >= totalItems;
+
+          if (isFinished) {
+            const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
             await setDoc(
               progressRef,
               {
@@ -99,7 +101,8 @@ export default function AlphabetCourse() {
                 courseId: String(course_id),
                 isFinished: true,
                 lastUpdated: serverTimestamp(),
-                createdAt: snap.exists() ? ((snap.data() as any).createdAt || serverTimestamp()) : serverTimestamp()
+                // We don't need to fetch createdAt, if it doesn't exist setDoc with merge will handle it or we can just omit if we want to be safe about not overwriting. 
+                // But here we just want to ensure isFinished is true.
               },
               { merge: true }
             );
@@ -109,7 +112,7 @@ export default function AlphabetCourse() {
         }
       })();
     }
-  }, [allCardsReviewed, allAlphabetItems.length]);
+  }, [allCardsReviewed, allAlphabetItems.length, learnedCharacters.length]);
 
   useEffect(() => {
     // Initialize course when alphabet data is loaded
@@ -257,15 +260,22 @@ export default function AlphabetCourse() {
         const snap = await getDoc(progressRef);
         const current = snap.exists() ? (snap.data() as any) : null;
         const currentIds: string[] = current?.learnedItemIds || [];
+
         if (currentIds.includes(String(characterId))) return;
+
         const updatedIds = [...currentIds, String(characterId)];
+
+        // Check if course is finished
+        const isFinished = allAlphabetItems.length > 0 && updatedIds.length >= allAlphabetItems.length;
+
         await setDoc(progressRef, {
           userId: user.uid,
           courseId: String(course_id),
           learnedItemIds: updatedIds,
+          isFinished: isFinished, // Explicitly save isFinished status
           lastUpdated: serverTimestamp(),
           createdAt: current?.createdAt || serverTimestamp()
-        });
+        }, { merge: true }); // Use merge to prevent overwriting other fields
       } catch (e) {
         console.error('❌ Error saving learned item:', e);
       }
