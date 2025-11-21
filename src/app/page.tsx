@@ -11,8 +11,15 @@ export default function LandingPage() {
           <h1 className="text-2xl font-semibold">Your First Step to Learning Georgian</h1>
           <p className="text-base text-gray-600">Short daily lessons designed for beginners</p>
         </div>
-        <div className="flex justify-center">
-          <Link href="/learn" className="btn btn-primary">Learn online</Link>
+        <div className="flex flex-col items-center gap-4">
+          <Link href="/learn" className="btn btn-primary btn-large w-72 justify-center">Learn online</Link>
+          <div className="flex flex-col items-center gap-2">
+            <button className="btn bg-black text-white btn-large w-72 justify-center opacity-50 cursor-not-allowed" disabled>
+              <Image src="/images/icon-android.svg" alt="Android" width={28} height={28} />
+              Play Market
+            </button>
+            <span className="text-sm text-gray-500">(Coming soon)</span>
+          </div>
         </div>
         <div className="mt-8">
           <ScopePreview />
