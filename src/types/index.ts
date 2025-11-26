@@ -32,20 +32,7 @@ export interface PhraseAdvancedMemory {
   isLearned: boolean;
 }
 
-// Progress tracking interfaces
-export interface CourseProgress {
-  learnedItems: Set<string>;  // Changed to Set of strings to match new structure
-  completedLessons: Set<string>;
-}
 
-export interface ProgressData {
-  alphabet: number[];
-  numbers: number[];
-  words: number[];
-}
-
-// Course type definitions
-export type CourseType = 'flashcards' | 'words' | 'phrases' | 'phrases-2' | 'vocabulary';
 
 // Component prop interfaces
 export interface CourseLinkProps {
