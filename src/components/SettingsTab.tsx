@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
-import ConfirmationDialog from './ShadcnConfirmationDialog';
-import SuccessModal from './ShadcnSuccessModal';
+import ConfirmationDialog from './ConfirmationDialog';
+import SuccessModal from './SuccessModal';
 import { Button } from '@/components/ui/button';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '@root/firebaseConfig';

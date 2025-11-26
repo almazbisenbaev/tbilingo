@@ -6,7 +6,7 @@ import CourseLinkSkeleton from '@/components/CourseLinkSkeleton';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { FirebaseErrorBoundary } from '@/components/FirebaseErrorBoundary';
 import Brand from '../Brand/Brand';
-import { ConfirmationDialog } from '@/components/ShadcnConfirmationDialog';
+import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { collection, getDocs, query, orderBy, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';

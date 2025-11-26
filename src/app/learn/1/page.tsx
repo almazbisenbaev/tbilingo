@@ -13,7 +13,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import FlashcardLetter from '@/components/FlashcardLetter/FlashcardLetter';
-import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
+import ConfirmationDialog from '@/components/ConfirmationDialog';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
 
 

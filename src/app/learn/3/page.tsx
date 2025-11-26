@@ -9,8 +9,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { WordItem, PendingWordAction } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
 import WordsComponent from '@/components/WordsComponent/WordsComponent';
-import ConfirmationDialog from '@/components/ShadcnConfirmationDialog';
-// import SuccessModal from '@/components/ShadcnSuccessModal';
+import ConfirmationDialog from '@/components/ConfirmationDialog';
+// import SuccessModal from '@/components/SuccessModal';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
 
 import Image from 'next/image';
