@@ -4,20 +4,17 @@ import { useEffect, useState } from 'react';
 import CourseLink from '@/components/CourseLink/CourseLink';
 import CourseLinkSkeleton from '@/components/CourseLinkSkeleton';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
-import { useProgressStore, useSafeProgressStore } from '@/stores/progressStore';
 import { FirebaseErrorBoundary } from '@/components/FirebaseErrorBoundary';
 import Brand from '../Brand/Brand';
 import { ConfirmationDialog } from '@/components/ShadcnConfirmationDialog';
 import { collection, getDocs, query, orderBy, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
+import { onAuthStateChanged } from 'firebase/auth';
 
 // Unlocks all courses for testing
 const UNLOCK_ALL_COURSES_FOR_TESTING = false;
 
 export default function LearnTab() {
-  const { initializeCourse } = useProgressStore();
-  const loadUserProgress = useProgressStore(state => state.loadUserProgress);
-
   // State for course item counts
   const [alphabetCount, setAlphabetCount] = useState(0);
   const [numbersCount, setNumbersCount] = useState(0);
@@ -25,27 +22,35 @@ export default function LearnTab() {
   const [phrasesAdvancedCount, setPhrasesAdvancedCount] = useState(0);
   const [businessCount, setBusinessCount] = useState(0);
 
+  // State for learned item counts
+  const [alphabetLearnedCount, setAlphabetLearnedCount] = useState(0);
+  const [numbersLearnedCount, setNumbersLearnedCount] = useState(0);
+  const [wordsLearnedCount, setWordsLearnedCount] = useState(0);
+  const [phrasesAdvancedLearnedCount, setPhrasesAdvancedLearnedCount] = useState(0);
+  const [businessLearnedCount, setBusinessLearnedCount] = useState(0);
+
   // Loading states
   const [alphabetLoading, setAlphabetLoading] = useState(true);
   const [numbersLoading, setNumbersLoading] = useState(true);
   const [wordsLoading, setWordsLoading] = useState(true);
   const [phrasesAdvancedLoading, setPhrasesAdvancedLoading] = useState(true);
   const [businessLoading, setBusinessLoading] = useState(true);
+  const [progressLoading, setProgressLoading] = useState(true);
 
   // State for locked course dialog
   const [showLockedDialog, setShowLockedDialog] = useState(false);
   const [requiredCourseTitle, setRequiredCourseTitle] = useState<string>('');
 
-  // Use safe progress store hooks that return undefined during SSR  
-  const alphabetLearnedCount = useSafeProgressStore(state => state.getLearnedCount('1'));
-  const numbersLearnedCount = useSafeProgressStore(state => state.getLearnedCount('2'));
-  const wordsLearnedCount = useSafeProgressStore(state => state.getLearnedCount('3'));
+  // Auth state
+  const [user, setUser] = useState(auth.currentUser);
 
-  // Phrase courses learned counts (using old slugs for progress tracking)
-  const phrasesAdvancedLearnedCount = useSafeProgressStore(state => state.getLearnedCount('4'));
-  const businessLearnedCount = useSafeProgressStore(state => state.getLearnedCount('5'));
-
-  const getCompletionPercentage = useProgressStore(state => state.getCompletionPercentage);
+  // Listen for auth changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return unsubscribe;
+  }, []);
 
   // Fetch item counts directly from Firebase
   useEffect(() => {
@@ -71,12 +76,70 @@ export default function LearnTab() {
     fetchCourseItemCount('5', setBusinessCount, setBusinessLoading);
   }, []);
 
+  // Fetch user progress directly from Firebase
+  useEffect(() => {
+    const fetchUserProgress = async () => {
+      if (!user) {
+        setAlphabetLearnedCount(0);
+        setNumbersLearnedCount(0);
+        setWordsLearnedCount(0);
+        setPhrasesAdvancedLearnedCount(0);
+        setBusinessLearnedCount(0);
+        setProgressLoading(false);
+        return;
+      }
+
+      try {
+        setProgressLoading(true);
+
+        const fetchCourseProgress = async (courseId: string, setLearned: (count: number) => void) => {
+          try {
+            const progressRef = doc(db, 'users', user.uid, 'progress', courseId);
+            const progressSnap = await getDoc(progressRef);
+
+            if (progressSnap.exists()) {
+              const data = progressSnap.data();
+              const learnedItems = data.learnedItemIds || [];
+              setLearned(learnedItems.length);
+            } else {
+              setLearned(0);
+            }
+          } catch (err) {
+            console.error(`Error fetching progress for course ${courseId}:`, err);
+            setLearned(0);
+          }
+        };
+
+        await Promise.all([
+          fetchCourseProgress('1', setAlphabetLearnedCount),
+          fetchCourseProgress('2', setNumbersLearnedCount),
+          fetchCourseProgress('3', setWordsLearnedCount),
+          fetchCourseProgress('4', setPhrasesAdvancedLearnedCount),
+          fetchCourseProgress('5', setBusinessLearnedCount)
+        ]);
+
+      } catch (error) {
+        console.error('Error fetching user progress:', error);
+      } finally {
+        setProgressLoading(false);
+      }
+    };
+
+    fetchUserProgress();
+  }, [user]);
+
+  // Helper to calculate completion percentage
+  const getCompletionPercentage = (learned: number, total: number) => {
+    if (total === 0) return 0;
+    return Math.round((learned / total) * 100);
+  };
+
   // Calculate completion percentages for the main courses
-  const alphabetProgress = getCompletionPercentage('1', alphabetCount);
-  const numbersProgress = getCompletionPercentage('2', numbersCount);
-  const wordsProgress = getCompletionPercentage('3', wordsCount);
-  const phrasesAdvancedProgress = getCompletionPercentage('4', phrasesAdvancedCount);
-  const businessProgress = getCompletionPercentage('5', businessCount);
+  const alphabetProgress = getCompletionPercentage(alphabetLearnedCount, alphabetCount);
+  const numbersProgress = getCompletionPercentage(numbersLearnedCount, numbersCount);
+  const wordsProgress = getCompletionPercentage(wordsLearnedCount, wordsCount);
+  const phrasesAdvancedProgress = getCompletionPercentage(phrasesAdvancedLearnedCount, phrasesAdvancedCount);
+  const businessProgress = getCompletionPercentage(businessLearnedCount, businessCount);
 
   // Check if each course is completed (or bypass if testing flag is enabled)
   const [isAlphabetCompleted, setIsAlphabetCompleted] = useState<boolean>(false);
@@ -84,61 +147,77 @@ export default function LearnTab() {
   const [isWordsCompleted, setIsWordsCompleted] = useState<boolean>(false);
   const [isPhrasesAdvancedCompleted, setIsPhrasesAdvancedCompleted] = useState<boolean>(false);
 
+  // Check completion status when data is loaded
   const [flagsLoaded, setFlagsLoaded] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
-    const loadFinishFlags = async () => {
+    const checkCompletionFlags = async () => {
+      if (!user) {
+        setFlagsLoaded(true);
+        return;
+      }
+
       try {
-        const user = auth.currentUser;
-        if (!user) {
-          if (mounted) {
-            setIsAlphabetCompleted(false);
-            setIsNumbersCompleted(false);
-            setIsWordsCompleted(false);
-            setIsPhrasesAdvancedCompleted(false);
-            setFlagsLoaded(true);
+        const checkFlag = async (courseId: string, setCompleted: (val: boolean) => void) => {
+          if (UNLOCK_ALL_COURSES_FOR_TESTING) {
+            setCompleted(true);
+            return;
           }
-          return;
-        }
-        const ids = ['1', '2', '3', '4', '5'];
-        const refs = ids.map(id => doc(db, 'users', user.uid, 'progress', id));
-        const snaps = await Promise.all(refs.map(r => getDoc(r)));
-        const flags = snaps.map(s => (s.exists() ? Boolean((s.data() as any).isFinished) : false));
-        if (mounted) {
-          setIsAlphabetCompleted(UNLOCK_ALL_COURSES_FOR_TESTING || flags[0]);
-          setIsNumbersCompleted(UNLOCK_ALL_COURSES_FOR_TESTING || flags[1]);
-          setIsWordsCompleted(UNLOCK_ALL_COURSES_FOR_TESTING || flags[2]);
-          setIsPhrasesAdvancedCompleted(UNLOCK_ALL_COURSES_FOR_TESTING || flags[3]);
-          setFlagsLoaded(true);
-        }
-      } catch {
-        if (mounted) setFlagsLoaded(true);
+
+          try {
+            const progressRef = doc(db, 'users', user.uid, 'progress', courseId);
+            const snap = await getDoc(progressRef);
+            if (snap.exists() && snap.data().isFinished) {
+              setCompleted(true);
+            } else {
+              setCompleted(false);
+            }
+          } catch (e) {
+            console.error(`Error checking flag for ${courseId}`, e);
+            setCompleted(false);
+          }
+        };
+
+        await Promise.all([
+          checkFlag('1', setIsAlphabetCompleted),
+          checkFlag('2', setIsNumbersCompleted),
+          checkFlag('3', setIsWordsCompleted),
+          checkFlag('4', setIsPhrasesAdvancedCompleted)
+        ]);
+      } catch (error) {
+        console.error("Error checking completion flags", error);
+      } finally {
+        setFlagsLoaded(true);
       }
     };
-    loadFinishFlags();
-    return () => { mounted = false };
-  }, [alphabetProgress, numbersProgress, wordsProgress, phrasesAdvancedProgress, businessProgress]);
 
-  // Self-correcting logic: if user has learned all items but isFinished is false, fix it
+    checkCompletionFlags();
+  }, [user]);
+
+  // Auto-fix completion flags if user has learned all items but flag is missing
   useEffect(() => {
-    if (!flagsLoaded) return;
+    if (!user || !flagsLoaded) return;
 
     const checkAndFix = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
-
-      const fixCourse = async (courseId: string, isCompleted: boolean, learnedCount: number | undefined, totalItems: number, setCompletedState: (val: boolean) => void) => {
-        if (learnedCount !== undefined && totalItems > 0 && learnedCount >= totalItems && !isCompleted) {
-          console.log(`Auto-correcting course ${courseId} completion status`);
+      const fixCourse = async (
+        courseId: string,
+        isCompleted: boolean,
+        learnedCount: number,
+        totalCount: number,
+        setCompletedState: (val: boolean) => void
+      ) => {
+        // Only fix if NOT marked completed, but we have learned all items, and total items > 0
+        if (!isCompleted && totalCount > 0 && learnedCount >= totalCount) {
+          console.log(`Auto-fixing completion flag for course ${courseId}`);
           try {
-            await setDoc(doc(db, 'users', user.uid, 'progress', courseId), {
+            const progressRef = doc(db, 'users', user.uid, 'progress', courseId);
+            await setDoc(progressRef, {
               isFinished: true,
               lastUpdated: serverTimestamp()
             }, { merge: true });
             setCompletedState(true);
           } catch (e) {
-            console.error(`Failed to auto-correct course ${courseId}`, e);
+            console.error(`Error fixing course ${courseId}`, e);
           }
         }
       };
@@ -147,13 +226,11 @@ export default function LearnTab() {
       if (!numbersLoading) await fixCourse('2', isNumbersCompleted, numbersLearnedCount, numbersCount, setIsNumbersCompleted);
       if (!wordsLoading) await fixCourse('3', isWordsCompleted, wordsLearnedCount, wordsCount, setIsWordsCompleted);
       if (!phrasesAdvancedLoading) await fixCourse('4', isPhrasesAdvancedCompleted, phrasesAdvancedLearnedCount, phrasesAdvancedCount, setIsPhrasesAdvancedCompleted);
-      // Business course (5) doesn't seem to unlock anything else, but we can fix it too if needed. 
-      // The state isPhrasesAdvancedCompleted controls Business lock. 
-      // There is no isBusinessCompleted state used for locking anything, but we might want to fix the flag anyway.
     };
 
     checkAndFix();
   }, [
+    user,
     flagsLoaded,
     alphabetLoading, alphabetCount, alphabetLearnedCount, isAlphabetCompleted,
     numbersLoading, numbersCount, numbersLearnedCount, isNumbersCompleted,
@@ -162,90 +239,63 @@ export default function LearnTab() {
   ]);
 
   // Handler for locked course click
-  const handleLockedClick = (courseTitle: string) => {
-    setRequiredCourseTitle(courseTitle);
+  const handleLockedClick = (requiredTitle: string) => {
+    setRequiredCourseTitle(requiredTitle);
     setShowLockedDialog(true);
   };
 
-  // Initialize courses with their total item counts when data is loaded
-  useEffect(() => {
-    if (!alphabetLoading && alphabetCount > 0) {
-      initializeCourse('1', alphabetCount);
-    }
-  }, [alphabetLoading, alphabetCount, initializeCourse]);
-
-  useEffect(() => {
-    if (!numbersLoading && numbersCount > 0) {
-      initializeCourse('2', numbersCount);
-    }
-  }, [numbersLoading, numbersCount, initializeCourse]);
-
-  useEffect(() => {
-    if (!wordsLoading && wordsCount > 0) {
-      initializeCourse('3', wordsCount);
-    }
-  }, [wordsLoading, wordsCount, initializeCourse]);
-
-  // Initialize phrase courses (using old slugs for progress)
-  useEffect(() => {
-    if (!phrasesAdvancedLoading && phrasesAdvancedCount > 0) {
-      initializeCourse('4', phrasesAdvancedCount);
-    }
-  }, [phrasesAdvancedLoading, phrasesAdvancedCount, initializeCourse]);
-
-  useEffect(() => {
-    if (!businessLoading && businessCount > 0) {
-      initializeCourse('5', businessCount);
-    }
-  }, [businessLoading, businessCount, initializeCourse]);
-
   // Refresh user progress when this screen mounts and on page focus/visibility
   useEffect(() => {
-    loadUserProgress();
-    const onFocus = () => loadUserProgress();
-    const onVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        loadUserProgress();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && user) {
+        // We could re-fetch here if needed, but for now simple mount fetch is enough
+        // or we could trigger the fetchUserProgress effect again
       }
     };
-    window.addEventListener('focus', onFocus);
-    document.addEventListener('visibilitychange', onVisibilityChange);
-    return () => {
-      window.removeEventListener('focus', onFocus);
-      document.removeEventListener('visibilitychange', onVisibilityChange);
-    };
-  }, [loadUserProgress]);
 
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [user]);
+
+  // Show loading skeleton while initial data is loading
+  if (alphabetLoading || (user && progressLoading)) {
+    return (
+      <div className="learn-content">
+        <Brand />
+        <div className="courses-list">
+          <CourseLinkSkeleton />
+          <CourseLinkSkeleton />
+          <CourseLinkSkeleton />
+          <CourseLinkSkeleton />
+          <CourseLinkSkeleton />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <FirebaseErrorBoundary>
-      <div className="learn-content">
+    <div className="learn-content">
+      <Brand />
 
-        <div className="welcome-header">
-          <Brand />
-        </div>
-
-        <div className="welcome-actions">
-
-          {/* Alphabet Course - Always unlocked */}
-          {alphabetLoading ? (
-            <CourseLinkSkeleton />
-          ) : (
+      <div className="courses-list">
+        <FirebaseErrorBoundary>
+          {/* Alphabet Course (Always Unlocked) */}
+          <div className="course-item-wrapper">
             <CourseLink
               href="/learn/1"
               title="Alphabet"
               icon="/images/icon-alphabet.svg"
               disabled={false}
               progress={alphabetProgress}
-              completedItems={alphabetLearnedCount ?? 0}
+              completedItems={alphabetLearnedCount}
               totalItems={alphabetCount}
             />
-          )}
+          </div>
 
-          {/* Numbers Course - Unlocked after alphabet */}
-          {numbersLoading ? (
-            <CourseLinkSkeleton />
-          ) : (
+          {/* Numbers Course (Locked until Alphabet is done) */}
+          <div className="course-item-wrapper">
             <CourseLink
               href="/learn/2"
               title="Numbers"
@@ -253,17 +303,15 @@ export default function LearnTab() {
               disabled={false}
               locked={!isAlphabetCompleted}
               progress={numbersProgress}
-              completedItems={numbersLearnedCount ?? 0}
+              completedItems={numbersLearnedCount}
               totalItems={numbersCount}
               // This is for a popup that tells you what you need complete first before this one
               onLockedClick={() => handleLockedClick("Learn Alphabet")}
             />
-          )}
+          </div>
 
-          {/* Words/Phrases Course - Unlocked after numbers */}
-          {wordsLoading ? (
-            <CourseLinkSkeleton />
-          ) : (
+          {/* Words & Phrases - Basic (Locked until Numbers is done) */}
+          <div className="course-item-wrapper">
             <CourseLink
               href="/learn/3"
               title="Words & Phrases - Basic"
@@ -271,16 +319,14 @@ export default function LearnTab() {
               disabled={false}
               locked={!isNumbersCompleted}
               progress={wordsProgress}
-              completedItems={wordsLearnedCount ?? 0}
+              completedItems={wordsLearnedCount}
               totalItems={wordsCount}
               onLockedClick={() => handleLockedClick("Learn Numbers")}
             />
-          )}
+          </div>
 
-          {/* Phrases Advanced Course - Unlocked after words */}
-          {phrasesAdvancedLoading ? (
-            <CourseLinkSkeleton />
-          ) : (
+          {/* Phrases Advanced (Locked until Words is done) */}
+          <div className="course-item-wrapper">
             <CourseLink
               href="/learn/4"
               title="Phrases Advanced"
@@ -288,16 +334,14 @@ export default function LearnTab() {
               disabled={false}
               locked={!isWordsCompleted}
               progress={phrasesAdvancedProgress}
-              completedItems={phrasesAdvancedLearnedCount ?? 0}
+              completedItems={phrasesAdvancedLearnedCount}
               totalItems={phrasesAdvancedCount}
               onLockedClick={() => handleLockedClick("Words & Phrases - Basic")}
             />
-          )}
+          </div>
 
-          {/* Business Georgian Course - Unlocked after phrases advanced */}
-          {businessLoading ? (
-            <CourseLinkSkeleton />
-          ) : (
+          {/* Business Georgian (Locked until Phrases Advanced is done) */}
+          <div className="course-item-wrapper">
             <CourseLink
               href="/learn/5"
               title="Business Georgian"
@@ -305,27 +349,25 @@ export default function LearnTab() {
               disabled={false}
               locked={!isPhrasesAdvancedCompleted}
               progress={businessProgress}
-              completedItems={businessLearnedCount ?? 0}
+              completedItems={businessLearnedCount}
               totalItems={businessCount}
               onLockedClick={() => handleLockedClick("Phrases Advanced")}
             />
-          )}
-
-        </div>
-
-        {/* Locked Course Dialog */}
-        <ConfirmationDialog
-          isOpen={showLockedDialog}
-          title={`Complete "${requiredCourseTitle}" first to unlock this course.`}
-          confirmText="OK"
-          cancelText=""
-          onConfirm={() => setShowLockedDialog(false)}
-          onCancel={() => setShowLockedDialog(false)}
-        />
-
-        <PWAInstallPrompt />
-
+          </div>
+        </FirebaseErrorBoundary>
       </div>
-    </FirebaseErrorBoundary>
+
+      <PWAInstallPrompt />
+
+      <ConfirmationDialog
+        isOpen={showLockedDialog}
+        title="Course Locked"
+        message={`Please complete "${requiredCourseTitle}" first to unlock this course.`}
+        confirmText="Got it"
+        cancelText=""
+        onConfirm={() => setShowLockedDialog(false)}
+        onCancel={() => setShowLockedDialog(false)}
+      />
+    </div>
   );
 }

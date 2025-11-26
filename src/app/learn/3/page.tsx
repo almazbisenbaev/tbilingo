@@ -5,7 +5,7 @@ console.log(course_id);
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-// import { useStoreHydration } from '@/stores/progressStore';
+
 import { WordItem, PendingWordAction } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
 import WordsComponent from '@/components/WordsComponent/WordsComponent';
@@ -19,7 +19,7 @@ import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimesta
 import { db, auth } from '@root/firebaseConfig';
 
 export default function WordsCourse() {
-  
+
 
   // State for words data fetching
   const [words, setWords] = useState<WordItem[]>([]);
@@ -28,10 +28,10 @@ export default function WordsCourse() {
 
   const [learnedWords, setLearnedWords] = useState<number[]>([]); // Store words that the user has learned
   const [progressLoaded, setProgressLoaded] = useState(false);
-  
+
   // Gameplay states
   const [isGameplayActive, setIsGameplayActive] = useState<boolean>(false);
-  const [processedWords, setProcessedWords] = useState<number[]>([]); 
+  const [processedWords, setProcessedWords] = useState<number[]>([]);
   const [wordsToReview, setWordsToReview] = useState<WordItem[]>([]);
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [slideWidth, setSlideWidth] = useState<number>(0);
@@ -42,8 +42,8 @@ export default function WordsCourse() {
   const [pendingLearnedAction, setPendingLearnedAction] = useState<PendingWordAction | null>(null);
 
   // const isHydrated = useStoreHydration();
-  
-  
+
+
 
   // Fetch words data from Firebase
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function WordsCourse() {
       try {
         setWordsLoading(true);
         setWordsError(null);
-        
+
         const itemsRef = collection(db, 'courses', String(course_id), 'items');
         const qItems = query(itemsRef, orderBy('order', 'asc'));
         const snapshot = await getDocs(qItems);
@@ -62,7 +62,7 @@ export default function WordsCourse() {
           latin: (docSnap.data() as any).latin
         }));
         setWords(wordItems);
-        
+
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         console.error('❌ Error fetching words data:', error);
@@ -108,7 +108,7 @@ export default function WordsCourse() {
   // Check if all cards have been reviewed - moved to top level to avoid hooks order issues
   useEffect(() => {
     if (wordsToReview.length > 0 && processedWords.length === wordsToReview.length) {
-        setAllCardsReviewed(true);
+      setAllCardsReviewed(true);
     }
   }, [processedWords, wordsToReview]);
 
@@ -145,39 +145,39 @@ export default function WordsCourse() {
   // Show loading state
   if (wordsLoading) {
     return (
-        <div className='h-screen w-screen flex items-center justify-center'>Loading...</div>
+      <div className='h-screen w-screen flex items-center justify-center'>Loading...</div>
     );
   }
 
   // Show error state
   if (wordsError) {
     return (
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          minHeight: '100svh',
-          flexDirection: 'column'
-        }}>
-          <p>Error loading words: {wordsError}</p>
-          <button onClick={() => window.location.reload()}>Retry</button>
-        </div>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100svh',
+        flexDirection: 'column'
+      }}>
+        <p>Error loading words: {wordsError}</p>
+        <button onClick={() => window.location.reload()}>Retry</button>
+      </div>
     );
   }
 
   // Show empty state
   if (words.length === 0) {
     return (
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          minHeight: '100svh',
-          flexDirection: 'column'
-        }}>
-          <p>No words data found. Please check the manual data entry guide.</p>
-          <Link href="/learn">Go back to home</Link>
-        </div>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100svh',
+        flexDirection: 'column'
+      }}>
+        <p>No words data found. Please check the manual data entry guide.</p>
+        <Link href="/learn">Go back to home</Link>
+      </div>
     );
   }
 
@@ -188,7 +188,7 @@ export default function WordsCourse() {
   const startGameplay = () => {
     const learnedWordsInLocal = learnedWords;
     const wordsMissingInLocal = words.filter((word: any) => !learnedWordsInLocal.includes(word.id)) as WordItem[];
-    
+
     // Reset session state
     setProcessedWords([]);
     setCurrentWordIndex(0);
@@ -205,11 +205,11 @@ export default function WordsCourse() {
 
     // Calculate slide width after component renders for proper animations
     setTimeout(() => {
-        const element = document.querySelector('.slider-slide');
-        if(element){
-            const slideWidth = element.getBoundingClientRect().width;
-            setSlideWidth(slideWidth);
-        }
+      const element = document.querySelector('.slider-slide');
+      if (element) {
+        const slideWidth = element.getBoundingClientRect().width;
+        setSlideWidth(slideWidth);
+      }
     }, 200); // Short delay to ensure DOM is ready
   };
 
@@ -220,18 +220,18 @@ export default function WordsCourse() {
    */
   const switchSlide = (index: number, element: HTMLElement | null) => {
     if (!element) return;
-    
+
     const slideWidth = element.getBoundingClientRect().width;
     const sliderTrack = document.querySelector('.slider-track') as HTMLElement | null;
-    
-    if(sliderTrack){
-        const currentTransform = getComputedStyle(sliderTrack).transform;
-        const matrix = new window.DOMMatrix(currentTransform);
-        const currentTranslateX = matrix.m41;
-        
-        sliderTrack.style.transform = `translateX(${currentTranslateX - slideWidth}px)`;
+
+    if (sliderTrack) {
+      const currentTransform = getComputedStyle(sliderTrack).transform;
+      const matrix = new window.DOMMatrix(currentTransform);
+      const currentTranslateX = matrix.m41;
+
+      sliderTrack.style.transform = `translateX(${currentTranslateX - slideWidth}px)`;
     }
-    
+
     // Update current word index for progress bar
     setCurrentWordIndex(index + 1);
   }
@@ -348,23 +348,23 @@ export default function WordsCourse() {
   // Main words page
   if (!isGameplayActive) {
     return (
-        <div className='h-svh flex flex-col justify-between py-4'>
+      <div className='h-svh flex flex-col justify-between py-4'>
         <div className='w-full max-w-2xl mx-auto p-4'>
           <div className="navbar">
-              <div className="navbar-row">
-                  <div className="navbar-aside">
-                  <Link href="/learn" className='navbar-button'>
-                      <Image
-                      src="/images/icon-back.svg"
-                      alt="Back"
-                      width={24}
-                      height={24}
-                      />
-                  </Link>
-                  </div>
-                  <h1 className="navbar-title">Words & Phrases - Basic</h1>
-                  <div className="navbar-aside"></div>
+            <div className="navbar-row">
+              <div className="navbar-aside">
+                <Link href="/learn" className='navbar-button'>
+                  <Image
+                    src="/images/icon-back.svg"
+                    alt="Back"
+                    width={24}
+                    height={24}
+                  />
+                </Link>
               </div>
+              <h1 className="navbar-title">Words & Phrases - Basic</h1>
+              <div className="navbar-aside"></div>
+            </div>
           </div>
         </div>
 
@@ -377,7 +377,7 @@ export default function WordsCourse() {
         <div className='w-full max-w-2xl mx-auto p-4'>
           <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>
         </div>
-        </div>
+      </div>
     )
   }
 
@@ -385,105 +385,105 @@ export default function WordsCourse() {
   return (
     <div className='h-svh flex flex-col justify-between py-4'>
 
-        {!allCardsReviewed && (
-            <div className="screen-gameplay">
+      {!allCardsReviewed && (
+        <div className="screen-gameplay">
 
-                <div className='w-full max-w-2xl mx-auto p-4'>
-                    <div className="navbar">
-                        <div className="navbar-row">
-                            <div className="navbar-aside">
-                            <button onClick={resetGameplay} className='navbar-button'>
-                                <Image
-                                src="/images/icon-back.svg"
-                                alt="Back"
-                                width={24}
-                                height={24}
-                                />
-                            </button>
-                            </div>
-                            <div className="navbar-title">
-                              {/* Progress bar */}
-                              <ProgressBar 
-                                current={processedWords.length} 
-                                total={wordsToReview.length}
-                                width="200px"
-                              />
-                            </div>
-                            <div className="navbar-aside"></div>
-                        </div>
-                    </div>
+          <div className='w-full max-w-2xl mx-auto p-4'>
+            <div className="navbar">
+              <div className="navbar-row">
+                <div className="navbar-aside">
+                  <button onClick={resetGameplay} className='navbar-button'>
+                    <Image
+                      src="/images/icon-back.svg"
+                      alt="Back"
+                      width={24}
+                      height={24}
+                    />
+                  </button>
                 </div>
-
-                <div className="gameplay-game">
-                    <div className="slider">
-                        <div className="slider-wrapper">
-                        <div className="slider-track">
-                            {wordsToReview.map((item, index) => {
-                                const isProcessed = processedWords.includes(item.id);
-                                const isLearned = learnedWords.includes(item.id);
-                                return  <div key={item.id} 
-                                            className={`slider-slide ${isProcessed ? 'processed' : 'not-processed'} ${isLearned ? 'learned' : 'not-learned'}`}
-                                                style={{
-                                                '--slide-width': slideWidth + 'px',
-                                                } as React.CSSProperties}
-                                        >
-                                            <div className='slider-slide-inner'>
-
-                                                <WordsComponent 
-                                                    word={item} 
-                                                    onNext={() => markAsToReview(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
-                                                    onLearned={() => markAsLearned(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
-                                                />
-
-                                            </div>
-                                        </div>;
-                            })}
-                        </div>
-                        </div>
-                    </div>
+                <div className="navbar-title">
+                  {/* Progress bar */}
+                  <ProgressBar
+                    current={processedWords.length}
+                    total={wordsToReview.length}
+                    width="200px"
+                  />
                 </div>
-
+                <div className="navbar-aside"></div>
+              </div>
             </div>
+          </div>
+
+          <div className="gameplay-game">
+            <div className="slider">
+              <div className="slider-wrapper">
+                <div className="slider-track">
+                  {wordsToReview.map((item, index) => {
+                    const isProcessed = processedWords.includes(item.id);
+                    const isLearned = learnedWords.includes(item.id);
+                    return <div key={item.id}
+                      className={`slider-slide ${isProcessed ? 'processed' : 'not-processed'} ${isLearned ? 'learned' : 'not-learned'}`}
+                      style={{
+                        '--slide-width': slideWidth + 'px',
+                      } as React.CSSProperties}
+                    >
+                      <div className='slider-slide-inner'>
+
+                        <WordsComponent
+                          word={item}
+                          onNext={() => markAsToReview(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
+                          onLearned={() => markAsLearned(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
+                        />
+
+                      </div>
+                    </div>;
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      )}
+
+      <AnimatePresence mode="wait">
+        {allCardsReviewed && (
+          <motion.div
+            className="screen-finish"
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: -20 }}
+            transition={{
+              duration: 0.5,
+              ease: [0.34, 1.56, 0.64, 1]
+            }}
+          >
+            <div className="finish-message">
+              <div className='text-center text-4xl'>🎉</div>
+              <h2 className='font-semibold text-2xl'>Great work!</h2>
+              <div className='text-lg finish-message-text'>
+                <p>You've reviewed all the words and phrases for this session. You learned <b>{learnedWords.filter(id => wordsToReview.some(word => word.id === id)).length}</b> new items!</p>
+                <p>Total progress: <b>{learnedWords.length}</b> out of <b>{words.length}</b> words & phrases learned.</p>
+              </div>
+              <div className='finish-message-actions'>
+                <button onClick={resetGameplay} className='btn btn-small btn-secondary'>Go back</button>
+              </div>
+            </div>
+          </motion.div>
         )}
+      </AnimatePresence>
 
-        <AnimatePresence mode="wait">
-          {allCardsReviewed && (
-            <motion.div 
-              className="screen-finish"
-              initial={{ opacity: 0, scale: 0.8, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: -20 }}
-              transition={{ 
-                duration: 0.5,
-                ease: [0.34, 1.56, 0.64, 1]
-              }}
-            >
-                <div className="finish-message">
-                <div className='text-center text-4xl'>🎉</div>
-                <h2 className='font-semibold text-2xl'>Great work!</h2>
-                <div className='text-lg finish-message-text'>
-                    <p>You've reviewed all the words and phrases for this session. You learned <b>{learnedWords.filter(id => wordsToReview.some(word => word.id === id)).length}</b> new items!</p>
-                    <p>Total progress: <b>{learnedWords.length}</b> out of <b>{words.length}</b> words & phrases learned.</p>
-                </div>
-                <div className='finish-message-actions'>
-                    <button onClick={resetGameplay} className='btn btn-small btn-secondary'>Go back</button>
-                </div>
-                </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+      {/* Confirmation Dialog for Mark as Learned */}
+      <ConfirmationDialog
+        isOpen={showConfirmation}
+        title="Are you sure you want to mark this item as learned?"
+        confirmText="Confirm"
+        cancelText="Cancel"
+        onConfirm={confirmMarkAsLearned}
+        onCancel={cancelMarkAsLearned}
+      />
 
-        {/* Confirmation Dialog for Mark as Learned */}
-        <ConfirmationDialog
-            isOpen={showConfirmation}
-            title="Are you sure you want to mark this item as learned?"
-            confirmText="Confirm"
-            cancelText="Cancel"
-            onConfirm={confirmMarkAsLearned}
-            onCancel={cancelMarkAsLearned}
-        />
 
-    
     </div>
   )
 }

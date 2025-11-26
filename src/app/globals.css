@@ -827,7 +827,7 @@ input[type=submit]:focus {
 }
 
 
-
+/* 
 @theme inline {
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -905,4 +905,12 @@ input[type=submit]:focus {
   * {
     @apply border-border outline-ring/50;
   }
+}
+ */
+
+
+.courses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }

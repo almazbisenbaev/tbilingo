@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
-import { useProgressStore } from '@/stores/progressStore';
 import ConfirmationDialog from './ShadcnConfirmationDialog';
 import SuccessModal from './ShadcnSuccessModal';
 import { Button } from '@/components/ui/button';
+import { doc, deleteDoc } from 'firebase/firestore';
+import { db } from '@root/firebaseConfig';
 
 export default function SettingsTab() {
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
@@ -14,16 +15,34 @@ export default function SettingsTab() {
   const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const { currentUser, logout } = useAuth();
-  const { resetAllProgress } = useProgressStore();
 
-  
+  const resetAllProgress = async () => {
+    if (!currentUser) return;
+
+    try {
+      // Delete progress for all courses
+      const courseIds = ['1', '2', '3', '4', '5'];
+      const deletePromises = courseIds.map(courseId => {
+        const progressRef = doc(db, 'users', currentUser.uid, 'progress', courseId);
+        return deleteDoc(progressRef);
+      });
+
+      await Promise.all(deletePromises);
+      console.log('All progress reset successfully');
+
+      // Force reload to update UI since we don't have a global store anymore
+      window.location.reload();
+    } catch (error) {
+      console.error('Error resetting progress:', error);
+    }
+  };
 
   const onReset = () => {
     setShowResetConfirmation(true);
   };
 
-  const confirmReset = () => {
-    resetAllProgress();
+  const confirmReset = async () => {
+    await resetAllProgress();
     setShowResetConfirmation(false);
     setShowSuccessPopup(true);
     setTimeout(() => {
@@ -64,7 +83,7 @@ export default function SettingsTab() {
               <p>Welcome, {currentUser.displayName || currentUser.email}!</p>
 
               <div>
-                <Button 
+                <Button
                   variant="link"
                   size="sm"
                   className="text-red-600 hover:text-red-700 p-0 h-auto"
@@ -81,13 +100,13 @@ export default function SettingsTab() {
         <div className="settings-items">
           <div className="divider"></div>
           <div className="settings-item">
-            <button 
-              className='reset-button' 
+            <button
+              className='reset-button'
               onClick={onReset}
             >
-              <Image 
-                src="/images/icon-reset-red.svg" 
-                alt="Reset" 
+              <Image
+                src="/images/icon-reset-red.svg"
+                alt="Reset"
                 width={16}
                 height={16}
               />

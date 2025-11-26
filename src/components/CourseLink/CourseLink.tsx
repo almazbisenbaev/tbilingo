@@ -1,8 +1,10 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { CourseLinkProps } from '@/types';
-import { useStoreHydration } from '@/stores/progressStore';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
+import { useState, useEffect } from 'react';
 
 import './CourseLink.css';
 
@@ -11,37 +13,38 @@ import './CourseLink.css';
  * Optionally shows progress information when progress data is provided
  */
 
-export default function CourseLink({ 
-  href, 
-  title, 
-  icon, 
-  disabled = false, 
-  locked = false,
-  progress = 0, 
-  totalItems = 0, 
-  completedItems = 0,
-  onLockedClick
+export default function CourseLink({
+    href,
+    title,
+    icon,
+    disabled = false,
+    locked = false,
+    progress = 0,
+    totalItems = 0,
+    completedItems = 0,
+    onLockedClick
 }: CourseLinkProps) {
-  const isHydrated = useStoreHydration();
-  
-  // Only show progress if hydrated AND we have actual data
-  const shouldShowProgress = isHydrated && !disabled && progress !== undefined && progress >= 0;
-  
-  // Debug log to check the props being received
-  console.log(`CourseLink [${title}]:`, { progress, completedItems, totalItems, isHydrated, shouldShowProgress, locked });
-  
-  // Handle locked course click
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (locked) {
-      e.preventDefault();
-      onLockedClick?.();
-    }
-  };
-  
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    // Only show progress if mounted AND we have actual data
+    const shouldShowProgress = isMounted && !disabled && progress !== undefined && progress >= 0;
+
+    // Handle locked course click
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        if (locked) {
+            e.preventDefault();
+            onLockedClick?.();
+        }
+    };
+
     return (
         <>
-            <Link 
-                href={href} 
+            <Link
+                href={href}
                 className={`course-link ${disabled ? 'course-link-disabled' : ''}`}
                 style={{
                     pointerEvents: (disabled) ? "none" : "auto",
@@ -59,7 +62,7 @@ export default function CourseLink({
                     )}
                     {shouldShowProgress && (
                         <div className='course-link-progress'>
-                            <ProgressBar 
+                            <ProgressBar
                                 current={completedItems || 0}
                                 total={totalItems || 0}
                                 width="100%"
