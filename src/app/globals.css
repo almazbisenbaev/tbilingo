@@ -49,7 +49,7 @@ body {
 
 body {
   font-family: var(--font-sans);
-  font-size: 1rem;  
+  font-size: 1rem;
   transition: .3s cubic-bezier(0.76, 0, 0.24, 1);
   /* background: linear-gradient(180deg, rgba(255, 118, 88, 0.03) 0%, rgba(255, 118, 88, 0.1) 100%), #FFFFFF; */
   background: #f4f4f4;
@@ -75,7 +75,7 @@ textarea,
 button,
 select,
 a {
-    -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button,
@@ -106,7 +106,7 @@ input[type=submit]:focus {
   gap: 6px;
 }
 
-.debugbar > div {
+.debugbar>div {
   background: #222;
   padding: 3px;
 }
@@ -132,7 +132,8 @@ input[type=submit]:focus {
   user-select: none;
 }
 
-.btn:hover, .btn:focus {
+.btn:hover,
+.btn:focus {
   color: #8A2008;
 }
 
@@ -160,8 +161,25 @@ input[type=submit]:focus {
   background-color: #F24822;
 }
 
-.btn-primary:hover, .btn-primary:focus {
+.btn-primary:hover,
+.btn-primary:focus {
   color: #fff;
+}
+
+.btn-black {
+  color: #fff;
+  background-color: #000;
+}
+
+.btn-black:hover,
+.btn-black:focus {
+  color: #fff;
+  background-color: #000;
+}
+
+.btn-black:active {
+  color: #fff;
+  background-color: #000;
 }
 
 .auth-divider {
@@ -255,12 +273,12 @@ input[type=submit]:focus {
 }
 
 .slider-slide.learned .slider-slide-inner {
-  transform: translateX( calc(var(--slide-width, 0) / 2) ) rotate(5deg) scale(0.8);
+  transform: translateX(calc(var(--slide-width, 0) / 2)) rotate(5deg) scale(0.8);
 }
 
 /* The green ring on learned card */
 .slider-slide.learned .flashcard-front {
-  box-shadow: inset 0px 0px 0px 8px rgba(14,194,113,1);
+  box-shadow: inset 0px 0px 0px 8px rgba(14, 194, 113, 1);
 }
 
 .slider-slide-actions {
@@ -526,10 +544,11 @@ input[type=submit]:focus {
   height: 56px;
   padding-bottom: 10px;
 
-  transition: 0.2s;;
+  transition: 0.2s;
+  ;
 }
 
-.settings-ff-item input:checked + .settings-ff-item-preview {
+.settings-ff-item input:checked+.settings-ff-item-preview {
   border-color: rgba(0, 0, 0, 0.5);
   background-color: #d4d0ce;
 }
@@ -602,6 +621,7 @@ input[type=submit]:focus {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -611,6 +631,7 @@ input[type=submit]:focus {
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
   }
@@ -626,7 +647,8 @@ input[type=submit]:focus {
 .tab-content {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 80px; /* Space for tab bar */
+  padding-bottom: 80px;
+  /* Space for tab bar */
 }
 
 /* Animated tab content transitions */
@@ -772,7 +794,7 @@ input[type=submit]:focus {
   margin: auto;
 }
 
-@media (max-width: 375px){
+@media (max-width: 375px) {
 
   .learn-content {
     padding-right: 24px;
@@ -884,5 +906,3 @@ input[type=submit]:focus {
     @apply border-border outline-ring/50;
   }
 }
-
-

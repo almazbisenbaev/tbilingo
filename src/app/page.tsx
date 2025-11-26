@@ -14,7 +14,7 @@ export default function LandingPage() {
         <div className="flex flex-col items-center gap-4">
           <Link href="/learn" className="btn btn-primary btn-large w-72 justify-center">Learn online</Link>
           <div className="flex flex-col items-center gap-2">
-            <button className="btn bg-black text-white btn-large w-72 justify-center opacity-50 cursor-not-allowed" disabled>
+            <button className="btn btn-black text-white btn-large w-72 justify-center cursor-not-allowed" disabled>
               <Image src="/images/icon-android.svg" alt="Android" width={28} height={28} />
               Play Market
             </button>

@@ -5,11 +5,10 @@ import CourseLink from '@/components/CourseLink/CourseLink';
 import CourseLinkSkeleton from '@/components/CourseLinkSkeleton';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { useProgressStore, useSafeProgressStore } from '@/stores/progressStore';
-import { useAlphabet, useNumbers, useWords, usePhrasesCourse } from '@/hooks/useEnhancedLearningContent';
 import { FirebaseErrorBoundary } from '@/components/FirebaseErrorBoundary';
 import Brand from '../Brand/Brand';
 import { ConfirmationDialog } from '@/components/ShadcnConfirmationDialog';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
 
 // Unlocks all courses for testing
@@ -19,20 +18,23 @@ export default function LearnTab() {
   const { initializeCourse } = useProgressStore();
   const loadUserProgress = useProgressStore(state => state.loadUserProgress);
 
-  // Fetch learning data from Firebase
-  const { items: alphabetData, loading: alphabetLoading } = useAlphabet();
-  const { items: numbersData, loading: numbersLoading } = useNumbers();
-  const { items: wordsData, loading: wordsLoading } = useWords();
+  // State for course item counts
+  const [alphabetCount, setAlphabetCount] = useState(0);
+  const [numbersCount, setNumbersCount] = useState(0);
+  const [wordsCount, setWordsCount] = useState(0);
+  const [phrasesAdvancedCount, setPhrasesAdvancedCount] = useState(0);
+  const [businessCount, setBusinessCount] = useState(0);
 
-  // Fetch phrase courses data
-  const { items: phrasesAdvancedData, loading: phrasesAdvancedLoading } = usePhrasesCourse('4');
-  const { items: businessData, loading: businessLoading } = usePhrasesCourse('5');
+  // Loading states
+  const [alphabetLoading, setAlphabetLoading] = useState(true);
+  const [numbersLoading, setNumbersLoading] = useState(true);
+  const [wordsLoading, setWordsLoading] = useState(true);
+  const [phrasesAdvancedLoading, setPhrasesAdvancedLoading] = useState(true);
+  const [businessLoading, setBusinessLoading] = useState(true);
 
   // State for locked course dialog
   const [showLockedDialog, setShowLockedDialog] = useState(false);
   const [requiredCourseTitle, setRequiredCourseTitle] = useState<string>('');
-
-
 
   // Use safe progress store hooks that return undefined during SSR  
   const alphabetLearnedCount = useSafeProgressStore(state => state.getLearnedCount('1'));
@@ -45,12 +47,36 @@ export default function LearnTab() {
 
   const getCompletionPercentage = useProgressStore(state => state.getCompletionPercentage);
 
+  // Fetch item counts directly from Firebase
+  useEffect(() => {
+    const fetchCourseItemCount = async (courseId: string, setCount: (count: number) => void, setLoading: (loading: boolean) => void) => {
+      try {
+        const itemsRef = collection(db, 'courses', courseId, 'items');
+        const q = query(itemsRef, orderBy('order', 'asc'));
+        const snapshot = await getDocs(q);
+        setCount(snapshot.docs.length);
+      } catch (error) {
+        console.error(`Error fetching course ${courseId} items:`, error);
+        setCount(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Fetch all course item counts
+    fetchCourseItemCount('1', setAlphabetCount, setAlphabetLoading);
+    fetchCourseItemCount('2', setNumbersCount, setNumbersLoading);
+    fetchCourseItemCount('3', setWordsCount, setWordsLoading);
+    fetchCourseItemCount('4', setPhrasesAdvancedCount, setPhrasesAdvancedLoading);
+    fetchCourseItemCount('5', setBusinessCount, setBusinessLoading);
+  }, []);
+
   // Calculate completion percentages for the main courses
-  const alphabetProgress = getCompletionPercentage('1', alphabetData.length);
-  const numbersProgress = getCompletionPercentage('2', numbersData.length);
-  const wordsProgress = getCompletionPercentage('3', wordsData.length);
-  const phrasesAdvancedProgress = getCompletionPercentage('4', phrasesAdvancedData.length);
-  const businessProgress = getCompletionPercentage('5', businessData.length);
+  const alphabetProgress = getCompletionPercentage('1', alphabetCount);
+  const numbersProgress = getCompletionPercentage('2', numbersCount);
+  const wordsProgress = getCompletionPercentage('3', wordsCount);
+  const phrasesAdvancedProgress = getCompletionPercentage('4', phrasesAdvancedCount);
+  const businessProgress = getCompletionPercentage('5', businessCount);
 
   // Check if each course is completed (or bypass if testing flag is enabled)
   const [isAlphabetCompleted, setIsAlphabetCompleted] = useState<boolean>(false);
@@ -117,10 +143,10 @@ export default function LearnTab() {
         }
       };
 
-      if (!alphabetLoading) await fixCourse('1', isAlphabetCompleted, alphabetLearnedCount, alphabetData.length, setIsAlphabetCompleted);
-      if (!numbersLoading) await fixCourse('2', isNumbersCompleted, numbersLearnedCount, numbersData.length, setIsNumbersCompleted);
-      if (!wordsLoading) await fixCourse('3', isWordsCompleted, wordsLearnedCount, wordsData.length, setIsWordsCompleted);
-      if (!phrasesAdvancedLoading) await fixCourse('4', isPhrasesAdvancedCompleted, phrasesAdvancedLearnedCount, phrasesAdvancedData.length, setIsPhrasesAdvancedCompleted);
+      if (!alphabetLoading) await fixCourse('1', isAlphabetCompleted, alphabetLearnedCount, alphabetCount, setIsAlphabetCompleted);
+      if (!numbersLoading) await fixCourse('2', isNumbersCompleted, numbersLearnedCount, numbersCount, setIsNumbersCompleted);
+      if (!wordsLoading) await fixCourse('3', isWordsCompleted, wordsLearnedCount, wordsCount, setIsWordsCompleted);
+      if (!phrasesAdvancedLoading) await fixCourse('4', isPhrasesAdvancedCompleted, phrasesAdvancedLearnedCount, phrasesAdvancedCount, setIsPhrasesAdvancedCompleted);
       // Business course (5) doesn't seem to unlock anything else, but we can fix it too if needed. 
       // The state isPhrasesAdvancedCompleted controls Business lock. 
       // There is no isBusinessCompleted state used for locking anything, but we might want to fix the flag anyway.
@@ -129,10 +155,10 @@ export default function LearnTab() {
     checkAndFix();
   }, [
     flagsLoaded,
-    alphabetLoading, alphabetData.length, alphabetLearnedCount, isAlphabetCompleted,
-    numbersLoading, numbersData.length, numbersLearnedCount, isNumbersCompleted,
-    wordsLoading, wordsData.length, wordsLearnedCount, isWordsCompleted,
-    phrasesAdvancedLoading, phrasesAdvancedData.length, phrasesAdvancedLearnedCount, isPhrasesAdvancedCompleted
+    alphabetLoading, alphabetCount, alphabetLearnedCount, isAlphabetCompleted,
+    numbersLoading, numbersCount, numbersLearnedCount, isNumbersCompleted,
+    wordsLoading, wordsCount, wordsLearnedCount, isWordsCompleted,
+    phrasesAdvancedLoading, phrasesAdvancedCount, phrasesAdvancedLearnedCount, isPhrasesAdvancedCompleted
   ]);
 
   // Handler for locked course click
@@ -143,35 +169,35 @@ export default function LearnTab() {
 
   // Initialize courses with their total item counts when data is loaded
   useEffect(() => {
-    if (!alphabetLoading && alphabetData.length > 0) {
-      initializeCourse('1', alphabetData.length);
+    if (!alphabetLoading && alphabetCount > 0) {
+      initializeCourse('1', alphabetCount);
     }
-  }, [alphabetLoading, alphabetData.length, initializeCourse]);
+  }, [alphabetLoading, alphabetCount, initializeCourse]);
 
   useEffect(() => {
-    if (!numbersLoading && numbersData.length > 0) {
-      initializeCourse('2', numbersData.length);
+    if (!numbersLoading && numbersCount > 0) {
+      initializeCourse('2', numbersCount);
     }
-  }, [numbersLoading, numbersData.length, initializeCourse]);
+  }, [numbersLoading, numbersCount, initializeCourse]);
 
   useEffect(() => {
-    if (!wordsLoading && wordsData.length > 0) {
-      initializeCourse('3', wordsData.length);
+    if (!wordsLoading && wordsCount > 0) {
+      initializeCourse('3', wordsCount);
     }
-  }, [wordsLoading, wordsData.length, initializeCourse]);
+  }, [wordsLoading, wordsCount, initializeCourse]);
 
   // Initialize phrase courses (using old slugs for progress)
   useEffect(() => {
-    if (!phrasesAdvancedLoading && phrasesAdvancedData.length > 0) {
-      initializeCourse('4', phrasesAdvancedData.length);
+    if (!phrasesAdvancedLoading && phrasesAdvancedCount > 0) {
+      initializeCourse('4', phrasesAdvancedCount);
     }
-  }, [phrasesAdvancedLoading, phrasesAdvancedData.length, initializeCourse]);
+  }, [phrasesAdvancedLoading, phrasesAdvancedCount, initializeCourse]);
 
   useEffect(() => {
-    if (!businessLoading && businessData.length > 0) {
-      initializeCourse('5', businessData.length);
+    if (!businessLoading && businessCount > 0) {
+      initializeCourse('5', businessCount);
     }
-  }, [businessLoading, businessData.length, initializeCourse]);
+  }, [businessLoading, businessCount, initializeCourse]);
 
   // Refresh user progress when this screen mounts and on page focus/visibility
   useEffect(() => {
@@ -212,7 +238,7 @@ export default function LearnTab() {
               disabled={false}
               progress={alphabetProgress}
               completedItems={alphabetLearnedCount ?? 0}
-              totalItems={alphabetData.length}
+              totalItems={alphabetCount}
             />
           )}
 
@@ -228,7 +254,7 @@ export default function LearnTab() {
               locked={!isAlphabetCompleted}
               progress={numbersProgress}
               completedItems={numbersLearnedCount ?? 0}
-              totalItems={numbersData.length}
+              totalItems={numbersCount}
               // This is for a popup that tells you what you need complete first before this one
               onLockedClick={() => handleLockedClick("Learn Alphabet")}
             />
@@ -246,7 +272,7 @@ export default function LearnTab() {
               locked={!isNumbersCompleted}
               progress={wordsProgress}
               completedItems={wordsLearnedCount ?? 0}
-              totalItems={wordsData.length}
+              totalItems={wordsCount}
               onLockedClick={() => handleLockedClick("Learn Numbers")}
             />
           )}
@@ -263,7 +289,7 @@ export default function LearnTab() {
               locked={!isWordsCompleted}
               progress={phrasesAdvancedProgress}
               completedItems={phrasesAdvancedLearnedCount ?? 0}
-              totalItems={phrasesAdvancedData.length}
+              totalItems={phrasesAdvancedCount}
               onLockedClick={() => handleLockedClick("Words & Phrases - Basic")}
             />
           )}
@@ -280,7 +306,7 @@ export default function LearnTab() {
               locked={!isPhrasesAdvancedCompleted}
               progress={businessProgress}
               completedItems={businessLearnedCount ?? 0}
-              totalItems={businessData.length}
+              totalItems={businessCount}
               onLockedClick={() => handleLockedClick("Phrases Advanced")}
             />
           )}
