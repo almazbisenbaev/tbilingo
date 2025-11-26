@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { create } from 'zustand';
 import { SimpleUserProgressService, SimpleUserProgress } from '@/services/simpleUserProgress';
 import { auth } from '@root/firebaseConfig';
@@ -13,68 +13,46 @@ const debugLog = (operation: string, data?: any) => {
   }
 };
 
-// Local course types (keeping for backward compatibility)
-export type CourseType = 'flashcards' | 'phrases' | '4' | 'phrases-2' | 'vocabulary' | string;
-
-// Course progress interface
+// Simplified course progress - removed unused completedLessons
 export interface CourseProgress {
   learnedItems: Set<string>;
-  completedLessons: Set<string>;
 }
 
-// Progress state interface
+// Progress state interface - removed unused methods
 export interface ProgressState {
   // Data
   courses: Record<string, CourseProgress>;
   user: User | null;
   isLoading: boolean;
   isHydrated: boolean;
-  
-  // Actions
-  initializeCourse: (courseType: CourseType, totalItems: number) => Promise<void>;
-  addLearnedItem: (courseType: CourseType, itemId: string) => Promise<void>;
-  removeLearnedItem: (courseType: CourseType, itemId: string) => Promise<void>;
-  isItemLearned: (courseType: CourseType, itemId: string) => boolean;
-  resetCourseProgress: (courseType: CourseType) => Promise<void>;
+
+  // Actions (only the ones actually used)
+  initializeCourse: (courseId: string, totalItems: number) => void;
+  addLearnedItem: (courseId: string, itemId: string) => Promise<void>;
   resetAllProgress: () => Promise<void>;
-  getCourseProgress: (courseType: CourseType) => CourseProgress;
-  getLearnedCount: (courseType: CourseType) => number;
-  getCompletionPercentage: (courseType: CourseType, totalItems: number) => number;
+  getLearnedCount: (courseId: string) => number;
+  getCompletionPercentage: (courseId: string, totalItems: number) => number;
   setUser: (user: User | null) => void;
   loadUserProgress: () => Promise<void>;
 }
 
-// Helper function to calculate completion percentage
 // Helper function to create default course progress
-    const createDefaultCourseProgress = (): CourseProgress => ({
-      learnedItems: new Set<string>(),
-      completedLessons: new Set<string>(),
-    });
+const createDefaultCourseProgress = (): CourseProgress => ({
+  learnedItems: new Set<string>(),
+});
 
-// Map UI course types to numeric progress document IDs
-const mapCourseType = (courseType: CourseType): string | null => {
-  const toNumericId: Record<string, string> = {
-    '1': '1',
-    '2': '2',
-    '3': '3',
-    '4': '4',
-    '5': '5',
+// Convert Firebase progress to internal format
+const convertFirebaseProgress = (firebaseProgress: SimpleUserProgress | null): CourseProgress => {
+  if (!firebaseProgress) return createDefaultCourseProgress();
+
+  return {
+    learnedItems: new Set(firebaseProgress.learnedItemIds || []),
   };
-
-  return toNumericId[courseType] || courseType;
 };
 
-    // Convert Firebase progress to our internal format
-    const convertFirebaseProgress = (firebaseProgress: SimpleUserProgress | null): CourseProgress => {
-      if (!firebaseProgress) return createDefaultCourseProgress();
-      
-      return {
-        learnedItems: new Set(firebaseProgress.learnedItemIds || []),
-        completedLessons: new Set(), // New structure doesn't track lessons yet
-      };
-    };// Create the Zustand store
+// Create the Zustand store
 export const useProgressStore = create<ProgressState>((set, get) => ({
-  // Initial state - start with base courses, will be extended dynamically
+  // Initial state
   courses: {
     '1': createDefaultCourseProgress(),
     '2': createDefaultCourseProgress(),
@@ -90,8 +68,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   setUser: (user: User | null) => {
     debugLog('Setting user', user?.uid);
     set({ user, isLoading: false });
-    
-    // Load user progress when user is set
+
     if (user) {
       get().loadUserProgress();
     } else {
@@ -122,21 +99,17 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       set({ isLoading: true });
 
       // Load progress for all supported courses
-      const supportedCourses: CourseType[] = ['1', '2', '3', '4', '5'];
-      const progressPromises = supportedCourses.map(async (courseType) => {
-        const firebaseCourseId = mapCourseType(courseType);
-        if (firebaseCourseId) {
-          const firebaseProgress = await SimpleUserProgressService.getUserProgress(firebaseCourseId);
-          return { courseType, progress: convertFirebaseProgress(firebaseProgress) };
-        }
-        return { courseType, progress: createDefaultCourseProgress() };
+      const courseIds = ['1', '2', '3', '4', '5'];
+      const progressPromises = courseIds.map(async (courseId) => {
+        const firebaseProgress = await SimpleUserProgressService.getUserProgress(courseId);
+        return { courseId, progress: convertFirebaseProgress(firebaseProgress) };
       });
 
       const results = await Promise.all(progressPromises);
-      
+
       const newCourses = { ...get().courses };
-      results.forEach(({ courseType, progress }) => {
-        newCourses[courseType] = progress;
+      results.forEach(({ courseId, progress }) => {
+        newCourses[courseId] = progress;
       });
 
       set({
@@ -153,145 +126,55 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     }
   },
 
-  // Initialize course
-  initializeCourse: async (courseType: CourseType, totalItems: number) => {
-    try {
-      debugLog(`Initializing course ${courseType} with ${totalItems} items`);
-      
-      const state = get();
-      const currentCourse = state.courses[courseType] || createDefaultCourseProgress();
-      
-      const updatedCourse = {
-        ...currentCourse,
-      };
+  // Initialize course (simplified - no totalItems needed since we don't store it)
+  initializeCourse: (courseId: string, totalItems: number) => {
+    debugLog(`Initializing course ${courseId} with ${totalItems} items`);
 
+    const state = get();
+    if (!state.courses[courseId]) {
       set({
         courses: {
           ...state.courses,
-          [courseType]: updatedCourse,
+          [courseId]: createDefaultCourseProgress(),
         },
       });
-
-      // No Firebase update needed - will be handled by individual item operations
-
-      debugLog(`Course ${courseType} initialized successfully`);
-
-    } catch (error) {
-      console.error(`❌ Error initializing course ${courseType}:`, error);
     }
   },
 
   // Add learned item
-  addLearnedItem: async (courseType: CourseType, itemId: string) => {
+  addLearnedItem: async (courseId: string, itemId: string) => {
     try {
-      debugLog(`Adding learned item ${itemId} to ${courseType}`);
+      debugLog(`Adding learned item ${itemId} to ${courseId}`);
 
       const state = get();
-      const currentCourse = state.courses[courseType] || createDefaultCourseProgress();
-      
+      const currentCourse = state.courses[courseId] || createDefaultCourseProgress();
+
       // Don't add if already learned
       if (currentCourse.learnedItems.has(itemId)) {
-        debugLog(`Item ${itemId} already learned for ${courseType}`);
+        debugLog(`Item ${itemId} already learned for ${courseId}`);
         return;
       }
 
       const newLearnedItems = new Set(currentCourse.learnedItems);
       newLearnedItems.add(itemId);
-      const updatedCourse = {
-        ...currentCourse,
-        learnedItems: newLearnedItems,
-      };
 
       // Update local state
       set({
         courses: {
           ...state.courses,
-          [courseType]: updatedCourse,
+          [courseId]: { learnedItems: newLearnedItems },
         },
       });
 
-      // Update Firebase if user is authenticated and this is a supported course
-      const firebaseCourseId = mapCourseType(courseType);
-      if (state.user && firebaseCourseId) {
-        await SimpleUserProgressService.addLearnedItem(firebaseCourseId, itemId);
+      // Update Firebase if user is authenticated
+      if (state.user) {
+        await SimpleUserProgressService.addLearnedItem(courseId, itemId);
       }
 
-      debugLog(`Successfully added learned item ${itemId} to ${courseType}`);
+      debugLog(`Successfully added learned item ${itemId} to ${courseId}`);
 
     } catch (error) {
-      console.error(`❌ Error adding learned item ${itemId} to ${courseType}:`, error);
-    }
-  },
-
-  // Remove learned item
-  removeLearnedItem: async (courseType: CourseType, itemId: string) => {
-    try {
-      debugLog(`Removing learned item ${itemId} from ${courseType}`);
-
-      const state = get();
-      const currentCourse = state.courses[courseType];
-      if (!currentCourse) return;
-
-      const newLearnedItems = new Set(currentCourse.learnedItems);
-      newLearnedItems.delete(itemId);
-      const updatedCourse = {
-        ...currentCourse,
-        learnedItems: newLearnedItems,
-      };
-
-      // Update local state
-      set({
-        courses: {
-          ...state.courses,
-          [courseType]: updatedCourse,
-        },
-      });
-
-      // Update Firebase if user is authenticated and this is a supported course
-      const firebaseCourseId = mapCourseType(courseType);
-      if (state.user && firebaseCourseId) {
-        await SimpleUserProgressService.removeLearnedItem(firebaseCourseId, itemId);
-      }
-
-      debugLog(`Successfully removed learned item ${itemId} from ${courseType}`);
-
-    } catch (error) {
-      console.error(`❌ Error removing learned item ${itemId} from ${courseType}:`, error);
-    }
-  },
-
-  // Check if item is learned
-  isItemLearned: (courseType: CourseType, itemId: string) => {
-    const state = get();
-    const course = state.courses[courseType];
-    const isLearned = course ? course.learnedItems.has(itemId) : false;
-    debugLog(`Item ${itemId} learned status for ${courseType}:`, isLearned);
-    return isLearned;
-  },
-
-  // Reset course progress
-  resetCourseProgress: async (courseType: CourseType) => {
-    try {
-      debugLog(`Resetting progress for ${courseType}`);
-
-      const state = get();
-      const resetCourse = createDefaultCourseProgress();      set({
-        courses: {
-          ...state.courses,
-          [courseType]: resetCourse,
-        },
-      });
-
-      // Update Firebase if user is authenticated and this is a supported course
-      const firebaseCourseId = mapCourseType(courseType);
-      if (state.user && firebaseCourseId) {
-        await SimpleUserProgressService.resetCourseProgress(firebaseCourseId);
-      }
-
-      debugLog(`Successfully reset progress for ${courseType}`);
-
-    } catch (error) {
-      console.error(`❌ Error resetting progress for ${courseType}:`, error);
+      console.error(`❌ Error adding learned item ${itemId} to ${courseId}:`, error);
     }
   },
 
@@ -310,15 +193,14 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
       set({ courses: defaultCourses });
 
-      // Reset Firebase progress for supported courses
+      // Reset Firebase progress for all courses
       const state = get();
       if (state.user) {
-        const supportedCourses: CourseType[] = ['alphabet', 'numbers', 'words', 'phrases-2', 'phrases-business'];
+        const courseIds = ['1', '2', '3', '4', '5'];
         await Promise.all(
-          supportedCourses.map(courseType => {
-            const firebaseCourseId = mapCourseType(courseType);
-            return firebaseCourseId ? SimpleUserProgressService.resetCourseProgress(firebaseCourseId) : Promise.resolve();
-          })
+          courseIds.map(courseId =>
+            SimpleUserProgressService.resetCourseProgress(courseId)
+          )
         );
       }
 
@@ -329,38 +211,25 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     }
   },
 
-  // Get course progress
-  getCourseProgress: (courseType: CourseType) => {
-    const state = get();
-    const progress = state.courses[courseType] || createDefaultCourseProgress();
-    debugLog(`Getting progress for ${courseType}`, progress);
-    return progress;
-  },
-
   // Get learned count
-  getLearnedCount: (courseType: CourseType) => {
+  getLearnedCount: (courseId: string) => {
     const state = get();
-    const course = state.courses[courseType];
-    const count = course ? course.learnedItems.size : 0;
-    debugLog(`Learned count for ${courseType}:`, count);
-    return count;
+    const course = state.courses[courseId];
+    return course ? course.learnedItems.size : 0;
   },
 
-  // Get completion percentage for a course
-  getCompletionPercentage: (courseType: CourseType, totalItems: number) => {
+  // Get completion percentage
+  getCompletionPercentage: (courseId: string, totalItems: number) => {
     const state = get();
-    const course = state.courses[courseType];
+    const course = state.courses[courseId];
     if (!course || totalItems === 0) return 0;
+
     const learnedCount = course.learnedItems.size;
-    const percentage = Math.round((learnedCount / totalItems) * 100);
-    debugLog(`Completion percentage for ${courseType}:`, percentage);
-    return percentage;
+    return Math.round((learnedCount / totalItems) * 100);
   },
-
-
 }));
 
-// Custom hook to ensure the store is hydrated before using it
+// Simplified hydration hook
 export function useStoreHydration() {
   const [isHydrated, setIsHydrated] = useState(false);
   const storeHydrated = useProgressStore(state => state.isHydrated);
@@ -372,24 +241,23 @@ export function useStoreHydration() {
   return isHydrated;
 }
 
-// Custom hook to use the store with hydration check
+// Safe progress store hook (returns undefined during SSR)
 export function useSafeProgressStore<U>(
   selector: (state: ProgressState) => U
 ): U | undefined {
   const store = useProgressStore(selector);
   const isHydrated = useStoreHydration();
-  
-  // Return undefined during SSR or before hydration
+
   return isHydrated ? store : undefined;
 }
 
-// Auth state listener hook - should be used in the root component
+// Auth state listener hook
 export function useAuthStateListener() {
   const setUser = useProgressStore(state => state.setUser);
 
   useEffect(() => {
     debugLog('Setting up auth state listener');
-    
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       debugLog('Auth state changed', user?.uid);
       setUser(user);
