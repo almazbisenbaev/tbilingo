@@ -7,7 +7,7 @@ import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { FirebaseErrorBoundary } from '@/components/FirebaseErrorBoundary';
 import Brand from '../Brand/Brand';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
-import { collection, getDocs, query, orderBy, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, query, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -67,7 +67,7 @@ export default function LearnTab() {
       await Promise.all(COURSES.map(async (course) => {
         try {
           const itemsRef = collection(db, 'courses', course.id, 'items');
-          const q = query(itemsRef, orderBy('order', 'asc'));
+          const q = query(itemsRef);
           const snapshot = await getDocs(q);
 
           newCoursesData[course.id] = {

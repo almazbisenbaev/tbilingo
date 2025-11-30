@@ -158,7 +158,6 @@ interface CourseDefinition {
 ```typescript
 interface BaseCourseItem {
   id: string;                    // "1", "2", "3", ...
-  order: number;                 // display order
 }
 ```
 

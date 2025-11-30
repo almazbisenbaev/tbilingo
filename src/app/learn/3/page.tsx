@@ -1,3 +1,5 @@
+// Course: Words
+
 "use client";
 
 const course_id = 3;
@@ -15,7 +17,7 @@ import ProgressBar from '@/components/ProgressBar/ProgressBar';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc, getDoc, query, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
 
 export default function WordsCourse() {
@@ -53,14 +55,14 @@ export default function WordsCourse() {
         setWordsError(null);
 
         const itemsRef = collection(db, 'courses', String(course_id), 'items');
-        const qItems = query(itemsRef, orderBy('order', 'asc'));
+        const qItems = query(itemsRef);
         const snapshot = await getDocs(qItems);
         const wordItems: WordItem[] = snapshot.docs.map(docSnap => ({
           id: typeof docSnap.id === 'string' ? parseInt(docSnap.id) : (docSnap.id as unknown as number),
           english: (docSnap.data() as any).english,
           georgian: (docSnap.data() as any).georgian,
           latin: (docSnap.data() as any).latin
-        }));
+        })).sort((a, b) => a.id - b.id);
         setWords(wordItems);
 
       } catch (error) {

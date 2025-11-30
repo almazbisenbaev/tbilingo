@@ -1,3 +1,5 @@
+// Course: Numbers
+
 "use client";
 
 const course_id = 2;
@@ -13,7 +15,7 @@ import ConfirmationDialog from '@/components/ConfirmationDialog';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { collection, doc, getDocs, setDoc, getDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc, getDoc, query, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
 
 export default function NumbersCourse() {
@@ -48,14 +50,14 @@ export default function NumbersCourse() {
         setNumbersError(null);
 
         const itemsRef = collection(db, 'courses', String(course_id), 'items');
-        const qItems = query(itemsRef, orderBy('order', 'asc'));
+        const qItems = query(itemsRef);
         const snapshot = await getDocs(qItems);
         const numberItems: NumberItem[] = snapshot.docs.map(docSnap => ({
           id: typeof docSnap.id === 'string' ? parseInt(docSnap.id) : (docSnap.id as unknown as number),
           number: (docSnap.data() as any).number,
           translation: (docSnap.data() as any).translation,
           translationLatin: (docSnap.data() as any).translationLatin
-        }));
+        })).sort((a, b) => a.id - b.id);
         setNumbers(numberItems);
 
       } catch (error) {
