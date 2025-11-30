@@ -136,22 +136,8 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 ### Firestore Collections
 
 #### `/courses/{courseId}` - Course Definitions
-```typescript
-interface CourseDefinition {
-  id: string;                    // e.g., "1", "2", ...
-  title: string;                 // "Georgian Alphabet"
-  description: string;
-  type: 'flashcards' | 'phrases' | 'words';
-  isActive: boolean;
-  totalItems: number;
-  estimatedTime: number;         // minutes
-  prerequisites: string[];       // required course IDs
-  icon: string;                  // icon path
-  version: number;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
-}
-```
+*Note: Course metadata (title, icon, etc.) is currently defined in `src/components/screens/LearnTab.tsx` constant `COURSES`. This Firestore collection may be used for future dynamic configuration.*
+
 
 #### `/courses/{courseId}/items/{itemId}` - Course Content
 **Base interface (all items):**
@@ -196,7 +182,7 @@ interface PhraseItem extends BaseCourseItem {
 interface UserProgress {
   courseId: string;
   userId: string;
-  learnedItems: number[];        // array of learned item IDs
+  learnedItemIds: string[];      // array of learned item IDs
   totalItems: number;
   completionPercentage: number;  // 0-100
   lastUpdated: Timestamp;
@@ -306,26 +292,17 @@ interface ProgressState {
 
 ### Course Categories
 
-#### 1. Flashcard-based Courses (3 courses)
+#### 1. Flashcard-based Courses
 - **Alphabet** (`/app/learn/1/page.tsx`)
-- **Numbers** (`/app/(courses)/numbers/page.tsx`)
-- **Words** (`/app/(courses)/words/page.tsx`)
+- **Numbers** (`/app/learn/2/page.tsx`)
+- **Words** (`/app/learn/3/page.tsx`)
 - **Gameplay**: Flip cards to learn individual items with "Mark as Learned" confirmation
 
-#### 2. Phrase Construction Courses (11 courses)
+#### 2. Phrase Construction Courses
 All phrase courses use sentence construction gameplay where users build Georgian sentences by selecting words in correct order:
 
-- **Restaurant** (`/restaurant`) - `phrases-restaurant`
-- **Travel** (`/travel`) - `phrases-travel`
-- **Medical** (`/medical`) - `phrases-medical`
-- **Emergency** (`/emergency`) - `phrases-emergency`
-- **Family** (`/family`) - `phrases-family`
-- **Business** (`/business`) - `phrases-business`
-- **Directions** (`/directions`) - `phrases-directions`
-- **Shopping** (`/shopping`) - `phrases-shopping`
-- **Culture** (`/culture`) - `phrases-culture`
-- **Weather** (`/weather`) - `phrases-weather`
-- **Phrases Advanced** (`/phrases-2`) - `phrases-2`
+- **Phrases Advanced** (`/app/learn/4/page.tsx`)
+- **Business Georgian** (`/app/learn/5/page.tsx`)
 
 ### Course File Structure
 
