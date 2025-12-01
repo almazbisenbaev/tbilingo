@@ -110,7 +110,7 @@ export default function PhrasesAdvancedPage() {
       loadProgress();
       setIsInitialized(true);
     }
-  }, [phrasesLoading, phrases.length, isInitialized]);
+  }, [phrasesLoading, phrases.length, isInitialized, phrases]);
 
   // Check if all cards reviewed
   useEffect(() => {
