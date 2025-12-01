@@ -44,69 +44,33 @@ export class FirebaseErrorBoundary extends Component<Props, State> {
 
       // Default error UI
       return (
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '200px',
-          padding: '20px',
-          backgroundColor: '#f8f9fa',
-          border: '1px solid #dee2e6',
-          borderRadius: '8px',
-          margin: '20px'
-        }}>
-          <h3 style={{ color: '#dc3545', marginBottom: '10px' }}>
+        <div className="flex flex-col items-center justify-center min-h-[200px] p-5 bg-gray-50 border border-gray-200 rounded-lg m-5">
+          <h3 className="text-red-600 mb-2.5">
             🚨 Something went wrong
           </h3>
-          <p style={{ color: '#6c757d', textAlign: 'center', marginBottom: '15px' }}>
+          <p className="text-gray-500 text-center mb-4">
             There was an error loading this content. This might be a temporary issue with Firebase.
           </p>
-          <button
-            onClick={() => this.setState({ hasError: false })}
-            style={{
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              padding: '10px 20px',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              marginRight: '10px'
-            }}
-          >
-            Try Again
-          </button>
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              backgroundColor: '#28a745',
-              color: 'white',
-              border: 'none',
-              padding: '10px 20px',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            Reload Page
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => this.setState({ hasError: false })}
+              className="bg-blue-500 text-white border-none px-5 py-2.5 rounded cursor-pointer hover:bg-blue-600 transition-colors"
+            >
+              Try Again
+            </button>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-green-500 text-white border-none px-5 py-2.5 rounded cursor-pointer hover:bg-green-600 transition-colors"
+            >
+              Reload Page
+            </button>
+          </div>
           {process.env.NODE_ENV === 'development' && (
-            <details style={{ 
-              marginTop: '15px', 
-              padding: '10px', 
-              backgroundColor: '#e9ecef',
-              borderRadius: '4px',
-              width: '100%',
-              maxWidth: '500px'
-            }}>
-              <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>
+            <details className="mt-4 p-2.5 bg-gray-200 rounded w-full max-w-[500px]">
+              <summary className="cursor-pointer font-bold">
                 Debug Info (Development Only)
               </summary>
-              <pre style={{ 
-                fontSize: '11px', 
-                overflow: 'auto',
-                marginTop: '10px',
-                whiteSpace: 'pre-wrap'
-              }}>
+              <pre className="text-[11px] overflow-auto mt-2.5 whitespace-pre-wrap">
                 {this.state.error?.message}
                 {'\n\n'}
                 {this.state.error?.stack}
