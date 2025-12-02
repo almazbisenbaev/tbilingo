@@ -690,7 +690,7 @@ input[type=submit]:focus {
 .learn-content {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  gap: 32px;
   min-height: calc(100svh - 80px);
   padding-top: 32px;
   padding-right: 32px;

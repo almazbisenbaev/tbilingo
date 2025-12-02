@@ -3,7 +3,7 @@
 import "./welcome-screen.css";
 
 import { useState } from 'react';
-import Brand from '@/components/Brand/Brand';
+import Image from "next/image";
 import { useAuth } from '@/contexts/AuthContext';
 import GoogleSignInButton from '@/components/GoogleSignInButton/GoogleSignInButton';
 
@@ -39,8 +39,9 @@ export default function WelcomeScreen({ onSignUp, onSignIn }: WelcomeScreenProps
   return (
     <div className="welcome">
       <div className="welcome-inner">
-        <div className="welcome-header">
-          <Brand />
+
+        <div className='flex justify-center'>
+          <Image src="/images/logo.svg" alt="Tbilingo" width={120} height={48} className='object-contain' />
         </div>
 
         {error && (

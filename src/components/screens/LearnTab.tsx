@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react';
 import CourseLink from '@/components/CourseLink/CourseLink';
 import CourseLinkSkeleton from '@/components/CourseLinkSkeleton';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
-import Brand from '../Brand/Brand';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { collection, getDocs, query, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
+import Image from "next/image";
 
 // Unlocks all courses for testing
 const UNLOCK_ALL_COURSES_FOR_TESTING = false;
@@ -146,7 +146,11 @@ export default function LearnTab() {
   if (globalLoading) {
     return (
       <div className="learn-content">
-        <Brand />
+
+        <div className='flex justify-center'>
+          <Image src="/images/logo.svg" alt="Tbilingo" width={120} height={48} className='object-contain' />
+        </div>
+
         <div className="courses-list">
           {COURSES.map(course => (
             <CourseLinkSkeleton key={course.id} />
@@ -158,7 +162,10 @@ export default function LearnTab() {
 
   return (
     <div className="learn-content">
-      <Brand />
+
+      <div className='flex justify-center'>
+        <Image src="/images/logo.svg" alt="Tbilingo" width={120} height={48} className='object-contain' />
+      </div>
 
       <div className="courses-list">
           {COURSES.map((course) => {
