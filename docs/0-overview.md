@@ -71,7 +71,7 @@ function MyComponent() {
 5. `AuthWrapper` switches to main app view
 
 #### Google Sign-In:
-1. User clicks Google button (in `WelcomeScreen`, `LoginPage`, or `SignupPage`)
+1. User clicks Google button (in `AuthScreen`, `LoginPage`, or `SignupPage`)
 2. Calls `loginWithGoogle()`
 3. Opens Google OAuth popup via `signInWithPopup()`
 4. User selects Google account
@@ -83,11 +83,11 @@ function MyComponent() {
 
 #### AuthWrapper (`src/components/AuthWrapper.tsx`)
 Orchestrates the authentication flow. Shows:
-- `WelcomeScreen` when not authenticated
+- `AuthScreen` when not authenticated
 - `LoginPage` or `SignupPage` when user chooses auth method
 - `LearnTab` when authenticated
 
-#### WelcomeScreen (`src/components/welcome-screen/welcome-screen.tsx`)
+#### AuthScreen (`src/components/welcome-screen/welcome-screen.tsx`)
 Landing page with authentication options:
 - **Primary**: "Continue with Google" button
 - **Secondary**: "Sign Up with Email" and "Sign In with Email"

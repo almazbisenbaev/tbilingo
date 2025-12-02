@@ -1,18 +1,18 @@
 'use client';
 
-import "./welcome-screen.css";
+import "./auth-screen.css";
 
 import { useState } from 'react';
 import Image from "next/image";
 import { useAuth } from '@/contexts/AuthContext';
 import GoogleSignInButton from '@/components/GoogleSignInButton/GoogleSignInButton';
 
-interface WelcomeScreenProps {
+interface AuthScreenProps {
   onSignUp: () => void;
   onSignIn: () => void;
 }
 
-export default function WelcomeScreen({ onSignUp, onSignIn }: WelcomeScreenProps) {
+export default function AuthScreen({ onSignUp, onSignIn }: AuthScreenProps) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { loginWithGoogle } = useAuth();

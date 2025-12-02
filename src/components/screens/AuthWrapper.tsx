@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import LoginPage from '@/components/screens/LoginPage';
 import SignupPage from '@/components/SignupPage';
 import LearnTab from '@/components/screens/LearnTab';
-import WelcomeScreen from '@/components/screens/welcome-screen/welcome-screen';
+import AuthScreen from '@/components/screens/welcome-screen/auth-screen';
 
 type AuthMode = 'login' | 'signup' | null;
 
@@ -47,7 +47,7 @@ export default function AuthWrapper() {
 
   // Default state: show welcome screen with auth buttons
   return (
-    <WelcomeScreen 
+    <AuthScreen 
       onSignUp={() => setAuthMode('signup')}
       onSignIn={() => setAuthMode('login')}
     />
