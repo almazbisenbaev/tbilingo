@@ -1,11 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@theme {
+  --color-accent-500: #FF4F27;
+}
+
 :root {
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
   --font-serif: var(--font-noto-serif-georgian);
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -48,7 +51,7 @@ body {
 }
 
 body {
-  font-family: var(--font-sans);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   font-size: 1rem;
   transition: .3s cubic-bezier(0.76, 0, 0.24, 1);
   /* background: linear-gradient(180deg, rgba(255, 118, 88, 0.03) 0%, rgba(255, 118, 88, 0.1) 100%), #FFFFFF; */
@@ -112,34 +115,36 @@ input[type=submit]:focus {
 }
 
 .btn {
-  font-size: 1.15rem;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: bold;
   line-height: 1.1;
+  letter-spacing: -0.01em;
   text-decoration: none;
-  color: #8A2008;
-  border: 1px solid transparent;
-  background: #EAE7E6;
-  border-radius: 12px;
+  color: #fff;
+  border: none;
+  background: #FF4F27;
+  border-radius: 8px;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   padding: 0.6em 1.5em;
-  height: 56px;
+  min-height: 56px;
 
-  transition: 0.1s;
+  transition: 0.15s;
   user-select: none;
 }
 
 .btn:hover,
 .btn:focus {
-  color: #8A2008;
+  color: #fff;
 }
 
 .btn:active {
   color: #8A2008;
-  transform: translateY(2px);
+  transform: scale(0.98);
+  filter: brightness(.98);
 }
 
 .btn-block {
@@ -148,12 +153,12 @@ input[type=submit]:focus {
 
 .btn-small {
   font-size: 1rem;
-  height: 44px;
+  min-height: 44px;
 }
 
 .btn-large {
   font-size: 1.25rem;
-  height: 72px;
+  min-height: 78px;
 }
 
 .btn-primary {
@@ -837,4 +842,12 @@ input[type=submit]:focus {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+
+
+/* Landing page */
+
+.landing {
+  background: #fff;
 }
