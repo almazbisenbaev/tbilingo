@@ -9,7 +9,7 @@ export default function LandingPage() {
     <div className="landing py-20">
       <div className="container mx-auto">
 
-        <div className="text-center flex flex-col items-center gap-3 mx-auto px-4 max-w-[240px] mb-12">
+        <div className="text-center flex flex-col items-center gap-3 mx-auto px-4 max-w-[280px] mb-12">
           <Image src="/images/logo.svg" alt="Tbilingo" width={160} height={64} className='object-contain' />
           <h1 className="text-2xl font-bold">Your First Step to Learning <span className='text-accent-500'>Georgian</span></h1>
           <p className="text-base text-gray-600">Short daily lessons designed for absolute beginners</p>

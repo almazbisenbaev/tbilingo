@@ -55,7 +55,7 @@ body {
   font-size: 1rem;
   transition: .3s cubic-bezier(0.76, 0, 0.24, 1);
   /* background: linear-gradient(180deg, rgba(255, 118, 88, 0.03) 0%, rgba(255, 118, 88, 0.1) 100%), #FFFFFF; */
-  background: #f4f4f4;
+  background: #FAEFE8;
 }
 
 a {
@@ -484,29 +484,6 @@ input[type=submit]:focus {
   height: 40px;
 }
 
-/* Settings drawer styles for Headless UI */
-.settings-drawer {
-  background: #FFFFFF;
-  border-radius: 20px 0 0 20px;
-  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.1);
-}
-
-.welcome-settings-close {
-  font-size: 0;
-  background: url(/images/icon-close-black.svg) no-repeat center center;
-  background-size: auto 24px;
-  border: none;
-
-  width: 30px;
-  height: 30px;
-
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 2;
-}
-
-
 
 /* PWA Install Button */
 .pwa-install-container {
@@ -605,7 +582,7 @@ input[type=submit]:focus {
 
 
 .app {
-  background: #f4f4f4;
+  /* background: #f4f4f4; */
   border-radius: 20px;
 
   /* width: 640px; */
@@ -849,5 +826,5 @@ input[type=submit]:focus {
 /* Landing page */
 
 .landing {
-  background: #fff;
+  /* background: #fff; */
 }
