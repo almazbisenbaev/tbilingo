@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import CourseLink from '@/components/CourseLink/CourseLink';
 import CourseLinkSkeleton from '@/components/CourseLinkSkeleton';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
-import { FirebaseErrorBoundary } from '@/components/FirebaseErrorBoundary';
 import Brand from '../Brand/Brand';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { collection, getDocs, query, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -162,7 +161,6 @@ export default function LearnTab() {
       <Brand />
 
       <div className="courses-list">
-        <FirebaseErrorBoundary>
           {COURSES.map((course) => {
             const data = coursesData[course.id] || { totalItems: 0, learnedItems: 0, isCompleted: false };
             const isLocked = course.requiredCourseId
@@ -185,7 +183,6 @@ export default function LearnTab() {
               </div>
             );
           })}
-        </FirebaseErrorBoundary>
       </div>
 
       <PWAInstallPrompt />
