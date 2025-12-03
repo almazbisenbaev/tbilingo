@@ -36,31 +36,30 @@ export default function SettingsTab() {
 
   return (
     <>
-      <div className="settings-content min-h-screen flex flex-col justify-between">
-        <div className="settings-header">
-          {currentUser && (
-            <div className="user-info flex justify-between align-center">
-              <p>Welcome, {currentUser.displayName || currentUser.email}!</p>
+      <div className="pb-20 flex flex-col justify-between">
 
-              <div>
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="text-red-600 hover:text-red-700 p-0 h-auto"
-                  onClick={onLogout}
-                  disabled={logoutLoading}
-                >
-                  {logoutLoading ? 'Signing out...' : 'Sign Out'}
-                </Button>
-              </div>
+        {currentUser && (
+          <div className="flex flex-col items-center py-5 mb-24">
+            <p>Welcome, {currentUser.displayName || currentUser.email}!</p>
 
+            <div>
+              <Button
+                variant="link"
+                size="sm"
+                className="text-red-600 hover:text-red-700 p-0 h-auto"
+                onClick={onLogout}
+                disabled={logoutLoading}
+              >
+                {logoutLoading ? 'Signing out...' : 'Sign Out'}
+              </Button>
             </div>
-          )}
-        </div>
+
+          </div>
+        )}
 
         <div className="credits">Made by <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
-      </div>
 
+      </div>
 
       <ConfirmationDialog
         isOpen={showLogoutConfirmation}

@@ -51,7 +51,7 @@ export function ConfirmationDialog({
           <Button
             onClick={onConfirm}
             size="lg"
-            className={cancelText ? "flex-1 text-white bg-red-600 hover:bg-red-700" : "w-full"}
+            className={cancelText ? "flex-1 text-white bg-black" : "w-full"}
           >
             {confirmText}
           </Button>
