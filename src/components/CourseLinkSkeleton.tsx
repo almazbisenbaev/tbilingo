@@ -12,7 +12,7 @@ export default function CourseLinkSkeleton() {
         .course-link-skeleton {
           width: 100%;
           min-height: 96px;
-          background-color: #f0f0f0;
+          background-color: rgba(255,255,255,.5);
           border-radius: 16px;
           animation: pulse 1.5s ease-in-out infinite;
         }

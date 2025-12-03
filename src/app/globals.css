@@ -116,7 +116,7 @@ input[type=submit]:focus {
 
 .btn {
   font-size: 20px;
-  font-weight: bold;
+  font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.01em;
   text-decoration: none;
@@ -169,6 +169,17 @@ input[type=submit]:focus {
 .btn-primary:hover,
 .btn-primary:focus {
   color: #fff;
+}
+
+.btn-secondary {
+  color: #F24822;
+  background-color: #F2482220;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+  color: #F24822;
+  background-color: #F2482230;
 }
 
 .btn-black {

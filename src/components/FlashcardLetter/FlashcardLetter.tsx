@@ -62,7 +62,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ letter, onNext, onLearned }) => {
       <div className={`flashcard-inner ${showAnswer ? 'flipped' : ''}`}>
         <div className="flashcard-front">
           <div className='flashcard-character'>{letter.character}</div>
-          <button 
+          <button
             className="btn btn-primary w-full"
             onClick={handleShowAnswer}
           >
@@ -77,7 +77,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ letter, onNext, onLearned }) => {
               Pronunciation: <b>{letter.pronunciation}</b>
             </div>
             <div className="flashcard-audio-container">
-              <button 
+              <button
                 className="btn btn-audio"
                 onClick={handlePlayAudio}
                 disabled={!letter.audioUrl}
@@ -101,14 +101,14 @@ const Flashcard: React.FC<FlashcardProps> = ({ letter, onNext, onLearned }) => {
             </div>
           </div>
           <div className="flashcard-actions">
-            <button 
+            <button
               className="btn btn-block btn-primary"
               onClick={onNext}
             >
               Next card
             </button>
-            <button 
-              className="btn btn-block"
+            <button
+              className="btn btn-block btn-secondary"
               onClick={onLearned}
             >
               Mark as learned
