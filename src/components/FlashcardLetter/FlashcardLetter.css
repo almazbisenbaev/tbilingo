@@ -1,9 +1,9 @@
 .flashcard {
   background-color: transparent;
   width: 360px;
-  max-width: 80vw;
+  max-width: 86vw;
   height: 70vh;
-  max-height: 70vh;
+  /* max-height: 70vh; */
 }
 
 .flashcard-inner {
@@ -123,8 +123,11 @@
   font-family: monospace;
 }
 
-.btn-audio {
+.flashcard-audio-btn {
   font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 48px;
   width: 48px;
   min-width: 48px;
@@ -136,19 +139,19 @@
   padding: 0;
 }
 
-.btn-audio:hover,
-.btn-audio:focus {
+.flashcard-audio-btn:hover,
+.flashcard-audio-btn:focus {
   background-color: rgba(242, 72, 34, 0.3);
   color: #F24822;
 }
 
-.btn-audio:disabled {
+.flashcard-audio-btn:disabled {
   background-color: rgba(204, 204, 204, 0.2);
   color: #ccc;
   cursor: not-allowed;
 }
 
-.btn-audio svg {
+.flashcard-audio-btn svg {
   width: 20px;
   height: 20px;
 }

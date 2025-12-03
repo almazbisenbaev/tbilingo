@@ -78,7 +78,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ letter, onNext, onLearned }) => {
             </div>
             <div className="flashcard-audio-container">
               <button
-                className="btn btn-audio"
+                className="flashcard-audio-btn"
                 onClick={handlePlayAudio}
                 disabled={!letter.audioUrl}
               >

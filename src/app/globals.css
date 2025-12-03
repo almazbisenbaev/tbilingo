@@ -132,7 +132,7 @@ input[type=submit]:focus {
   padding: 0.6em 1.5em;
   min-height: 56px;
 
-  transition: 0.15s;
+  transition: 0.25s;
   user-select: none;
 }
 
@@ -164,6 +164,7 @@ input[type=submit]:focus {
 .btn-primary {
   color: #fff;
   background-color: #F24822;
+  box-shadow: 0 10px 10px -5px #ff623e7d;
 }
 
 .btn-primary:hover,
