@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import Modal from '@/components/common/Modal';
-import { Button } from '@/components/ui/button';
 
 interface ConfirmationDialogProps {
   isOpen: boolean;
@@ -39,22 +38,19 @@ export function ConfirmationDialog({
 
         <div className="flex gap-3 justify-end">
           {cancelText && (
-            <Button
-              variant="outline"
+            <button
               onClick={onCancel}
-              size="lg"
-              className="flex-1"
+              className="btn btn-secondary flex-1"
             >
               {cancelText}
-            </Button>
+            </button>
           )}
-          <Button
+          <button
             onClick={onConfirm}
-            size="lg"
-            className={cancelText ? "flex-1 text-white bg-black" : "w-full"}
+            className={`btn btn-black ${cancelText ? "flex-1" : "btn-block"}`}
           >
             {confirmText}
-          </Button>
+          </button>
         </div>
       </div>
     </Modal>
