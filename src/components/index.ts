@@ -6,6 +6,3 @@ export { default as LoadingSpinner } from './common/LoadingSpinner';
 export { default as LoadingScreen } from './common/LoadingScreen';
 export { default as ErrorState } from './common/ErrorState';
 
-
-// Auth Components
-export { default as AuthScreen } from './screens/welcome-screen/auth-screen';
