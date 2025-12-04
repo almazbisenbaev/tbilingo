@@ -49,16 +49,15 @@ const FlashcardNumber: React.FC<FlashcardNumberProps> = ({ number, onNext, onLea
             <div className='flashcard-transliteration-section'>
               {showTransliteration && (
                 <div className='flashcard-pronunciation'>
-                  Transliteration: <b>{number.translationLatin}</b>
+                  <div className='text-xs text-gray-600'>Transliteration:</div>
+                  <div><b>{number.translationLatin}</b></div>
                 </div>
               )}
               {!showTransliteration && (
                 <button
                   className="btn btn-small btn-secondary"
                   onClick={handleShowTransliteration}
-                >
-                  Latin
-                </button>
+                >Latin</button>
               )}
             </div>
           </div>

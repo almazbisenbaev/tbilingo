@@ -33,6 +33,8 @@ export default function CourseLink({
     // Only show progress if mounted AND we have actual data
     const shouldShowProgress = isMounted && !disabled && progress !== undefined && progress >= 0;
 
+    const isCompleted = progress === 100;
+
     // Handle locked course click
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         if (locked) {
@@ -45,11 +47,7 @@ export default function CourseLink({
         <>
             <Link
                 href={href}
-                className={`course-link ${disabled ? 'course-link-disabled' : ''}`}
-                style={{
-                    pointerEvents: (disabled) ? "none" : "auto",
-                    opacity: locked ? 0.3 : 1
-                }}
+                className={`course-link ${disabled ? 'course-link-disabled' : ''} ${isCompleted ? 'course-link-completed' : ''} ${locked ? 'course-link-locked' : ''}`}
                 onClick={handleClick}
             >
                 <div className='course-link-icon'>

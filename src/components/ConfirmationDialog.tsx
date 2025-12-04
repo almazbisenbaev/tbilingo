@@ -31,7 +31,7 @@ export function ConfirmationDialog({
     >
       <div className="space-y-6">
         {message && (
-          <p className="text-muted-foreground text-center">
+          <p className="text-muted-foreground">
             {message}
           </p>
         )}

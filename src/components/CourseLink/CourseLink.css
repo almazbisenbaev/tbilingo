@@ -30,6 +30,11 @@
     background: #00000010;
     color: #000000;
     cursor: not-allowed;
+    pointer-events: none;
+}
+
+.course-link-locked {
+    opacity: 0.3;
 }
 
 .course-link-disabled img {
