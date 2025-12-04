@@ -14,6 +14,8 @@
     padding-right: 32px;
 
     cursor: pointer;
+
+    transition: .2s;
 }
 
 .course-link:hover {
@@ -23,6 +25,7 @@
 
 .course-link:active {
     /* background: #F2482220; */
+    transform: scale(0.98);
 }
 
 .course-link-disabled {
