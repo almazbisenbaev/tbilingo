@@ -33,6 +33,12 @@ service cloud.firestore {
       }
     }
     
+    // App notification subscribers - public write for email signups
+    match /app_notify_subscribers/{docId} {
+      allow create: if true; // Anyone can sign up for notifications
+      allow read, update, delete: if false; // Only admin/server can read or modify
+    }
+    
     // Global stats (optional - for leaderboards, etc.)
     match /global-stats/{document=**} {
       allow read: if true; // Anyone can read global stats
