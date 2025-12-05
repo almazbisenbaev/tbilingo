@@ -45,6 +45,7 @@ const FlashcardWord: React.FC<FlashcardWordProps> = ({ word, onNext, onLearned }
                 </div>
                 <div className="flashcard-back">
                     <div className='flashcard-back-content'>
+                        <div className='flashcard-word-english-small'>{word.english}</div>
                         <div className='flashcard-word-georgian'>{word.georgian}</div>
                         <div className='flashcard-transliteration-section'>
                             {showTransliteration && (
