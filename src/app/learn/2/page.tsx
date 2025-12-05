@@ -369,6 +369,8 @@ export default function NumbersLevel() {
 
   // Main numbers page
   if (!isGameplayActive) {
+    const isFinished = numbers.length > 0 && learnedNumbers.length === numbers.length;
+
     return (
       <div className='h-svh flex flex-col justify-between py-4'>
 
@@ -391,21 +393,23 @@ export default function NumbersLevel() {
           </div>
         </div>
 
-        {progressLoaded && (
+        {progressLoaded && !isFinished && (
           <div className='w-full max-w-2xl mx-auto p-4'>
             <div className='text-center'>Learned <b>{learnedNumbers.length}</b> out of <b>{numbers.length}</b> numbers</div>
           </div>
         )}
 
-        <div className='w-full max-w-2xl mx-auto p-4'>
-          {allCardsReviewed || (numbers.length > 0 && learnedNumbers.length === numbers.length) ? (
-            <div className='text-center'>
-              You've learned all numbers
-            </div>
-          ) : (
-            <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>
-          )}
-        </div>
+        {progressLoaded && (
+          <div className='w-full max-w-2xl mx-auto p-4'>
+            {isFinished ? (
+              <div className='text-center'>
+                You've learned all numbers
+              </div>
+            ) : (
+              <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>
+            )}
+          </div>
+        )}
 
       </div>
     )

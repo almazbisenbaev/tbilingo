@@ -355,6 +355,8 @@ export default function BasicWordsLevel() {
 
   // Main words page
   if (!isGameplayActive) {
+    const isFinished = words.length > 0 && learnedWords.length === words.length;
+
     return (
       <div className='h-svh flex flex-col justify-between py-4'>
         <div className='w-full max-w-2xl mx-auto p-4'>
@@ -376,21 +378,23 @@ export default function BasicWordsLevel() {
           </div>
         </div>
 
-        {progressLoaded && (
+        {progressLoaded && !isFinished && (
           <div className='w-full max-w-2xl mx-auto p-4'>
             <div className='text-center'>Learned <b>{learnedWords.length}</b> out of <b>{words.length}</b> basic words</div>
           </div>
         )}
 
-        <div className='w-full max-w-2xl mx-auto p-4'>
-          {allCardsReviewed || (words.length > 0 && learnedWords.length === words.length) ? (
-            <div className='text-center'>
-              You've learned all basic words
-            </div>
-          ) : (
-            <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>
-          )}
-        </div>
+        {progressLoaded && (
+          <div className='w-full max-w-2xl mx-auto p-4'>
+            {isFinished ? (
+              <div className='text-center'>
+                You've learned all basic words
+              </div>
+            ) : (
+              <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>
+            )}
+          </div>
+        )}
       </div>
     )
   }
