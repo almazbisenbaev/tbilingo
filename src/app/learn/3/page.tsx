@@ -188,8 +188,8 @@ export default function BasicWordsLevel() {
    * Selects 10 random items from unlearned words
    */
   const startGameplay = () => {
-    const learnedWordsInLocal = learnedWords;
-    const wordsMissingInLocal = words.filter((word: any) => !learnedWordsInLocal.includes(word.id)) as WordItem[];
+    const learnedWordsInFirebase = learnedWords;
+    const unlearnedWords = words.filter((word: any) => !learnedWordsInFirebase.includes(word.id)) as WordItem[];
 
     // Reset session state
     setProcessedWords([]);
@@ -197,9 +197,9 @@ export default function BasicWordsLevel() {
     setSlideWidth(0);
 
     // Shuffle remaining words and select a subset for this session
-    const shuffledWordsMissingInLocal = shuffleArray(wordsMissingInLocal);
+    const shuffledWords = shuffleArray(unlearnedWords);
     // Limit to 10 words per session for better learning experience
-    const selectedWords = shuffledWordsMissingInLocal.slice(0, 10);
+    const selectedWords = shuffledWords.slice(0, 10);
 
     // Update state to start the gameplay
     setWordsToReview(selectedWords);
@@ -242,7 +242,7 @@ export default function BasicWordsLevel() {
    * Persists a learned word to the progress store
    * @param wordId - The ID of the word to save as learned
    */
-  const saveWordToLocal = (wordId: number) => {
+  const saveItemAsLearned = (wordId: number) => {
     const user = auth.currentUser;
     if (!user) return;
     (async () => {
@@ -253,13 +253,18 @@ export default function BasicWordsLevel() {
         const currentIds: string[] = current?.learnedItemIds || [];
         if (currentIds.includes(String(wordId))) return;
         const updatedIds = [...currentIds, String(wordId)];
+
+        // Check if level is finished
+        const isFinished = words.length > 0 && updatedIds.length >= words.length;
+
         await setDoc(progressRef, {
           userId: user.uid,
           courseId: String(level_id),
           learnedItemIds: updatedIds,
+          isFinished: isFinished, // Explicitly save isFinished status
           lastUpdated: serverTimestamp(),
           createdAt: current?.createdAt || serverTimestamp()
-        });
+        }, { merge: true });
       } catch (e) {
         console.error('❌ Error saving learned word:', e);
       }
@@ -303,8 +308,9 @@ export default function BasicWordsLevel() {
       setTimeout(() => {
         setProcessedWords((prev) => [...prev, wordId]);
         setLearnedWords((prev) => [...prev, wordId]);
+        setLearnedWords((prev) => [...prev, wordId]);
         switchSlide(index, element);
-        saveWordToLocal(wordId);
+        saveItemAsLearned(wordId);
       }, 450);
     }
     setShowConfirmation(false);
@@ -467,11 +473,11 @@ export default function BasicWordsLevel() {
             }}
           >
             <div className="finish-message">
-              <div className='text-center text-4xl'>🎉</div>
-              <h2 className='font-semibold text-2xl'>Great work!</h2>
+              <div className='text-center text-4xl'>🙌</div>
+              <h2 className='font-semibold text-2xl'>That's it for today!</h2>
               <div className='text-lg finish-message-text'>
-                <p>You've reviewed all the basic words for this session. You learned <b>{learnedWords.filter(id => wordsToReview.some(word => word.id === id)).length}</b> new items!</p>
-                <p>Total progress: <b>{learnedWords.length}</b> out of <b>{words.length}</b> basic words learned.</p>
+                <p>You've looked through all the flashcards for this session. You can go back to the homepage and start again.</p>
+                <p>If you're not sure whether you memorized all the words, you can reset your progress and start from 0.</p>
               </div>
               <div className='finish-message-actions'>
                 <button onClick={resetGameplay} className='btn btn-small btn-secondary'>Go back</button>

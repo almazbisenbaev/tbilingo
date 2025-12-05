@@ -8,9 +8,11 @@ console.log(level_id);
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NumberItem, PendingNumberAction } from '@/types';
+// import { shuffleArray } from '@/utils/shuffle-array';
 import FlashcardNumber from '@/components/FlashcardNumber/FlashcardNumber';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 // import SuccessModal from '@/components/SuccessModal';
+import ProgressBar from '@/components/ProgressBar/ProgressBar';
 
 
 import Image from 'next/image';
@@ -187,16 +189,16 @@ export default function NumbersLevel() {
    * 4. Sets up the UI for the learning experience
    */
   const startGameplay = () => {
-    const learnedNumbersInLocal = learnedNumbers;
-    const numbersMissingInLocal = numbers.filter((number: any) => !learnedNumbersInLocal.includes(number.id)) as NumberItem[];
+    const learnedNumbersInFirebase = learnedNumbers;
+    const unlearnedNumbers = numbers.filter((number: any) => !learnedNumbersInFirebase.includes(number.id)) as NumberItem[];
 
     // Reset session state
     setProcessedNumbers([]);
     setSlideWidth(0);
 
-    // Select a subset of numbers for this session (without shuffling)
+    // No need to shuffle numbers, they should be learned in order
     // Limit to 10 numbers per session for better learning experience
-    const selectedNumbers = numbersMissingInLocal.slice(0, 10);
+    const selectedNumbers = unlearnedNumbers.slice(0, 10);
 
     // Update state to start the gameplay
     setNumbersToReview(selectedNumbers);
@@ -244,7 +246,7 @@ export default function NumbersLevel() {
    * This function is called when a user confirms they've learned a number
    * @param numberId - The ID of the number to save as learned
    */
-  const saveNumberToLocal = (numberId: number) => {
+  const saveItemAsLearned = (numberId: number) => {
     const user = auth.currentUser;
     if (!user) return;
     (async () => {
@@ -255,13 +257,18 @@ export default function NumbersLevel() {
         const currentIds: string[] = current?.learnedItemIds || [];
         if (currentIds.includes(String(numberId))) return;
         const updatedIds = [...currentIds, String(numberId)];
+
+        // Check if level is finished
+        const isFinished = numbers.length > 0 && updatedIds.length >= numbers.length;
+
         await setDoc(progressRef, {
           userId: user.uid,
           courseId: String(level_id),
           learnedItemIds: updatedIds,
+          isFinished: isFinished, // Explicitly save isFinished status
           lastUpdated: serverTimestamp(),
           createdAt: current?.createdAt || serverTimestamp()
-        });
+        }, { merge: true });
       } catch (e) {
         console.error('❌ Error saving learned number:', e);
       }
@@ -317,7 +324,7 @@ export default function NumbersLevel() {
         setProcessedNumbers((prev) => [...prev, numberId]); // Add to processed numbers for this session
         setLearnedNumbers((prev) => [...prev, numberId]); // Add to learned numbers list
         switchSlide(index, element); // Animate to the next slide
-        saveNumberToLocal(numberId); // Persist the learned status in localStorage
+        saveItemAsLearned(numberId); // Persist the learned status in localStorage
       }, 450); // Delay for better user experience and to allow animation to complete
     }
     // Clean up the confirmation state
@@ -424,7 +431,14 @@ export default function NumbersLevel() {
                     />
                   </button>
                 </div>
-                <div className="navbar-title"></div>
+                <div className="navbar-title">
+                  {/* Progress bar */}
+                  <ProgressBar
+                    current={processedNumbers.length}
+                    total={numbersToReview.length}
+                    width="200px"
+                  />
+                </div>
                 <div className="navbar-aside"></div>
               </div>
             </div>
