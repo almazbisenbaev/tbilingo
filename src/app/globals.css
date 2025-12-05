@@ -123,7 +123,7 @@ input[type=submit]:focus {
   color: #fff;
   border: none;
   background: #FF4F27;
-  border-radius: 8px;
+  border-radius: 12px;
 
   display: inline-flex;
   align-items: center;

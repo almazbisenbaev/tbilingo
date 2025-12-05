@@ -45,6 +45,7 @@ const FlashcardNumber: React.FC<FlashcardNumberProps> = ({ number, onNext, onLea
         </div>
         <div className="flashcard-back">
           <div className='flashcard-back-content'>
+            <div className='flashcard-number-small'>{number.number}</div>
             <div className='flashcard-name'>{number.translation}</div>
             <div className='flashcard-transliteration-section'>
               {showTransliteration && (

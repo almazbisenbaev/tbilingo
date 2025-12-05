@@ -15,6 +15,7 @@ import { collection, getDocs, query, doc, getDoc, setDoc, serverTimestamp } from
 import { db, auth } from '@root/firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
 import Image from "next/image";
+import Link from 'next/link';
 
 // --- Types ---
 
@@ -224,7 +225,9 @@ function LearnTabView() {
   return (
     <div className="learn-content">
       <div className='flex justify-center'>
-        <Image src="/images/logo.svg" alt="Tbilingo" width={120} height={48} className='object-contain' />
+        <Link href="/">
+          <Image src="/images/logo.svg" alt="Tbilingo" width={120} height={48} className='object-contain' />
+        </Link>
       </div>
 
       <div className="levels-list">
@@ -301,9 +304,10 @@ function AuthView({ onSignUp, onSignIn }: AuthViewProps) {
   return (
     <div className="welcome">
       <div className="welcome-inner">
-        <div className='flex justify-center'>
+
+        <Link href="/" className='flex justify-center'>
           <Image src="/images/logo.svg" alt="Tbilingo" width={120} height={48} className='object-contain' />
-        </div>
+        </Link>
 
         {error && (
           <div className="error-message">
@@ -333,9 +337,9 @@ function AuthView({ onSignUp, onSignIn }: AuthViewProps) {
           <button
             onClick={onSignIn}
             disabled={loading}
-            className="btn btn-block"
+            className="btn btn-block btn-secondary"
           >
-            Sign In with Email
+            Log In
           </button>
         </div>
       </div>
