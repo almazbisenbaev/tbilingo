@@ -34,8 +34,8 @@ interface CourseConfig {
 const COURSES: CourseConfig[] = [
   { id: '1', title: 'Alphabet', icon: '/images/icon-alphabet.svg' },
   { id: '2', title: 'Numbers', icon: '/images/icon-numbers.svg', requiredCourseId: '1', requiredCourseTitle: 'Learn Alphabet' },
-  { id: '3', title: 'Words & Phrases - Basic', icon: '/images/icon-phrases.svg', requiredCourseId: '2', requiredCourseTitle: 'Learn Numbers' },
-  { id: '4', title: 'Phrases Advanced', icon: '/images/icon-phrases.svg', requiredCourseId: '3', requiredCourseTitle: 'Words & Phrases - Basic' },
+  { id: '3', title: 'Basic Words', icon: '/images/icon-phrases.svg', requiredCourseId: '2', requiredCourseTitle: 'Learn Numbers' },
+  { id: '4', title: 'Phrases Advanced', icon: '/images/icon-phrases.svg', requiredCourseId: '3', requiredCourseTitle: 'Basic Words' },
   { id: '5', title: 'Business Georgian', icon: '/images/icon-phrases.svg', requiredCourseId: '4', requiredCourseTitle: 'Phrases Advanced' },
 ];
 

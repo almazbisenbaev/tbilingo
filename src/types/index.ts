@@ -59,7 +59,7 @@ export interface FlashcardNumberProps {
   onLearned: () => void;
 }
 
-export interface WordsComponentProps {
+export interface BasicWordsComponentProps {
   word: WordItem;
   onNext: () => void;
   onLearned: () => void;

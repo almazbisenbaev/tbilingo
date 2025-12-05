@@ -1,4 +1,4 @@
-// Course: Words
+// Course: Basic Words
 
 "use client";
 
@@ -20,7 +20,7 @@ import Link from 'next/link';
 import { collection, doc, getDocs, setDoc, getDoc, query, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
 
-export default function WordsCourse() {
+export default function BasicWordsCourse() {
 
 
   // State for words data fetching
@@ -364,7 +364,7 @@ export default function WordsCourse() {
                   />
                 </Link>
               </div>
-              <h1 className="navbar-title">Words & Phrases - Basic</h1>
+              <h1 className="navbar-title">Basic Words</h1>
               <div className="navbar-aside"></div>
             </div>
           </div>
@@ -372,7 +372,7 @@ export default function WordsCourse() {
 
         {progressLoaded && (
           <div className='w-full max-w-2xl mx-auto p-4'>
-            <div className='text-center'>Learned <b>{learnedWords.length}</b> out of <b>{words.length}</b> words & phrases</div>
+            <div className='text-center'>Learned <b>{learnedWords.length}</b> out of <b>{words.length}</b> basic words</div>
           </div>
         )}
 
@@ -464,8 +464,8 @@ export default function WordsCourse() {
               <div className='text-center text-4xl'>🎉</div>
               <h2 className='font-semibold text-2xl'>Great work!</h2>
               <div className='text-lg finish-message-text'>
-                <p>You've reviewed all the words and phrases for this session. You learned <b>{learnedWords.filter(id => wordsToReview.some(word => word.id === id)).length}</b> new items!</p>
-                <p>Total progress: <b>{learnedWords.length}</b> out of <b>{words.length}</b> words & phrases learned.</p>
+                <p>You've reviewed all the basic words for this session. You learned <b>{learnedWords.filter(id => wordsToReview.some(word => word.id === id)).length}</b> new items!</p>
+                <p>Total progress: <b>{learnedWords.length}</b> out of <b>{words.length}</b> basic words learned.</p>
               </div>
               <div className='finish-message-actions'>
                 <button onClick={resetGameplay} className='btn btn-small btn-secondary'>Go back</button>
