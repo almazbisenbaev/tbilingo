@@ -34,8 +34,11 @@ const FlashcardNumber: React.FC<FlashcardNumberProps> = ({ number, onNext, onLea
   return (
     <div className="flashcard">
       <div className={`flashcard-inner ${showAnswer ? 'flipped' : ''}`}>
+
         <div className="flashcard-front">
-          <div className='flashcard-character'>{number.number}</div>
+          <div className='text-3xl tracking-tight whitespace-nowrap font-bold flex-1 flex items-center'>
+            <div>{number.number}</div>
+          </div>
           <button
             className="btn btn-primary w-full"
             onClick={handleShowAnswer}
@@ -43,9 +46,11 @@ const FlashcardNumber: React.FC<FlashcardNumberProps> = ({ number, onNext, onLea
             Show answer
           </button>
         </div>
+
         <div className="flashcard-back">
+
           <div className='flashcard-back-content'>
-            <div className='flashcard-number-small'>{number.number}</div>
+            <div className='text-xl font-semibold'>{number.number}</div>
             <div className='flashcard-name'>{number.translation}</div>
             <div className='flashcard-transliteration-section'>
               {showTransliteration && (
@@ -62,6 +67,7 @@ const FlashcardNumber: React.FC<FlashcardNumberProps> = ({ number, onNext, onLea
               )}
             </div>
           </div>
+
           <div className="flashcard-actions">
             <button
               className="btn btn-block btn-primary"
@@ -76,6 +82,7 @@ const FlashcardNumber: React.FC<FlashcardNumberProps> = ({ number, onNext, onLea
               Mark as learned
             </button>
           </div>
+
         </div>
       </div>
     </div>
