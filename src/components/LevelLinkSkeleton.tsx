@@ -1,15 +1,15 @@
 /**
- * Course Link Skeleton Loader
- * Shows a loading placeholder while course data is being fetched
+ * Level Link Skeleton Loader
+ * Shows a loading placeholder while level data is being fetched
  */
 
 import React from 'react';
 
-export default function CourseLinkSkeleton() {
+export default function LevelLinkSkeleton() {
   return (
-    <div className="course-link-skeleton">
+    <div className="level-link-skeleton">
       <style jsx>{`
-        .course-link-skeleton {
+        .level-link-skeleton {
           width: 100%;
           min-height: 96px;
           background-color: rgba(255,255,255,.5);

@@ -1,5 +1,5 @@
 /**
- * Utility functions for processing Georgian text for the Phrases Advanced course
+ * Utility functions for processing Georgian text for the Phrases Advanced level
  */
 
 /**
@@ -11,7 +11,7 @@ export function extractWordsFromGeorgian(sentence: string): string[] {
   if (!sentence || typeof sentence !== 'string') {
     return [];
   }
-  
+
   // Split by whitespace and filter out empty strings
   return sentence
     .trim()
@@ -28,7 +28,7 @@ export function removePunctuation(word: string): string {
   if (!word || typeof word !== 'string') {
     return '';
   }
-  
+
   // Remove common punctuation marks but keep Georgian characters
   // Georgian Unicode range: \u10A0-\u10FF (Georgian alphabet)
   // Keep letters, numbers, and Georgian characters, remove everything else
@@ -54,7 +54,7 @@ export function normalizeForComparison(text: string): string {
   if (!text || typeof text !== 'string') {
     return '';
   }
-  
+
   return text
     .trim()
     .replace(/[^\u10A0-\u10FF\u0041-\u005A\u0061-\u007A\u0030-\u0039\s]/g, '') // Remove punctuation

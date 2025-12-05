@@ -35,16 +35,16 @@ export interface PhraseAdvancedMemory {
 
 
 // Component prop interfaces
-export interface CourseLinkProps {
+export interface LevelLinkProps {
   href: string;
   title: string;
   icon: string;
   disabled: boolean;
-  locked?: boolean; // Whether the course is locked (not yet unlocked)
+  locked?: boolean; // Whether the level is locked (not yet unlocked)
   progress?: number; // Percentage of completion (0-100)
-  totalItems?: number; // Total number of items in the course
+  totalItems?: number; // Total number of items in the level
   completedItems?: number; // Number of completed items
-  onLockedClick?: () => void; // Callback when locked course is clicked
+  onLockedClick?: () => void; // Callback when locked level is clicked
 }
 
 export interface FlashcardProps {

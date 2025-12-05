@@ -1,8 +1,8 @@
-// Course: Alphabet
+// Level: Alphabet
 
 "use client";
 
-const course_id = 1;
+const level_id = 1;
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,7 +22,7 @@ import ProgressBar from '@/components/ProgressBar/ProgressBar';
 import { collection, doc, getDocs, setDoc, getDoc, query, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
 
-export default function AlphabetCourse() {
+export default function AlphabetLevel() {
 
   // State for alphabet data fetching
   const [allAlphabetItems, setAllAlphabetItems] = useState<AlphabetItem[]>([]);
@@ -52,7 +52,7 @@ export default function AlphabetCourse() {
       try {
         setAlphabetLoading(true);
         setAlphabetError(null);
-        const itemsRef = collection(db, 'courses', String(course_id), 'items');
+        const itemsRef = collection(db, 'courses', String(level_id), 'items');
         const qItems = query(itemsRef);
         const snapshot = await getDocs(qItems);
         const alphabetItems: AlphabetItem[] = snapshot.docs.map(docSnap => ({
@@ -95,12 +95,12 @@ export default function AlphabetCourse() {
           const isFinished = totalItems > 0 && learnedCharacters.length >= totalItems;
 
           if (isFinished) {
-            const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+            const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
             await setDoc(
               progressRef,
               {
                 userId: user.uid,
-                courseId: String(course_id),
+                courseId: String(level_id),
                 isFinished: true,
                 lastUpdated: serverTimestamp(),
                 // We don't need to fetch createdAt, if it doesn't exist setDoc with merge will handle it or we can just omit if we want to be safe about not overwriting. 
@@ -110,14 +110,14 @@ export default function AlphabetCourse() {
             );
           }
         } catch (e) {
-          console.error('❌ Error marking course finished:', e);
+          console.error('❌ Error marking level finished:', e);
         }
       })();
     }
   }, [allCardsReviewed, allAlphabetItems.length, learnedCharacters.length]);
 
   useEffect(() => {
-    // Initialize course when alphabet data is loaded
+    // Initialize level when alphabet data is loaded
     if (!alphabetLoading && allAlphabetItems.length > 0) {
       const loadProgress = async () => {
         try {
@@ -127,7 +127,7 @@ export default function AlphabetCourse() {
             setProgressLoaded(true);
             return;
           }
-          const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+          const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
           const progressSnap = await getDoc(progressRef);
           if (progressSnap.exists()) {
             const data = progressSnap.data() as any;
@@ -258,7 +258,7 @@ export default function AlphabetCourse() {
     if (!user) return;
     (async () => {
       try {
-        const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+        const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
         const snap = await getDoc(progressRef);
         const current = snap.exists() ? (snap.data() as any) : null;
         const currentIds: string[] = current?.learnedItemIds || [];
@@ -267,12 +267,12 @@ export default function AlphabetCourse() {
 
         const updatedIds = [...currentIds, String(characterId)];
 
-        // Check if course is finished
+        // Check if level is finished
         const isFinished = allAlphabetItems.length > 0 && updatedIds.length >= allAlphabetItems.length;
 
         await setDoc(progressRef, {
           userId: user.uid,
-          courseId: String(course_id),
+          courseId: String(level_id),
           learnedItemIds: updatedIds,
           isFinished: isFinished, // Explicitly save isFinished status
           lastUpdated: serverTimestamp(),
@@ -360,7 +360,7 @@ export default function AlphabetCourse() {
     }
     (async () => {
       try {
-        const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+        const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
         const progressSnap = await getDoc(progressRef);
         if (progressSnap.exists()) {
           const data = progressSnap.data() as any;

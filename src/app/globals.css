@@ -827,7 +827,7 @@ input[type=submit]:focus {
  */
 
 
-.courses-list {
+.levels-list {
   display: flex;
   flex-direction: column;
   gap: 12px;

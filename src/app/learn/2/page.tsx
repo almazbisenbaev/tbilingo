@@ -1,9 +1,9 @@
-// Course: Numbers
+// Level: Numbers
 
 "use client";
 
-const course_id = 2;
-console.log(course_id);
+const level_id = 2;
+console.log(level_id);
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { collection, doc, getDocs, setDoc, getDoc, query, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
 
-export default function NumbersCourse() {
+export default function NumbersLevel() {
 
 
   // State for numbers data fetching
@@ -49,7 +49,7 @@ export default function NumbersCourse() {
         setNumbersLoading(true);
         setNumbersError(null);
 
-        const itemsRef = collection(db, 'courses', String(course_id), 'items');
+        const itemsRef = collection(db, 'courses', String(level_id), 'items');
         const qItems = query(itemsRef);
         const snapshot = await getDocs(qItems);
         const numberItems: NumberItem[] = snapshot.docs.map(docSnap => ({
@@ -82,7 +82,7 @@ export default function NumbersCourse() {
             setProgressLoaded(true);
             return;
           }
-          const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+          const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
           const progressSnap = await getDoc(progressRef);
           if (progressSnap.exists()) {
             const data = progressSnap.data() as any;
@@ -115,7 +115,7 @@ export default function NumbersCourse() {
         try {
           const user = auth.currentUser;
           if (!user) return;
-          const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+          const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
           const snap = await getDoc(progressRef);
           const learnedItemIds: string[] = snap.exists() ? ((snap.data() as any).learnedItemIds || []) : [];
           const totalItems = numbers.length;
@@ -124,7 +124,7 @@ export default function NumbersCourse() {
               progressRef,
               {
                 userId: user.uid,
-                courseId: String(course_id),
+                courseId: String(level_id),
                 isFinished: true,
                 lastUpdated: serverTimestamp(),
                 createdAt: snap.exists() ? ((snap.data() as any).createdAt || serverTimestamp()) : serverTimestamp()
@@ -133,7 +133,7 @@ export default function NumbersCourse() {
             );
           }
         } catch (e) {
-          console.error('❌ Error marking course finished:', e);
+          console.error('❌ Error marking level finished:', e);
         }
       })();
     }
@@ -249,7 +249,7 @@ export default function NumbersCourse() {
     if (!user) return;
     (async () => {
       try {
-        const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+        const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
         const snap = await getDoc(progressRef);
         const current = snap.exists() ? (snap.data() as any) : null;
         const currentIds: string[] = current?.learnedItemIds || [];
@@ -257,7 +257,7 @@ export default function NumbersCourse() {
         const updatedIds = [...currentIds, String(numberId)];
         await setDoc(progressRef, {
           userId: user.uid,
-          courseId: String(course_id),
+          courseId: String(level_id),
           learnedItemIds: updatedIds,
           lastUpdated: serverTimestamp(),
           createdAt: current?.createdAt || serverTimestamp()
@@ -344,7 +344,7 @@ export default function NumbersCourse() {
     }
     (async () => {
       try {
-        const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+        const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
         const progressSnap = await getDoc(progressRef);
         if (progressSnap.exists()) {
           const data = progressSnap.data() as any;

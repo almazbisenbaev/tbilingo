@@ -7,8 +7,8 @@ import SettingsTab from '@/components/SettingsTab';
 import AnimatedTabContent from '@/components/AnimatedTabContent';
 import LoadingScreen from '@/components/common/LoadingScreen';
 import GoogleSignInButton from '@/components/GoogleSignInButton/GoogleSignInButton';
-import CourseLink from '@/components/CourseLink/CourseLink';
-import CourseLinkSkeleton from '@/components/CourseLinkSkeleton';
+import LevelLink from '@/components/LevelLink/LevelLink';
+import LevelLinkSkeleton from '@/components/LevelLinkSkeleton';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { collection, getDocs, query, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -20,23 +20,23 @@ import Image from "next/image";
 
 type AuthMode = 'login' | 'signup' | null;
 
-// Unlocks all courses for testing
-const UNLOCK_ALL_COURSES_FOR_TESTING = false;
+// Unlocks all levels for testing
+const UNLOCK_ALL_LEVELS_FOR_TESTING = false;
 
-interface CourseConfig {
+interface LevelConfig {
   id: string;
   title: string;
   icon: string;
-  requiredCourseId?: string;
-  requiredCourseTitle?: string;
+  requiredLevelId?: string;
+  requiredLevelTitle?: string;
 }
 
-const COURSES: CourseConfig[] = [
+const LEVELS: LevelConfig[] = [
   { id: '1', title: 'Alphabet', icon: '/images/icon-alphabet.svg' },
-  { id: '2', title: 'Numbers', icon: '/images/icon-numbers.svg', requiredCourseId: '1', requiredCourseTitle: 'Learn Alphabet' },
-  { id: '3', title: 'Basic Words', icon: '/images/icon-phrases.svg', requiredCourseId: '2', requiredCourseTitle: 'Learn Numbers' },
-  { id: '4', title: 'Phrases Advanced', icon: '/images/icon-phrases.svg', requiredCourseId: '3', requiredCourseTitle: 'Basic Words' },
-  { id: '5', title: 'Business Georgian', icon: '/images/icon-phrases.svg', requiredCourseId: '4', requiredCourseTitle: 'Phrases Advanced' },
+  { id: '2', title: 'Numbers', icon: '/images/icon-numbers.svg', requiredLevelId: '1', requiredLevelTitle: 'Learn Alphabet' },
+  { id: '3', title: 'Basic Words', icon: '/images/icon-phrases.svg', requiredLevelId: '2', requiredLevelTitle: 'Learn Numbers' },
+  { id: '4', title: 'Phrases Advanced', icon: '/images/icon-phrases.svg', requiredLevelId: '3', requiredLevelTitle: 'Basic Words' },
+  { id: '5', title: 'Business Georgian', icon: '/images/icon-phrases.svg', requiredLevelId: '4', requiredLevelTitle: 'Phrases Advanced' },
 ];
 
 // --- Main Component ---
@@ -104,7 +104,7 @@ export default function LearnApp() {
 // --- LearnTabView ---
 
 function LearnTabView() {
-  const [coursesData, setCoursesData] = useState<Record<string, {
+  const [levelsData, setLevelsData] = useState<Record<string, {
     totalItems: number;
     learnedItems: number;
     isCompleted: boolean;
@@ -114,7 +114,7 @@ function LearnTabView() {
   const [globalLoading, setGlobalLoading] = useState(true);
   const [user, setUser] = useState(auth.currentUser);
   const [showLockedDialog, setShowLockedDialog] = useState(false);
-  const [requiredCourseTitle, setRequiredCourseTitle] = useState<string>('');
+  const [requiredLevelTitle, setRequiredLevelTitle] = useState<string>('');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -127,30 +127,30 @@ function LearnTabView() {
     const fetchData = async () => {
       setGlobalLoading(true);
 
-      const newCoursesData: typeof coursesData = {};
+      const newLevelsData: typeof levelsData = {};
 
-      await Promise.all(COURSES.map(async (course) => {
+      await Promise.all(LEVELS.map(async (level) => {
         try {
-          const itemsRef = collection(db, 'courses', course.id, 'items');
+          const itemsRef = collection(db, 'courses', level.id, 'items');
           const q = query(itemsRef);
           const snapshot = await getDocs(q);
 
-          newCoursesData[course.id] = {
+          newLevelsData[level.id] = {
             totalItems: snapshot.docs.length,
             learnedItems: 0,
             isCompleted: false,
             loading: false
           };
         } catch (error) {
-          console.error(`Error fetching items for course ${course.id}:`, error);
-          newCoursesData[course.id] = { totalItems: 0, learnedItems: 0, isCompleted: false, loading: false };
+          console.error(`Error fetching items for level ${level.id}:`, error);
+          newLevelsData[level.id] = { totalItems: 0, learnedItems: 0, isCompleted: false, loading: false };
         }
       }));
 
       if (user) {
-        await Promise.all(COURSES.map(async (course) => {
+        await Promise.all(LEVELS.map(async (level) => {
           try {
-            const progressRef = doc(db, 'users', user.uid, 'progress', course.id);
+            const progressRef = doc(db, 'users', user.uid, 'progress', level.id);
             const progressSnap = await getDoc(progressRef);
 
             if (progressSnap.exists()) {
@@ -158,27 +158,27 @@ function LearnTabView() {
               const learnedItems = data.learnedItemIds?.length || 0;
               const isFinished = data.isFinished || false;
 
-              if (newCoursesData[course.id]) {
-                newCoursesData[course.id].learnedItems = learnedItems;
-                newCoursesData[course.id].isCompleted = UNLOCK_ALL_COURSES_FOR_TESTING || isFinished;
+              if (newLevelsData[level.id]) {
+                newLevelsData[level.id].learnedItems = learnedItems;
+                newLevelsData[level.id].isCompleted = UNLOCK_ALL_LEVELS_FOR_TESTING || isFinished;
 
-                if (!isFinished && newCoursesData[course.id].totalItems > 0 && learnedItems >= newCoursesData[course.id].totalItems) {
-                  console.log(`Auto-fixing completion flag for course ${course.id}`);
+                if (!isFinished && newLevelsData[level.id].totalItems > 0 && learnedItems >= newLevelsData[level.id].totalItems) {
+                  console.log(`Auto-fixing completion flag for level ${level.id}`);
                   await setDoc(progressRef, {
                     isFinished: true,
                     lastUpdated: serverTimestamp()
                   }, { merge: true });
-                  newCoursesData[course.id].isCompleted = true;
+                  newLevelsData[level.id].isCompleted = true;
                 }
               }
             }
           } catch (error) {
-            console.error(`Error fetching progress for course ${course.id}:`, error);
+            console.error(`Error fetching progress for level ${level.id}:`, error);
           }
         }));
       }
 
-      setCoursesData(newCoursesData);
+      setLevelsData(newLevelsData);
       setGlobalLoading(false);
     };
 
@@ -196,7 +196,7 @@ function LearnTabView() {
   }, [user]);
 
   const handleLockedClick = (requiredTitle: string) => {
-    setRequiredCourseTitle(requiredTitle);
+    setRequiredLevelTitle(requiredTitle);
     setShowLockedDialog(true);
   };
 
@@ -212,9 +212,9 @@ function LearnTabView() {
           <Image src="/images/logo.svg" alt="Tbilingo" width={120} height={48} className='object-contain' />
         </div>
 
-        <div className="courses-list">
-          {COURSES.map(course => (
-            <CourseLinkSkeleton key={course.id} />
+        <div className="levels-list">
+          {LEVELS.map(level => (
+            <LevelLinkSkeleton key={level.id} />
           ))}
         </div>
       </div>
@@ -227,25 +227,25 @@ function LearnTabView() {
         <Image src="/images/logo.svg" alt="Tbilingo" width={120} height={48} className='object-contain' />
       </div>
 
-      <div className="courses-list">
-        {COURSES.map((course) => {
-          const data = coursesData[course.id] || { totalItems: 0, learnedItems: 0, isCompleted: false };
-          const isLocked = course.requiredCourseId
-            ? !(coursesData[course.requiredCourseId]?.isCompleted)
+      <div className="levels-list">
+        {LEVELS.map((level) => {
+          const data = levelsData[level.id] || { totalItems: 0, learnedItems: 0, isCompleted: false };
+          const isLocked = level.requiredLevelId
+            ? !(levelsData[level.requiredLevelId]?.isCompleted)
             : false;
 
           return (
-            <div key={course.id} className="course-item-wrapper">
-              <CourseLink
-                href={`/learn/${course.id}`}
-                title={course.title}
-                icon={course.icon}
+            <div key={level.id} className="level-item-wrapper">
+              <LevelLink
+                href={`/learn/${level.id}`}
+                title={level.title}
+                icon={level.icon}
                 disabled={false}
                 locked={isLocked}
                 progress={getCompletionPercentage(data.learnedItems, data.totalItems)}
                 completedItems={data.learnedItems}
                 totalItems={data.totalItems}
-                onLockedClick={() => handleLockedClick(course.requiredCourseTitle || '')}
+                onLockedClick={() => handleLockedClick(level.requiredLevelTitle || '')}
               />
             </div>
           );
@@ -256,8 +256,8 @@ function LearnTabView() {
 
       <ConfirmationDialog
         isOpen={showLockedDialog}
-        title="Course Locked"
-        message={`Please complete "${requiredCourseTitle}" first to unlock this course.`}
+        title="Level Locked"
+        message={`Please complete "${requiredLevelTitle}" first to unlock this level.`}
         confirmText="Got it"
         cancelText=""
         onConfirm={() => setShowLockedDialog(false)}

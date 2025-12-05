@@ -2,18 +2,18 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { CourseLinkProps } from '@/types';
+import { LevelLinkProps } from '@/types';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
 import { useState, useEffect } from 'react';
 
-import './CourseLink.css';
+import './LevelLink.css';
 
 /**
- * CourseLink component displays a link to a course with an icon and title
+ * LevelLink component displays a link to a level with an icon and title
  * Optionally shows progress information when progress data is provided
  */
 
-export default function CourseLink({
+export default function LevelLink({
     href,
     title,
     icon,
@@ -23,7 +23,7 @@ export default function CourseLink({
     totalItems = 0,
     completedItems = 0,
     onLockedClick
-}: CourseLinkProps) {
+}: LevelLinkProps) {
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
@@ -35,7 +35,7 @@ export default function CourseLink({
 
     const isCompleted = progress === 100;
 
-    // Handle locked course click
+    // Handle locked level click
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         if (locked) {
             e.preventDefault();
@@ -47,19 +47,19 @@ export default function CourseLink({
         <>
             <Link
                 href={href}
-                className={`course-link ${disabled ? 'course-link-disabled' : ''} ${isCompleted ? 'course-link-completed' : ''} ${locked ? 'course-link-locked' : ''}`}
+                className={`level-link ${disabled ? 'level-link-disabled' : ''} ${isCompleted ? 'level-link-completed' : ''} ${locked ? 'level-link-locked' : ''}`}
                 onClick={handleClick}
             >
-                <div className='course-link-icon'>
+                <div className='level-link-icon'>
                     <Image src={icon} alt={title} width={38} height={38} />
                 </div>
-                <div className='course-link-content'>
-                    <div className='course-link-title'>{title}</div>
+                <div className='level-link-content'>
+                    <div className='level-link-title'>{title}</div>
                     {disabled && (
-                        <div className='course-link-label'>Coming soon</div>
+                        <div className='level-link-label'>Coming soon</div>
                     )}
                     {shouldShowProgress && (
-                        <div className='course-link-progress'>
+                        <div className='level-link-progress'>
                             <ProgressBar
                                 current={completedItems || 0}
                                 total={totalItems || 0}

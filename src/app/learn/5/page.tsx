@@ -1,7 +1,7 @@
 "use client";
 
-const course_id = 5;
-console.log(course_id);
+const level_id = 5;
+console.log(level_id);
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -20,12 +20,12 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-// Numeric course id for data and memory progress
-const COURSE_ID = '5';
+// Numeric level id for data and memory progress
+const LEVEL_ID = '5';
 // Store key for local progress state (UI uses slug)
-const COURSE_STORE_KEY = 'phrases-business';
-const COURSE_TITLE = 'Business & Work';
-const COURSE_DESCRIPTION = 'Professional Georgian phrases for business and work settings';
+const LEVEL_STORE_KEY = 'phrases-business';
+const LEVEL_TITLE = 'Business & Work';
+const LEVEL_DESCRIPTION = 'Professional Georgian phrases for business and work settings';
 
 export default function BusinessWorkPage() {
 
@@ -54,7 +54,7 @@ export default function BusinessWorkPage() {
         setPhrasesLoading(true);
         setPhrasesError(null);
 
-        const itemsRef = collection(db, 'courses', String(course_id), 'items');
+        const itemsRef = collection(db, 'courses', String(level_id), 'items');
         const qItems = query(itemsRef);
         const snapshot = await getDocs(qItems);
         const phraseItems: PhraseAdvancedItem[] = snapshot.docs.map(docSnap => ({
@@ -76,7 +76,7 @@ export default function BusinessWorkPage() {
     fetchPhrasesData();
   }, []);
 
-  // Initialize course memory
+  // Initialize level memory
   useEffect(() => {
     if (!phrasesLoading && phrases.length > 0 && !isInitialized) {
       const loadProgress = async () => {
@@ -85,7 +85,7 @@ export default function BusinessWorkPage() {
           const initialMemory: Record<number, PhraseAdvancedMemory> = {};
           let learnedIds: number[] = [];
           if (user) {
-            const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+            const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
             const progressSnap = await getDoc(progressRef);
             if (progressSnap.exists()) {
               const data = progressSnap.data() as any;
@@ -131,7 +131,7 @@ export default function BusinessWorkPage() {
         try {
           const user = auth.currentUser;
           if (!user) return;
-          const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+          const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
           const snap = await getDoc(progressRef);
           const learnedItemIds: string[] = snap.exists() ? ((snap.data() as any).learnedItemIds || []) : [];
           const totalItems = phrases.length;
@@ -140,7 +140,7 @@ export default function BusinessWorkPage() {
               progressRef,
               {
                 userId: user.uid,
-                courseId: String(course_id),
+                courseId: String(level_id),
                 isFinished: true,
                 lastUpdated: serverTimestamp(),
                 createdAt: snap.exists() ? ((snap.data() as any).createdAt || serverTimestamp()) : serverTimestamp()
@@ -149,7 +149,7 @@ export default function BusinessWorkPage() {
             );
           }
         } catch (e) {
-          console.error('❌ Error marking course finished:', e);
+          console.error('❌ Error marking level finished:', e);
         }
       })();
     }
@@ -167,7 +167,7 @@ export default function BusinessWorkPage() {
         if (user) {
           (async () => {
             try {
-              const progressRef = doc(db, 'users', user.uid, 'progress', String(course_id));
+              const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
               const snap = await getDoc(progressRef);
               const currentDoc = snap.exists() ? (snap.data() as any) : null;
               const currentIds: string[] = currentDoc?.learnedItemIds || [];
@@ -175,7 +175,7 @@ export default function BusinessWorkPage() {
                 const updatedIds = [...currentIds, String(phraseId)];
                 await setDoc(progressRef, {
                   userId: user.uid,
-                  courseId: String(course_id),
+                  courseId: String(level_id),
                   learnedItemIds: updatedIds,
                   lastUpdated: serverTimestamp(),
                   createdAt: currentDoc?.createdAt || serverTimestamp()
@@ -271,7 +271,7 @@ export default function BusinessWorkPage() {
     );
   }
 
-  // Course intro page
+  // Level intro page
   if (!isGameplayActive) {
     return (
       <div className='h-svh flex flex-col justify-between py-4'>
@@ -283,16 +283,16 @@ export default function BusinessWorkPage() {
                   <Image src="/images/icon-back.svg" alt="Back" width={24} height={24} />
                 </Link>
               </div>
-              <h1 className="navbar-title">{COURSE_TITLE}</h1>
+              <h1 className="navbar-title">{LEVEL_TITLE}</h1>
               <div className="navbar-aside"></div>
             </div>
           </div>
         </div>
 
         <div className='w-full max-w-2xl mx-auto p-4'>
-          {COURSE_DESCRIPTION && (
+          {LEVEL_DESCRIPTION && (
             <div className="text-center mb-6">
-              <p className="text-gray-600">{COURSE_DESCRIPTION}</p>
+              <p className="text-gray-600">{LEVEL_DESCRIPTION}</p>
             </div>
           )}
           {progressLoaded && (
@@ -311,7 +311,7 @@ export default function BusinessWorkPage() {
     );
   }
 
-  // Course completion page
+  // Level completion page
   if (allCardsReviewed) {
     const sessionLearnedCount = learnedPhrases.filter(id =>
       phrasesToReview.some(phrase => phrase.id === id)
@@ -335,7 +335,7 @@ export default function BusinessWorkPage() {
                   <Image src="/images/icon-back.svg" alt="Back" width={24} height={24} />
                 </button>
               </div>
-              <h1 className="navbar-title">{COURSE_TITLE}</h1>
+              <h1 className="navbar-title">{LEVEL_TITLE}</h1>
               <div className="navbar-aside"></div>
             </div>
           </div>
@@ -367,7 +367,7 @@ export default function BusinessWorkPage() {
 
   // Active gameplay
   return (
-    <div className="h-svh flex flex-col justify-between py-4 phrases-advanced-course">
+    <div className="h-svh flex flex-col justify-between py-4 phrases-advanced-level">
       <div className="w-full max-w-2xl mx-auto p-4">
         <AppHeader
           title={
