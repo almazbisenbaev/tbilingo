@@ -391,7 +391,13 @@ export default function NumbersLevel() {
         )}
 
         <div className='w-full max-w-2xl mx-auto p-4'>
-          <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>
+          {allCardsReviewed || (numbers.length > 0 && learnedNumbers.length === numbers.length) ? (
+            <div className='text-center'>
+              You've learned all numbers
+            </div>
+          ) : (
+            <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>
+          )}
         </div>
 
       </div>

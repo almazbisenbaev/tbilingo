@@ -377,7 +377,13 @@ export default function BasicWordsLevel() {
         )}
 
         <div className='w-full max-w-2xl mx-auto p-4'>
-          <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>
+          {allCardsReviewed || (words.length > 0 && learnedWords.length === words.length) ? (
+            <div className='text-center'>
+              You've learned all basic words
+            </div>
+          ) : (
+            <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>
+          )}
         </div>
       </div>
     )
