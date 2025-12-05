@@ -5,16 +5,16 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Course content - readable by all, writable by authenticated users (temporary for migration)
+    // Course content - readable by all, admin-only write access
     // Course definitions and learning content should be read-only for regular users
     match /courses/{courseId} {
       allow read: if true; // Anyone can read course definitions
-      allow write: if request.auth != null; // Temporarily allow authenticated users to write
+      allow write: if false; // Only admin SDK / Cloud Functions can write
       
-      // Course items are readable by all, writable by authenticated users (temporary for migration)
+      // Course items are readable by all, admin-only write access
       match /items/{itemId} {
         allow read: if true; // Anyone can read course items
-        allow write: if request.auth != null; // Temporarily allow authenticated users to write
+        allow write: if false; // Only admin SDK / Cloud Functions can write
       }
     }
     
