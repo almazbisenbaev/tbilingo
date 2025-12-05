@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import { WordItem, PendingWordAction } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
-import WordsComponent from '@/components/WordsComponent/WordsComponent';
+import FlashcardWord from '@/components/FlashcardWord/FlashcardWord';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 // import SuccessModal from '@/components/SuccessModal';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
@@ -431,7 +431,7 @@ export default function WordsCourse() {
                     >
                       <div className='slider-slide-inner'>
 
-                        <WordsComponent
+                        <FlashcardWord
                           word={item}
                           onNext={() => markAsToReview(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
                           onLearned={() => markAsLearned(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}

@@ -65,6 +65,12 @@ export interface WordsComponentProps {
   onLearned: () => void;
 }
 
+export interface FlashcardWordProps {
+  word: WordItem;
+  onNext: () => void;
+  onLearned: () => void;
+}
+
 export interface ProgressBarProps {
   current: number;
   total: number;
