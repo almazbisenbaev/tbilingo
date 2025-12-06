@@ -1,58 +1,58 @@
-.level-preview-section {
+.levels-preview-section {
     margin-top: 2rem;
     width: 100%;
 }
 
-.level-preview-title {
+.levels-preview-title {
     font-size: 1.125rem;
     font-weight: 600;
-    color: #374151;
     margin: 0 0 1.5rem 0;
     text-align: center;
 }
 
 
-.level-preview-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 8px;
-}
-
-.level-preview-item {
-    text-align: center;
-    background: rgba(255, 255, 255, 0.75);
-    /* border: 1px solid #E5E7EB; */
-    border-radius: 12px;
-    /* backdrop-filter: blur(10px); */
-
+.levels-preview-list {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    padding: 24px 12px;
 }
 
-.level-preview-icon {
+
+.levels-preview-divider {
+    background: linear-gradient(180deg, rgba(255, 79, 39, 0) 0%, rgba(255, 79, 39, 0.16) 100%);
+    
+    width: 3px;
+    height: 50px;
+}
+
+.levels-preview-item {
+    text-align: center;
+
+
+}
+
+.levels-preview-icon {
+    border: 3px solid rgba(255, 79, 39, 0.16);
+    border-radius: 99px;
+
+    width: 100px;
+    height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
 }
 
-.level-preview-icon img {
-    width: 32px;
-    height: 32px;
-    opacity: 0.7;
+.levels-preview-icon img {
+    width: 36px;
+    height: 36px;
 }
 
-.level-preview-content {}
+.levels-preview-name {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 30px;
+    color: #FF4F27;
 
-.level-preview-name {
-    font-size: .875rem;
-    font-weight: 600;
-    color: #F24822;
-    margin-bottom: 2px;
+    margin-top: 14px;
+
 }
