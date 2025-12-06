@@ -88,14 +88,12 @@ export default function AndroidNotifyModal({ isOpen, onClose }: AndroidNotifyMod
                   setError('');
                 }}
                 placeholder="Enter your email"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all"
+                className="text-lg font-medium w-full px-5 py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
                 autoComplete="email"
               />
               {error && <p className="text-red-500 text-sm mt-1 text-left">{error}</p>}
             </div>
-            <button type="submit" className="btn btn-primary btn-large btn-block">
-              Notify Me
-            </button>
+            <button type="submit" className="btn btn-primary btn-block">Waitlist Me</button>
           </form>
         </div>
       )}
