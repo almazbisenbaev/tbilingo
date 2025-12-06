@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import ScopePreview from '@/components/ScopePreview/scope-preview';
@@ -9,7 +10,19 @@ import AndroidNotifyModal from '@/components/AndroidNotifyModal';
 
 
 export default function LandingPage() {
+  const router = useRouter();
   const [isAndroidModalOpen, setIsAndroidModalOpen] = useState(false);
+
+  useEffect(() => {
+    // Check if running in standalone mode (PWA)
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      const hasRedirected = sessionStorage.getItem('pwa_redirected');
+      if (!hasRedirected) {
+        sessionStorage.setItem('pwa_redirected', 'true');
+        router.replace('/learn');
+      }
+    }
+  }, [router]);
 
   return (
     <div className="landing py-20">
