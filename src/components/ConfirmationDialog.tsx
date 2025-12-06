@@ -47,7 +47,7 @@ export function ConfirmationDialog({
           )}
           <button
             onClick={onConfirm}
-            className={`btn btn-black ${cancelText ? "flex-1" : "btn-block"}`}
+            className={`btn btn-primary ${cancelText ? "flex-1" : "btn-block"}`}
           >
             {confirmText}
           </button>

@@ -57,7 +57,7 @@ export default function SettingsTab() {
           </div>
         )}
 
-        <div className="credits">Made by <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
+        <div className="text-sm text-center flex justify-center items-center gap-[0.3em] px-5 mt-8">Made by <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
 
       </div>
 

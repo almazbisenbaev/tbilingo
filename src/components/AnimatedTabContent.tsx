@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, ReactNode } from 'react';
-import { TabType } from './TabBar';
+import { TabType } from './tab-bar/tab-bar';
 
 interface AnimatedTabContentProps {
   activeTab: TabType;

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import TabBar, { TabType } from '@/components/TabBar';
+import TabBar, { TabType } from '@/components/tab-bar/tab-bar';
 import SettingsTab from '@/components/SettingsTab';
 import AnimatedTabContent from '@/components/AnimatedTabContent';
 import LoadingScreen from '@/components/common/LoadingScreen';
