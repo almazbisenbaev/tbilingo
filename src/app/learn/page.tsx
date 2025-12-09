@@ -11,6 +11,7 @@ import LevelLinkSkeleton from '@/components/LevelLinkSkeleton';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Button } from '@/components/ui/button';
+import { LevelType } from '@/types';
 import { collection, getDocs, query, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -30,14 +31,15 @@ interface LevelConfig {
   icon: string;
   requiredLevelId?: string;
   requiredLevelTitle?: string;
+  type?: LevelType; // Default type (can be overridden by Firestore)
 }
 
 const LEVELS: LevelConfig[] = [
-  { id: '1', title: 'Alphabet', icon: '/images/icon-alphabet.svg' },
-  { id: '2', title: 'Numbers', icon: '/images/icon-numbers.svg', requiredLevelId: '1', requiredLevelTitle: 'Learn Alphabet' },
-  { id: '3', title: 'Basic Words', icon: '/images/icon-phrases.svg', requiredLevelId: '2', requiredLevelTitle: 'Learn Numbers' },
-  { id: '4', title: 'Phrases Advanced', icon: '/images/icon-phrases.svg', requiredLevelId: '3', requiredLevelTitle: 'Basic Words' },
-  { id: '5', title: 'Business Georgian', icon: '/images/icon-phrases.svg', requiredLevelId: '4', requiredLevelTitle: 'Phrases Advanced' },
+  { id: '1', title: 'Alphabet', icon: '/images/icon-alphabet.svg', type: 'characters' },
+  { id: '2', title: 'Numbers', icon: '/images/icon-numbers.svg', requiredLevelId: '1', requiredLevelTitle: 'Learn Alphabet', type: 'numbers' },
+  { id: '3', title: 'Basic Words', icon: '/images/icon-phrases.svg', requiredLevelId: '2', requiredLevelTitle: 'Learn Numbers', type: 'words' },
+  { id: '4', title: 'Phrases Advanced', icon: '/images/icon-phrases.svg', requiredLevelId: '3', requiredLevelTitle: 'Basic Words', type: 'phrases' },
+  { id: '5', title: 'Business Georgian', icon: '/images/icon-phrases.svg', requiredLevelId: '4', requiredLevelTitle: 'Phrases Advanced', type: 'phrases' },
 ];
 
 // --- Main Component ---
@@ -178,6 +180,7 @@ function LearnTabView() {
     learnedItems: number;
     isCompleted: boolean;
     loading: boolean;
+    type?: LevelType;
   }>>({});
 
   const [globalLoading, setGlobalLoading] = useState(true);
@@ -200,6 +203,19 @@ function LearnTabView() {
 
       await Promise.all(LEVELS.map(async (level) => {
         try {
+          // Fetch level metadata (including type) from Firestore
+          const levelDocRef = doc(db, 'courses', level.id);
+          const levelDocSnap = await getDoc(levelDocRef);
+
+          let levelType = level.type; // Use default from config as fallback
+          if (levelDocSnap.exists()) {
+            const levelData = levelDocSnap.data();
+            if (levelData.type) {
+              levelType = levelData.type as LevelType;
+            }
+          }
+
+          // Fetch items count
           const itemsRef = collection(db, 'courses', level.id, 'items');
           const q = query(itemsRef);
           const snapshot = await getDocs(q);
@@ -208,11 +224,12 @@ function LearnTabView() {
             totalItems: snapshot.docs.length,
             learnedItems: 0,
             isCompleted: false,
-            loading: false
+            loading: false,
+            type: levelType,
           };
         } catch (error) {
           console.error(`Error fetching items for level ${level.id}:`, error);
-          newLevelsData[level.id] = { totalItems: 0, learnedItems: 0, isCompleted: false, loading: false };
+          newLevelsData[level.id] = { totalItems: 0, learnedItems: 0, isCompleted: false, loading: false, type: level.type };
         }
       }));
 
