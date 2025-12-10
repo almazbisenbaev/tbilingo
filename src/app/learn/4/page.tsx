@@ -307,7 +307,8 @@ export default function PhrasesAdvancedPage() {
     const isFinished = phrases.length > 0 && learnedPhrases.length >= phrases.length;
 
     return (
-      <div className='h-svh flex flex-col justify-between py-4'>
+      <div className='app h-svh flex flex-col justify-between py-4'>
+
         <div className='w-full max-w-[480px] mx-auto'>
           <div className="navbar">
             <div className="navbar-row">
@@ -381,7 +382,7 @@ export default function PhrasesAdvancedPage() {
 
     return (
       <motion.div
-        className='h-svh flex flex-col justify-between py-4'
+        className="app h-svh flex flex-col justify-between py-4"
         initial={{ opacity: 0, scale: 0.8, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{
@@ -429,7 +430,7 @@ export default function PhrasesAdvancedPage() {
 
   // Active gameplay
   return (
-    <div className="h-svh flex flex-col justify-between py-4 phrases-advanced-level">
+    <div className="app h-svh flex flex-col justify-between py-4 phrases-advanced-level">
       <div className="w-full max-w-[480px] mx-auto">
         <AppHeader
           title={

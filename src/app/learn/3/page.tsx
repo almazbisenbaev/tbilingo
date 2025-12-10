@@ -393,7 +393,7 @@ export default function BasicWordsLevel() {
     const isFinished = words.length > 0 && learnedWords.length === words.length;
 
     return (
-      <div className='h-svh flex flex-col justify-between py-4'>
+      <div className='app h-svh flex flex-col justify-between py-4'>
         <div className='w-full max-w-[480px] mx-auto'>
           <div className="navbar">
             <div className="navbar-row">
@@ -466,7 +466,7 @@ export default function BasicWordsLevel() {
 
   // Gameplay component
   return (
-    <div className='h-svh flex flex-col justify-between py-4'>
+    <div className='app h-svh flex flex-col justify-between py-4'>
 
       {!allCardsReviewed && (
         <div className="screen-gameplay">

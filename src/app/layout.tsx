@@ -43,14 +43,12 @@ export default function RootLayout({
       <body
         className={`${notoS_Georgian.variable} ${inter.variable} antialiased`}
       >
-        <div className="app">
-          <AuthProvider>
-            <ServiceWorkerRegistration />
-            <AnimationProvider>
-              {children}
-            </AnimationProvider>
-          </AuthProvider>
-        </div>
+        <AuthProvider>
+          <ServiceWorkerRegistration />
+          <AnimationProvider>
+            {children}
+          </AnimationProvider>
+        </AuthProvider>
       </body>
     </html>
   );

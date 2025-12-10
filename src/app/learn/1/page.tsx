@@ -416,7 +416,7 @@ export default function AlphabetLevel() {
     const isFinished = allAlphabetItems.length > 0 && learnedCharacters.length === allAlphabetItems.length;
 
     return (
-      <div className='h-svh flex flex-col justify-between py-4'>
+      <div className='app h-svh flex flex-col justify-between py-4'>
 
         <div className='w-full max-w-[480px] mx-auto'>
           <div className="navbar">
@@ -491,7 +491,7 @@ export default function AlphabetLevel() {
 
   // Gameplay component
   return (
-    <div className='h-svh flex flex-col justify-between py-4'>
+    <div className='app h-svh flex flex-col justify-between py-4'>
 
       {!allCardsReviewed && (
         <div className={`screen-gameplay`}>

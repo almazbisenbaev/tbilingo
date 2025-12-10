@@ -407,7 +407,7 @@ export default function NumbersLevel() {
     const isFinished = numbers.length > 0 && learnedNumbers.length === numbers.length;
 
     return (
-      <div className='h-svh flex flex-col justify-between py-4'>
+      <div className='app h-svh flex flex-col justify-between py-4'>
 
         <div className='w-full max-w-[480px] mx-auto'>
           <div className="navbar">
@@ -482,7 +482,7 @@ export default function NumbersLevel() {
 
   // Gameplay component
   return (
-    <div className='h-svh flex flex-col justify-between py-4'>
+    <div className='app h-svh flex flex-col justify-between py-4'>
 
       {!allCardsReviewed && (
         <div className={`screen-gameplay`}>

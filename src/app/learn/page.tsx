@@ -56,7 +56,7 @@ export default function LearnApp() {
   if (!currentUser) {
     if (authMode === 'login') {
       return (
-        <div className="welcome">
+        <div className="app welcome">
           <div className="welcome-inner">
             <LoginView
               onSwitchToSignup={() => setAuthMode('signup')}
@@ -69,7 +69,7 @@ export default function LearnApp() {
 
     if (authMode === 'signup') {
       return (
-        <div className="welcome">
+        <div className="app welcome">
           <div className="welcome-inner">
             <SignupView
               onSwitchToLogin={() => setAuthMode('login')}
@@ -89,7 +89,7 @@ export default function LearnApp() {
   }
 
   return (
-    <div className="app-with-tabs">
+    <div className="app app-with-tabs">
       <div className="tab-content">
         <AnimatedTabContent
           activeTab={activeTab}
@@ -387,7 +387,7 @@ function AuthView({ onSignUp, onSignIn }: AuthViewProps) {
   };
 
   return (
-    <div className="welcome">
+    <div className="app welcome">
       <div className="welcome-inner">
 
         <Link href="/" className='flex justify-center'>
