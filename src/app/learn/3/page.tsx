@@ -8,6 +8,9 @@ console.log(level_id);
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Swiper as SwiperType } from 'swiper/types';
+import 'swiper/css';
 
 import { WordItem, PendingWordAction } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
@@ -36,13 +39,12 @@ export default function BasicWordsLevel() {
   const [isGameplayActive, setIsGameplayActive] = useState<boolean>(false);
   const [processedWords, setProcessedWords] = useState<number[]>([]);
   const [wordsToReview, setWordsToReview] = useState<WordItem[]>([]);
-  const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
-  const [slideWidth, setSlideWidth] = useState<number>(0);
+  const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [allCardsReviewed, setAllCardsReviewed] = useState<boolean>(false);
 
   // Confirmation dialog state
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-  const [pendingLearnedAction, setPendingLearnedAction] = useState<PendingWordAction | null>(null);
+  const [pendingLearnedAction, setPendingLearnedAction] = useState<{ wordId: number } | null>(null);
 
   const [courseInfo, setCourseInfo] = useState<{title: string, description: string, icon: string} | null>(null);
 
@@ -228,8 +230,6 @@ export default function BasicWordsLevel() {
 
     // Reset session state
     setProcessedWords([]);
-    setCurrentWordIndex(0);
-    setSlideWidth(0);
 
     // Shuffle remaining words and select a subset for this session
     const shuffledWords = shuffleArray(unlearnedWords);
@@ -239,39 +239,9 @@ export default function BasicWordsLevel() {
     // Update state to start the gameplay
     setWordsToReview(selectedWords);
     setIsGameplayActive(true);
-
-    // Calculate slide width after component renders for proper animations
-    setTimeout(() => {
-      const element = document.querySelector('.slider-slide');
-      if (element) {
-        const slideWidth = element.getBoundingClientRect().width;
-        setSlideWidth(slideWidth);
-      }
-    }, 200); // Short delay to ensure DOM is ready
   };
 
-  /**
-   * Handles the animation between word cards by sliding the track horizontally
-   * @param index - The index of the current slide
-   * @param element - The DOM element of the current slide
-   */
-  const switchSlide = (index: number, element: HTMLElement | null) => {
-    if (!element) return;
 
-    const slideWidth = element.getBoundingClientRect().width;
-    const sliderTrack = document.querySelector('.slider-track') as HTMLElement | null;
-
-    if (sliderTrack) {
-      const currentTransform = getComputedStyle(sliderTrack).transform;
-      const matrix = new window.DOMMatrix(currentTransform);
-      const currentTranslateX = matrix.m41;
-
-      sliderTrack.style.transform = `translateX(${currentTranslateX - slideWidth}px)`;
-    }
-
-    // Update current word index for progress bar
-    setCurrentWordIndex(index + 1);
-  }
 
   /**
    * Persists a learned word to the progress store
@@ -309,14 +279,12 @@ export default function BasicWordsLevel() {
   /**
    * Marks a word as "to review" and advances to the next card
    * @param wordId - The ID of the word to mark as reviewed
-   * @param index - The index of the current slide
-   * @param element - The DOM element of the current slide for animation
    */
-  const markAsToReview = (wordId: number, index: number, element: HTMLElement | null) => {
+  const markAsToReview = (wordId: number) => {
     if (!processedWords.includes(wordId)) {
       setTimeout(() => {
         setProcessedWords((prevProcessedWords) => [...prevProcessedWords, wordId]);
-        switchSlide(index, element);
+        swiperInstance?.slideNext();
       }, 250);
     }
   };
@@ -324,12 +292,10 @@ export default function BasicWordsLevel() {
   /**
    * Initiates the process of marking a word as learned
    * @param wordId - The ID of the word to mark as learned
-   * @param index - The index of the current slide
-   * @param element - The DOM element of the current slide for animation
    */
-  const markAsLearned = (wordId: number, index: number, element: HTMLElement | null) => {
+  const markAsLearned = (wordId: number) => {
     if (!processedWords.includes(wordId)) {
-      setPendingLearnedAction({ wordId, index, element });
+      setPendingLearnedAction({ wordId });
       setShowConfirmation(true);
     }
   };
@@ -339,12 +305,12 @@ export default function BasicWordsLevel() {
    */
   const confirmMarkAsLearned = () => {
     if (pendingLearnedAction) {
-      const { wordId, index, element } = pendingLearnedAction;
+      const { wordId } = pendingLearnedAction;
       setTimeout(() => {
         setProcessedWords((prev) => [...prev, wordId]);
         setLearnedWords((prev) => [...prev, wordId]);
         setLearnedWords((prev) => [...prev, wordId]);
-        switchSlide(index, element);
+        swiperInstance?.slideNext();
         saveItemAsLearned(wordId);
       }, 450);
     }
@@ -364,7 +330,6 @@ export default function BasicWordsLevel() {
     setAllCardsReviewed(false);
     setProcessedWords([]);
     setWordsToReview([]);
-    setCurrentWordIndex(0);
     const user = auth.currentUser;
     if (!user) {
       setLearnedWords([]);
@@ -493,32 +458,29 @@ export default function BasicWordsLevel() {
           </div>
 
           <div className="gameplay-game">
-            <div className="slider">
-              <div className="slider-wrapper">
-                <div className="slider-track">
-                  {wordsToReview.map((item, index) => {
-                    const isProcessed = processedWords.includes(item.id);
-                    const isLearned = learnedWords.includes(item.id);
-                    return <div key={item.id}
-                      className={`slider-slide ${isProcessed ? 'processed' : 'not-processed'} ${isLearned ? 'learned' : 'not-learned'}`}
-                      style={{
-                        '--slide-width': slideWidth + 'px',
-                      } as React.CSSProperties}
-                    >
-                      <div className='slider-slide-inner'>
-
+            <Swiper
+              spaceBetween={20}
+              slidesPerView={1}
+              allowTouchMove={false}
+              onSwiper={(swiper) => setSwiperInstance(swiper)}
+              className="w-full h-full"
+            >
+              {wordsToReview.map((item) => {
+                const isProcessed = processedWords.includes(item.id);
+                const isLearned = learnedWords.includes(item.id);
+                return (
+                  <SwiperSlide key={item.id}>
+                    <div className={`h-full w-full flex items-center justify-center ${isProcessed ? 'processed' : 'not-processed'} ${isLearned ? 'learned' : 'not-learned'}`}>
                         <FlashcardWord
                           word={item}
-                          onNext={() => markAsToReview(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
-                          onLearned={() => markAsLearned(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
+                          onNext={() => markAsToReview(item.id)}
+                          onLearned={() => markAsLearned(item.id)}
                         />
-
-                      </div>
-                    </div>;
-                  })}
-                </div>
-              </div>
-            </div>
+                    </div>
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
           </div>
 
         </div>

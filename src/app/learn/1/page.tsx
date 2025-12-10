@@ -7,6 +7,9 @@ const level_id = 1;
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Swiper as SwiperType } from 'swiper/types';
+import 'swiper/css';
 
 import { AlphabetItem } from '@/types';
 
@@ -37,12 +40,12 @@ export default function AlphabetLevel() {
   const [isGameplayActive, setIsGameplayActive] = useState<boolean>(false);
   const [processedCharacters, setProcessedCharacters] = useState<number[]>([]);
   const [charactersToReview, setCharactersToReview] = useState<AlphabetItem[]>([]);
-  const [slideWidth, setSlideWidth] = useState<number>(0);
+  const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [allCardsReviewed, setAllCardsReviewed] = useState<boolean>(false);
 
   // Confirmation dialog state
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-  const [pendingLearnedAction, setPendingLearnedAction] = useState<{ characterId: number, index: number, element: HTMLElement | null } | null>(null);
+  const [pendingLearnedAction, setPendingLearnedAction] = useState<{ characterId: number } | null>(null);
 
   const [courseInfo, setCourseInfo] = useState<{title: string, description: string, icon: string} | null>(null);
 
@@ -235,7 +238,6 @@ export default function AlphabetLevel() {
 
     // Reset session state
     setProcessedCharacters([]);
-    setSlideWidth(0);
 
     // Shuffle remaining characters and select a subset for this session
     const shuffledUnlearnedCharacters = shuffleArray(unlearnedCharacters);
@@ -245,43 +247,9 @@ export default function AlphabetLevel() {
     // Update state to start the gameplay
     setCharactersToReview(selectedCharacters);
     setIsGameplayActive(true);
-
-    // Calculate slide width after component renders for proper animations
-    setTimeout(() => {
-      const element = document.querySelector('.slider-slide');
-      if (element) {
-        const slideWidth = element.getBoundingClientRect().width;
-        setSlideWidth(slideWidth);
-      }
-    }, 200); // Short delay to ensure DOM is ready
   };
 
-  /**
-   * Handles the animation between flashcards by sliding the track horizontally
-   * Uses CSS transform to create a smooth sliding animation
-   * @param index - The index of the current slide (not used but kept for API consistency)
-   * @param element - The DOM element of the current slide
-   */
-  const switchSlide = (index: number, element: HTMLElement | null) => {
-    if (!element) return; // Safety check if element doesn't exist
 
-    // Get the width of the current slide for accurate movement
-    const slideWidth = element.getBoundingClientRect().width;
-
-    // Find the slider track element that contains all slides
-    const sliderTrack = document.querySelector('.slider-track') as HTMLElement | null;
-
-    if (sliderTrack) {
-      // Extract the current transform matrix to get the current position
-      const currentTransform = getComputedStyle(sliderTrack).transform;
-      const matrix = new window.DOMMatrix(currentTransform);
-      const currentTranslateX = matrix.m41; // m41 is the translateX value in the matrix
-
-      // Move the track left by the width of one slide to show the next card
-      // The negative value moves the track to the left
-      sliderTrack.style.transform = `translateX(${currentTranslateX - slideWidth}px)`;
-    }
-  }
 
   /**
    * Persists a learned letter to the progress store to maintain user progress across sessions
@@ -323,14 +291,12 @@ export default function AlphabetLevel() {
    * Marks a character as "to review" and advances to the next card
    * This function is called when the user clicks "Next card" without marking it as learned
    * @param characterId - The ID of the character to mark as reviewed
-   * @param index - The index of the current slide
-   * @param element - The DOM element of the current slide for animation
    */
-  const markAsToReview = (characterId: number, index: number, element: HTMLElement | null) => {
+  const markAsToReview = (characterId: number) => {
     if (!processedCharacters.includes(characterId)) {
       setTimeout(() => {
         setProcessedCharacters((prevProcessedCharacters) => [...prevProcessedCharacters, characterId]);
-        switchSlide(index, element);
+        swiperInstance?.slideNext();
       }, 250); // Small delay for better user experience
     }
   };
@@ -340,13 +306,11 @@ export default function AlphabetLevel() {
    * Shows a confirmation dialog before actually marking it as learned
    * This is called when the user clicks "Mark as learned" button
    * @param characterId - The ID of the character to mark as learned
-   * @param index - The index of the current slide
-   * @param element - The DOM element of the current slide for animation
    */
-  const markAsLearned = (characterId: number, index: number, element: HTMLElement | null) => {
+  const markAsLearned = (characterId: number) => {
     if (!processedCharacters.includes(characterId)) {
       // Store the action details to be executed after confirmation
-      setPendingLearnedAction({ characterId, index, element });
+      setPendingLearnedAction({ characterId });
       // Show confirmation dialog
       setShowConfirmation(true);
     }
@@ -363,11 +327,11 @@ export default function AlphabetLevel() {
    */
   const confirmMarkAsLearned = () => {
     if (pendingLearnedAction) {
-      const { characterId, index, element } = pendingLearnedAction;
+      const { characterId } = pendingLearnedAction;
       setTimeout(() => {
         setProcessedCharacters((prev) => [...prev, characterId]); // Add to processed characters for this session
         setLearnedCharacters((prev) => [...prev, characterId]); // Add to learned characters list
-        switchSlide(index, element); // Animate to the next slide
+        swiperInstance?.slideNext(); // Animate to the next slide
         saveItemAsLearned(characterId); // Persist the learned status in user's firestore
       }, 450); // Delay for better user experience and to allow animation to complete
     }
@@ -517,32 +481,29 @@ export default function AlphabetLevel() {
           </div>
 
           <div className="gameplay-game">
-            <div className="slider">
-              <div className="slider-wrapper">
-                <div className="slider-track">
-                  {charactersToReview.map((item, index) => {
-                    const isProcessed = processedCharacters.includes(item.id);
-                    const isLearned = learnedCharacters.includes(item.id);
-                    return <div key={item.id}
-                      className={`slider-slide ${isProcessed ? 'processed' : 'not-processed'} ${isLearned ? 'learned' : 'not-learned'}`}
-                      style={{
-                        '--slide-width': slideWidth + 'px',
-                      } as React.CSSProperties}
-                    >
-                      <div className='slider-slide-inner'>
-
+            <Swiper
+              spaceBetween={20}
+              slidesPerView={1}
+              allowTouchMove={false}
+              onSwiper={(swiper) => setSwiperInstance(swiper)}
+              className="w-full h-full"
+            >
+              {charactersToReview.map((item) => {
+                const isProcessed = processedCharacters.includes(item.id);
+                const isLearned = learnedCharacters.includes(item.id);
+                return (
+                  <SwiperSlide key={item.id}>
+                    <div className={`h-full w-full flex items-center justify-center ${isProcessed ? 'processed' : 'not-processed'} ${isLearned ? 'learned' : 'not-learned'}`}>
                         <FlashcardLetter
                           letter={item}
-                          onNext={() => markAsToReview(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
-                          onLearned={() => markAsLearned(item.id, index, document.querySelectorAll('.slider-slide')[index] as HTMLElement)}
+                          onNext={() => markAsToReview(item.id)}
+                          onLearned={() => markAsLearned(item.id)}
                         />
-
-                      </div>
-                    </div>;
-                  })}
-                </div>
-              </div>
-            </div>
+                    </div>
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
           </div>
 
         </div>

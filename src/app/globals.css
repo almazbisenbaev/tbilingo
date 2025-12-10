@@ -214,73 +214,9 @@ input[type=submit]:focus {
   width: 100%;
 }
 
-.slider {
-  max-width: 100%;
-  overflow: hidden;
-}
-
-.slider-wrapper {
-  overflow: hidden;
-}
-
-.slider-track {
-  width: fit-content;
-  display: flex;
-  flex-wrap: nowrap;
-  transition: 0.8s;
-}
-
-.slider-slide {
-  width: 100%;
-  min-width: 100vw;
-
-  transition: 0.8s;
-}
-
-.slider-slide-inner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 32px;
-
-  width: 100%;
-  height: 100%;
-
-  transition: 0.99s;
-}
-
-.slider-slide.processed:not(.learned) {
-  opacity: 0;
-  transform: scale(0.95) rotate(-40deg);
-  transform-origin: 0% 100%;
-  z-index: -1;
-  pointer-events: none;
-}
-
-.slider-slide.learned {
-  opacity: 0;
-  transform-origin: center center;
-  z-index: -1;
-  pointer-events: none;
-}
-
-.slider-slide.learned .slider-slide-inner {
-  transform: translateX(calc(var(--slide-width, 0) / 2)) rotate(5deg) scale(0.8);
-}
-
 /* The green ring on learned card */
-.slider-slide.learned .flashcard-front {
+.learned .flashcard-front {
   box-shadow: inset 0px 0px 0px 8px rgba(14, 194, 113, 1);
-}
-
-.slider-slide-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 400px;
-  max-width: 100%;
-  padding: 0 32px;
 }
 
 .finish-message {
@@ -388,10 +324,8 @@ input[type=submit]:focus {
 .gameplay-game {
   overflow: hidden;
   flex: 1;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  position: relative;
 }
 
 .welcome {
@@ -540,7 +474,7 @@ input[type=submit]:focus {
 
 
 .app {
-  width: 480px;
+  /* width: 480px; */
   max-width: 100%;
   margin: 0 auto;
   min-height: 100svh;
