@@ -537,22 +537,13 @@ input[type=submit]:focus {
 
 
 .app {
-  /* background: #f4f4f4; */
-  border-radius: 20px;
-
-  /* width: 640px; */
-  /* max-width: 100%; */
-  /* margin: 0 auto; */
+  width: 480px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding-right: 20px;
+  padding-left: 20px;
   min-height: 100svh;
 }
-
-@media (max-width: 640px) {
-  .app {
-    border-radius: 0;
-    width: 100%;
-  }
-}
-
 
 
 /* Learn tab content */
@@ -562,8 +553,6 @@ input[type=submit]:focus {
   gap: 32px;
   min-height: calc(100svh - 80px);
   padding-top: 32px;
-  padding-right: 32px;
-  padding-left: 32px;
   width: 480px;
   max-width: 100%;
   margin: auto;
