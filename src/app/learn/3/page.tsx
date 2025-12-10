@@ -43,6 +43,40 @@ export default function BasicWordsLevel() {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [pendingLearnedAction, setPendingLearnedAction] = useState<PendingWordAction | null>(null);
 
+  const [courseInfo, setCourseInfo] = useState<{title: string, description: string, icon: string} | null>(null);
+
+  // Fetch course info
+  useEffect(() => {
+    const fetchCourseInfo = async () => {
+      try {
+        const courseRef = doc(db, 'courses', String(level_id));
+        const courseSnap = await getDoc(courseRef);
+        if (courseSnap.exists()) {
+          const data = courseSnap.data();
+          setCourseInfo({
+            title: data.title || 'Basic Words',
+            description: data.description || 'Essential vocabulary for daily use',
+            icon: data.icon || '/images/icon-phrases.svg'
+          });
+        } else {
+           setCourseInfo({
+            title: 'Basic Words',
+            description: 'Essential vocabulary for daily use',
+            icon: '/images/icon-phrases.svg'
+          });
+        }
+      } catch (e) {
+        console.error('Error fetching course info:', e);
+         setCourseInfo({
+            title: 'Basic Words',
+            description: 'Essential vocabulary for daily use',
+            icon: '/images/icon-phrases.svg'
+          });
+      }
+    };
+    fetchCourseInfo();
+  }, []);
+
   // const isHydrated = useStoreHydration();
 
 
@@ -359,7 +393,7 @@ export default function BasicWordsLevel() {
 
     return (
       <div className='h-svh flex flex-col justify-between py-4'>
-        <div className='w-full max-w-2xl mx-auto p-4'>
+        <div className='w-full max-w-[480px] mx-auto'>
           <div className="navbar">
             <div className="navbar-row">
               <div className="navbar-aside">
@@ -378,20 +412,50 @@ export default function BasicWordsLevel() {
           </div>
         </div>
 
-        {progressLoaded && !isFinished && (
-          <div className='w-full max-w-2xl mx-auto p-4'>
-            <div className='text-center'>Learned <b>{learnedWords.length}</b> out of <b>{words.length}</b> basic words</div>
+        {progressLoaded && courseInfo && (
+          <div className='w-full max-w-[480px] mx-auto flex-1 flex flex-col justify-center items-center'>
+            <div className="mb-8 text-center flex flex-col items-center">
+              <div className="mb-4 relative w-24 h-24">
+                 <Image 
+                   src={courseInfo.icon} 
+                   alt={courseInfo.title} 
+                   fill
+                   className="object-contain"
+                 />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">{courseInfo.title}</h2>
+              <p className="text-gray-500">{courseInfo.description}</p>
+            </div>
+
+            <div className=" w-full bg-white/50 rounded-2xl p-6 mb-8">
+              <div className="flex justify-between items-end mb-2">
+                <span className="text-sm font-medium text-gray-500">Progress</span>
+                <span className="text-2xl font-bold text-primary">{words.length > 0 ? Math.round((learnedWords.length / words.length) * 100) : 0}%</span>
+              </div>
+              <ProgressBar 
+                current={learnedWords.length} 
+                total={words.length} 
+                width="100%" 
+              />
+              <div className="mt-2 text-center text-sm text-gray-400">
+                {learnedWords.length} / {words.length} words learned
+              </div>
+            </div>
           </div>
         )}
 
         {progressLoaded && (
-          <div className='w-full max-w-2xl mx-auto p-4'>
+          <div className='w-full max-w-[480px] mx-auto'>
             {isFinished ? (
-              <div className='text-center'>
-                You've learned all basic words
+              <div className='text-center p-6 bg-green-50 rounded-xl'>
+                <div className="text-4xl mb-2">🎉</div>
+                <h3 className="font-bold text-lg text-green-800">Course Completed!</h3>
+                <p className="text-green-600">You've learned all basic words</p>
               </div>
             ) : (
-              <button onClick={startGameplay} className='btn btn-block btn-primary'>Start learning</button>
+              <button onClick={startGameplay} className='btn btn-block btn-primary btn-lg shadow-lg shadow-primary/20'>
+                Start Session
+              </button>
             )}
           </div>
         )}
@@ -406,7 +470,7 @@ export default function BasicWordsLevel() {
       {!allCardsReviewed && (
         <div className="screen-gameplay">
 
-          <div className='w-full max-w-2xl mx-auto p-4'>
+          <div className='w-full max-w-[480px] mx-auto'>
             <div className="navbar">
               <div className="navbar-row">
                 <div className="navbar-aside">
@@ -481,7 +545,6 @@ export default function BasicWordsLevel() {
               <h2 className='font-semibold text-2xl'>That's it for today!</h2>
               <div className='text-lg finish-message-text'>
                 <p>You've looked through all the flashcards for this session. You can go back to the homepage and start again.</p>
-                <p>If you're not sure whether you memorized all the words, you can reset your progress and start from 0.</p>
               </div>
               <div className='finish-message-actions'>
                 <button onClick={resetGameplay} className='btn btn-small btn-secondary'>Go back</button>

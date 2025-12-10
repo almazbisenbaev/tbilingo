@@ -435,7 +435,7 @@ export default function AdminPage() {
       {/* Edit Item Modal */}
       {isEditingItem && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-2xl shadow-xl max-h-[90vh] flex flex-col">
+          <Card className="w-full max-w-[480px] shadow-xl max-h-[90vh] flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 border-b">
               <div className="flex items-center gap-4">
                 <CardTitle>{itemForm.id ? 'Edit Item' : 'New Item'}</CardTitle>

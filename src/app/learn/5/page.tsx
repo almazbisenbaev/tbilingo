@@ -47,6 +47,40 @@ export default function BusinessWorkPage() {
   const [phrasesToReview, setPhrasesToReview] = useState<PhraseAdvancedItem[]>([]);
   const [allCardsReviewed, setAllCardsReviewed] = useState<boolean>(false);
 
+  const [courseInfo, setCourseInfo] = useState<{title: string, description: string, icon: string} | null>(null);
+
+  // Fetch course info
+  useEffect(() => {
+    const fetchCourseInfo = async () => {
+      try {
+        const courseRef = doc(db, 'courses', String(level_id));
+        const courseSnap = await getDoc(courseRef);
+        if (courseSnap.exists()) {
+          const data = courseSnap.data();
+          setCourseInfo({
+            title: data.title || LEVEL_TITLE,
+            description: data.description || LEVEL_DESCRIPTION,
+            icon: data.icon || '/images/icon-phrases.svg'
+          });
+        } else {
+           setCourseInfo({
+            title: LEVEL_TITLE,
+            description: LEVEL_DESCRIPTION,
+            icon: '/images/icon-phrases.svg'
+          });
+        }
+      } catch (e) {
+        console.error('Error fetching course info:', e);
+         setCourseInfo({
+            title: LEVEL_TITLE,
+            description: LEVEL_DESCRIPTION,
+            icon: '/images/icon-phrases.svg'
+          });
+      }
+    };
+    fetchCourseInfo();
+  }, []);
+
   // Fetch phrases data from Firebase
   useEffect(() => {
     const fetchPhrasesData = async () => {
@@ -273,9 +307,11 @@ export default function BusinessWorkPage() {
 
   // Level intro page
   if (!isGameplayActive) {
+    const isFinished = phrases.length > 0 && learnedPhrases.length >= phrases.length;
+
     return (
       <div className='h-svh flex flex-col justify-between py-4'>
-        <div className='w-full max-w-2xl mx-auto p-4'>
+        <div className='w-full max-w-[480px] mx-auto'>
           <div className="navbar">
             <div className="navbar-row">
               <div className="navbar-aside">
@@ -289,24 +325,53 @@ export default function BusinessWorkPage() {
           </div>
         </div>
 
-        <div className='w-full max-w-2xl mx-auto p-4'>
-          {LEVEL_DESCRIPTION && (
-            <div className="text-center mb-6">
-              <p className="text-gray-600">{LEVEL_DESCRIPTION}</p>
+        {progressLoaded && courseInfo && (
+          <div className='w-full max-w-[480px] mx-auto flex-1 flex flex-col justify-center items-center'>
+            <div className="mb-8 text-center flex flex-col items-center">
+              <div className="mb-4 relative w-24 h-24">
+                 <Image 
+                   src={courseInfo.icon} 
+                   alt={courseInfo.title} 
+                   fill
+                   className="object-contain"
+                 />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">{courseInfo.title}</h2>
+              <p className="text-gray-500">{courseInfo.description}</p>
             </div>
-          )}
-          {progressLoaded && (
-            <div className='text-center'>
-              Learned <b>{learnedPhrases.length}</b> out of <b>{phrases.length}</b> phrases
-            </div>
-          )}
-        </div>
 
-        <div className='w-full max-w-2xl mx-auto p-4'>
-          <button onClick={startGameplay} className='btn btn-block btn-primary'>
-            Start learning
-          </button>
-        </div>
+            <div className=" w-full bg-white/50 rounded-2xl p-6 mb-8">
+              <div className="flex justify-between items-end mb-2">
+                <span className="text-sm font-medium text-gray-500">Progress</span>
+                <span className="text-2xl font-bold text-primary">{phrases.length > 0 ? Math.round((learnedPhrases.length / phrases.length) * 100) : 0}%</span>
+              </div>
+              <ProgressBar 
+                current={learnedPhrases.length} 
+                total={phrases.length} 
+                width="100%" 
+              />
+              <div className="mt-2 text-center text-sm text-gray-400">
+                {learnedPhrases.length} / {phrases.length} phrases learned
+              </div>
+            </div>
+          </div>
+        )}
+
+        {progressLoaded && (
+          <div className='w-full max-w-[480px] mx-auto'>
+            {isFinished ? (
+              <div className='text-center p-6 bg-green-50 rounded-xl'>
+                <div className="text-4xl mb-2">🎉</div>
+                <h3 className="font-bold text-lg text-green-800">Course Completed!</h3>
+                <p className="text-green-600">You've learned all phrases</p>
+              </div>
+            ) : (
+              <button onClick={startGameplay} className='btn btn-block btn-primary btn-lg shadow-lg shadow-primary/20'>
+                Start Session
+              </button>
+            )}
+          </div>
+        )}
       </div>
     );
   }
@@ -327,7 +392,7 @@ export default function BusinessWorkPage() {
           ease: [0.34, 1.56, 0.64, 1]
         }}
       >
-        <div className='w-full max-w-2xl mx-auto p-4'>
+        <div className='w-full max-w-[480px] mx-auto'>
           <div className="navbar">
             <div className="navbar-row">
               <div className="navbar-aside">
@@ -341,7 +406,7 @@ export default function BusinessWorkPage() {
           </div>
         </div>
 
-        <div className='w-full max-w-2xl mx-auto p-4'>
+        <div className='w-full max-w-[480px] mx-auto'>
           <div className="text-center">
             <div className='text-4xl mb-4'>🎉</div>
             <h2 className='font-semibold text-2xl mb-4'>Great work!</h2>
@@ -353,7 +418,7 @@ export default function BusinessWorkPage() {
           </div>
         </div>
 
-        <div className='w-full max-w-2xl mx-auto p-4'>
+        <div className='w-full max-w-[480px] mx-auto'>
           <button onClick={startGameplay} className='btn btn-block btn-primary mb-2'>
             Continue Learning
           </button>
@@ -368,7 +433,7 @@ export default function BusinessWorkPage() {
   // Active gameplay
   return (
     <div className="h-svh flex flex-col justify-between py-4 phrases-advanced-level">
-      <div className="w-full max-w-2xl mx-auto p-4">
+      <div className="w-full max-w-[480px] mx-auto">
         <AppHeader
           title={
             <ProgressBar
@@ -381,7 +446,7 @@ export default function BusinessWorkPage() {
           onBackClick={resetGameplay}
         />
       </div>
-      <div className="w-full max-w-2xl mx-auto p-4">
+      <div className="w-full max-w-[480px] mx-auto">
         {phrasesToReview.map((item, index) => {
           if (index === processedPhrases.length) {
             return (
