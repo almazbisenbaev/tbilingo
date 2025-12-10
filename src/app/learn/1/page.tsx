@@ -485,15 +485,16 @@ export default function AlphabetLevel() {
               spaceBetween={20}
               slidesPerView={1}
               allowTouchMove={false}
+              speed={800}
+              centeredSlides={true}
               onSwiper={(swiper) => setSwiperInstance(swiper)}
               className="w-full h-full"
             >
               {charactersToReview.map((item) => {
-                const isProcessed = processedCharacters.includes(item.id);
                 const isLearned = learnedCharacters.includes(item.id);
                 return (
                   <SwiperSlide key={item.id}>
-                    <div className={`h-full w-full flex items-center justify-center ${isProcessed ? 'processed' : 'not-processed'} ${isLearned ? 'learned' : 'not-learned'}`}>
+                    <div className={`h-full w-full flex items-center justify-center ${isLearned ? 'learned' : 'not-learned'}`}>
                         <FlashcardLetter
                           letter={item}
                           onNext={() => markAsToReview(item.id)}

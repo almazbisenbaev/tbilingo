@@ -462,15 +462,15 @@ export default function BasicWordsLevel() {
               spaceBetween={20}
               slidesPerView={1}
               allowTouchMove={false}
+              speed={800}
               onSwiper={(swiper) => setSwiperInstance(swiper)}
               className="w-full h-full"
             >
               {wordsToReview.map((item) => {
-                const isProcessed = processedWords.includes(item.id);
                 const isLearned = learnedWords.includes(item.id);
                 return (
                   <SwiperSlide key={item.id}>
-                    <div className={`h-full w-full flex items-center justify-center ${isProcessed ? 'processed' : 'not-processed'} ${isLearned ? 'learned' : 'not-learned'}`}>
+                    <div className={`h-full w-full flex items-center justify-center ${isLearned ? 'learned' : 'not-learned'}`}>
                         <FlashcardWord
                           word={item}
                           onNext={() => markAsToReview(item.id)}

@@ -315,14 +315,14 @@ input[type=submit]:focus {
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  overflow: hidden;
+  /* overflow: hidden; */
   width: 100%;
   max-width: 100%;
   min-height: 100svh;
 }
 
 .gameplay-game {
-  overflow: hidden;
+  /* overflow: hidden; */
   flex: 1;
   width: 100%;
   position: relative;
@@ -474,7 +474,7 @@ input[type=submit]:focus {
 
 
 .app {
-  /* width: 480px; */
+  width: 480px;
   max-width: 100%;
   margin: 0 auto;
   min-height: 100svh;
@@ -523,3 +523,14 @@ input[type=submit]:focus {
   padding-left: 24px;
 }
 
+body .swiper {
+  overflow: visible;
+}
+
+.swiper-slide .flashcard {
+  transition: opacity 0.3s ease;
+}
+
+.swiper-slide:not(.swiper-slide-active) .flashcard {
+  opacity: 0;
+}

@@ -477,15 +477,15 @@ export default function NumbersLevel() {
               spaceBetween={20}
               slidesPerView={1}
               allowTouchMove={false}
+              speed={800}
               onSwiper={(swiper) => setSwiperInstance(swiper)}
               className="w-full h-full"
             >
               {numbersToReview.map((item) => {
-                const isProcessed = processedNumbers.includes(item.id);
                 const isLearned = learnedNumbers.includes(item.id);
                 return (
                   <SwiperSlide key={item.id}>
-                    <div className={`h-full w-full flex items-center justify-center ${isProcessed ? 'processed' : 'not-processed'} ${isLearned ? 'learned' : 'not-learned'}`}>
+                    <div className={`h-full w-full flex items-center justify-center ${isLearned ? 'learned' : 'not-learned'}`}>
                         <FlashcardNumber
                           number={item}
                           onNext={() => markAsToReview(item.id)}
