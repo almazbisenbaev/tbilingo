@@ -5,6 +5,7 @@ console.log(level_id);
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { X } from 'lucide-react';
 import { PhraseAdvancedItem, PhraseAdvancedMemory } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
 import { collection, doc, getDocs, setDoc, getDoc, query, serverTimestamp } from 'firebase/firestore';
@@ -436,10 +437,12 @@ export default function PhrasesAdvancedPage() {
               current={processedPhrases.length}
               total={phrasesToReview.length}
               width="200px"
+              height={12}
             />
           }
           showBackButton
           onBackClick={resetGameplay}
+          customBackIcon={<X size={24} />}
         />
       </div>
       <div className="w-full max-w-[480px] mx-auto">

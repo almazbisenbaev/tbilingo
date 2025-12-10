@@ -10,13 +10,14 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   current, 
   total, 
   showNumbers = false,
-  width = '200px' 
+  width = '200px',
+  height
 }) => {
   const percentage = total > 0 ? Math.round((current / total) * 100) : 0;
 
   return (
     <div className="words-progress-container" style={{ width }}>
-      <div className="words-progress-bar">
+      <div className="words-progress-bar" style={height ? { height: `${height}px` } : undefined}>
         <div 
           className="words-progress-fill" 
           style={{ width: `${percentage}%` }}

@@ -80,6 +80,7 @@ export interface ProgressBarProps {
   total: number;
   showNumbers?: boolean;
   width?: string;
+  height?: number;
 }
 
 // Utility interfaces

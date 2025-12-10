@@ -7,6 +7,7 @@ console.log(level_id);
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { X } from 'lucide-react';
 import { NumberItem, PendingNumberAction } from '@/types';
 // import { shuffleArray } from '@/utils/shuffle-array';
 import FlashcardNumber from '@/components/FlashcardNumber/FlashcardNumber';
@@ -491,12 +492,7 @@ export default function NumbersLevel() {
               <div className="navbar-row">
                 <div className="navbar-aside">
                   <button onClick={resetGameplay} className='navbar-button'>
-                    <Image
-                      src="/images/icon-back.svg"
-                      alt="Back"
-                      width={24}
-                      height={24}
-                    />
+                    <X size={24} />
                   </button>
                 </div>
                 <div className="navbar-title">
@@ -505,6 +501,7 @@ export default function NumbersLevel() {
                     current={processedNumbers.length}
                     total={numbersToReview.length}
                     width="200px"
+                    height={12}
                   />
                 </div>
                 <div className="navbar-aside"></div>

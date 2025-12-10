@@ -9,6 +9,7 @@ interface AppHeaderProps {
   backHref?: string;
   onBackClick?: () => void;
   rightContent?: React.ReactNode;
+  customBackIcon?: React.ReactNode;
 }
 
 export default function AppHeader({ 
@@ -16,13 +17,23 @@ export default function AppHeader({
   showBackButton = false, 
   backHref,
   onBackClick,
-  rightContent 
+  rightContent,
+  customBackIcon
 }: AppHeaderProps) {
   const handleBackClick = () => {
     if (onBackClick) {
       onBackClick();
     }
   };
+
+  const BackIcon = customBackIcon || (
+    <Image
+      src="/images/icon-back.svg"
+      alt="Back"
+      width={24}
+      height={24}
+    />
+  );
 
   return (
     <div className="navbar">
@@ -32,21 +43,11 @@ export default function AppHeader({
             <>
               {backHref ? (
                 <Link href={backHref} className="navbar-button">
-                  <Image
-                    src="/images/icon-back.svg"
-                    alt="Back"
-                    width={24}
-                    height={24}
-                  />
+                  {BackIcon}
                 </Link>
               ) : (
                 <button onClick={handleBackClick} className="navbar-button">
-                  <Image
-                    src="/images/icon-back.svg"
-                    alt="Back"
-                    width={24}
-                    height={24}
-                  />
+                  {BackIcon}
                 </button>
               )}
             </>
