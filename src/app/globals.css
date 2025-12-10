@@ -231,7 +231,7 @@ input[type=submit]:focus {
 }
 
 .slider-slide {
-  width: 100vw;
+  width: 100%;
   min-width: 100vw;
 
   transition: 0.8s;
@@ -242,7 +242,6 @@ input[type=submit]:focus {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 24px;
   padding: 32px;
 
   width: 100%;
@@ -333,11 +332,13 @@ input[type=submit]:focus {
   align-items: center;
   justify-content: center;
   width: 100%;
+  padding-right: 24px;
+  padding-left: 24px;
 }
 
 .navbar-aside {
-  width: 60px;
-  max-width: 60px;
+  width: 40px;
+  max-width: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -445,6 +446,8 @@ input[type=submit]:focus {
   display: flex;
   flex-direction: column;
   margin: 32px 0;
+  padding-right: 24px;
+  padding-left: 24px;
 }
 
 .pwa-install-button {
@@ -540,8 +543,6 @@ input[type=submit]:focus {
   width: 480px;
   max-width: 100%;
   margin: 0 auto;
-  padding-right: 20px;
-  padding-left: 20px;
   min-height: 100svh;
 }
 
@@ -556,15 +557,6 @@ input[type=submit]:focus {
   width: 480px;
   max-width: 100%;
   margin: auto;
-}
-
-@media (max-width: 375px) {
-
-  .learn-content {
-    padding-right: 24px;
-    padding-left: 24px;
-  }
-
 }
 
 /* Settings tab content */
@@ -593,6 +585,7 @@ input[type=submit]:focus {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding-right: 24px;
+  padding-left: 24px;
 }
-
 

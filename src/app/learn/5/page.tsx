@@ -313,7 +313,7 @@ export default function BusinessWorkPage() {
     return (
       <div className='app h-svh flex flex-col justify-between py-4'>
 
-        <div className='w-full max-w-[480px] mx-auto'>
+        <div className='w-full  mx-auto px-5'>
           <div className="navbar">
             <div className="navbar-row">
               <div className="navbar-aside">
@@ -328,7 +328,7 @@ export default function BusinessWorkPage() {
         </div>
 
         {progressLoaded && courseInfo && (
-          <div className='w-full max-w-[480px] mx-auto flex-1 flex flex-col justify-center items-center'>
+          <div className='w-full  mx-auto px-5 flex-1 flex flex-col justify-center items-center px-5'>
             <div className="mb-8 text-center flex flex-col items-center">
               <div className="mb-4 relative w-24 h-24">
                  <Image 
@@ -360,7 +360,7 @@ export default function BusinessWorkPage() {
         )}
 
         {progressLoaded && (
-          <div className='w-full max-w-[480px] mx-auto'>
+          <div className='w-full  mx-auto px-5'>
             {isFinished ? (
               <div className='text-center p-6 bg-green-50 rounded-xl'>
                 <div className="text-4xl mb-2">🎉</div>
@@ -368,7 +368,7 @@ export default function BusinessWorkPage() {
                 <p className="text-green-600">You've learned all phrases</p>
               </div>
             ) : (
-              <button onClick={startGameplay} className='btn btn-block btn-primary btn-lg shadow-lg shadow-primary/20'>
+              <button onClick={startGameplay} className='btn btn-block btn-primary btn-lg mb-2'>
                 Start Session
               </button>
             )}
@@ -394,7 +394,7 @@ export default function BusinessWorkPage() {
           ease: [0.34, 1.56, 0.64, 1]
         }}
       >
-        <div className='w-full max-w-[480px] mx-auto'>
+        <div className='w-full  mx-auto px-5'>
           <div className="navbar">
             <div className="navbar-row">
               <div className="navbar-aside">
@@ -408,7 +408,7 @@ export default function BusinessWorkPage() {
           </div>
         </div>
 
-        <div className='w-full max-w-[480px] mx-auto'>
+        <div className='w-full  mx-auto px-5'>
           <div className="text-center">
             <div className='text-4xl mb-4'>🎉</div>
             <h2 className='font-semibold text-2xl mb-4'>Great work!</h2>
@@ -420,7 +420,7 @@ export default function BusinessWorkPage() {
           </div>
         </div>
 
-        <div className='w-full max-w-[480px] mx-auto'>
+        <div className='w-full  mx-auto px-5'>
           <button onClick={startGameplay} className='btn btn-block btn-primary mb-2'>
             Continue Learning
           </button>
@@ -435,7 +435,7 @@ export default function BusinessWorkPage() {
   // Active gameplay
   return (
     <div className="app h-svh flex flex-col justify-between py-4 phrases-advanced-level">
-      <div className="w-full max-w-[480px] mx-auto">
+      <div className="w-full  mx-auto px-5">
         <AppHeader
           title={
             <ProgressBar
@@ -450,7 +450,7 @@ export default function BusinessWorkPage() {
           customBackIcon={<X size={24} />}
         />
       </div>
-      <div className="w-full max-w-[480px] mx-auto">
+      <div className="w-full  mx-auto px-5">
         {phrasesToReview.map((item, index) => {
           if (index === processedPhrases.length) {
             return (

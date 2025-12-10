@@ -409,27 +409,25 @@ export default function NumbersLevel() {
     return (
       <div className='app h-svh flex flex-col justify-between py-4'>
 
-        <div className='w-full max-w-[480px] mx-auto'>
-          <div className="navbar">
-            <div className="navbar-row">
-              <div className="navbar-aside">
-                <Link href="/learn" className='navbar-button'>
-                  <Image
-                    src="/images/icon-back.svg"
-                    alt="Back"
-                    width={24}
-                    height={24}
-                  />
-                </Link>
-              </div>
-              <h1 className="navbar-title">Learn numbers</h1>
-              <div className="navbar-aside"></div>
+        <div className="navbar">
+          <div className="navbar-row">
+            <div className="navbar-aside">
+              <Link href="/learn" className='navbar-button'>
+                <Image
+                  src="/images/icon-back.svg"
+                  alt="Back"
+                  width={24}
+                  height={24}
+                />
+              </Link>
             </div>
+            <h1 className="navbar-title">Learn numbers</h1>
+            <div className="navbar-aside"></div>
           </div>
         </div>
 
         {progressLoaded && courseInfo && (
-          <div className='w-full max-w-[480px] mx-auto flex-1 flex flex-col justify-center items-center'>
+          <div className='w-full  mx-auto px-5 flex-1 flex flex-col justify-center items-center px-5'>
             <div className="mb-8 text-center flex flex-col items-center">
               <div className="mb-4 relative w-24 h-24">
                  <Image 
@@ -461,7 +459,7 @@ export default function NumbersLevel() {
         )}
 
         {progressLoaded && (
-          <div className='w-full max-w-[480px] mx-auto'>
+          <div className='w-full  mx-auto px-5'>
             {isFinished ? (
               <div className='text-center p-6 bg-green-50 rounded-xl'>
                 <div className="text-4xl mb-2">🎉</div>
@@ -469,7 +467,7 @@ export default function NumbersLevel() {
                 <p className="text-green-600">You've learned all numbers</p>
               </div>
             ) : (
-              <button onClick={startGameplay} className='btn btn-block btn-primary btn-lg shadow-lg shadow-primary/20'>
+              <button onClick={startGameplay} className='btn btn-block btn-primary btn-lg mb-2'>
                 Start Session
               </button>
             )}
@@ -487,7 +485,7 @@ export default function NumbersLevel() {
       {!allCardsReviewed && (
         <div className={`screen-gameplay`}>
 
-          <div className='w-full max-w-[480px] mx-auto'>
+          <div className='w-full  mx-auto px-5'>
             <div className="navbar">
               <div className="navbar-row">
                 <div className="navbar-aside">
