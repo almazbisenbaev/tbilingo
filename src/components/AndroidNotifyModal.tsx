@@ -88,7 +88,7 @@ export default function AndroidNotifyModal({ isOpen, onClose }: AndroidNotifyMod
                   setError('');
                 }}
                 placeholder="Enter your email"
-                className="text-lg font-medium w-full px-5 py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                className="modal-text-input"
                 autoComplete="email"
               />
               {error && <p className="text-red-500 text-sm mt-1 text-left">{error}</p>}

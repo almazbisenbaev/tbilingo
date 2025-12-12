@@ -184,7 +184,7 @@ export default function BasicWordsLevel() {
   // Show loading state
   if (wordsLoading) {
     return (
-      <div className='h-screen w-screen flex items-center justify-center'>Loading...</div>
+      <div className="fullscreen-center">Loading...</div>
     );
   }
 
@@ -358,7 +358,7 @@ export default function BasicWordsLevel() {
     const isFinished = words.length > 0 && learnedWords.length === words.length;
 
     return (
-      <div className='app h-svh flex flex-col justify-between py-4'>
+      <div className="app app-screen">
 
         <div className="navbar">
           <div className="navbar-row">
@@ -378,7 +378,7 @@ export default function BasicWordsLevel() {
         </div>
 
         {progressLoaded && courseInfo && (
-          <div className='max-w-full w-[480px]  mx-auto px-5 flex-1 flex flex-col justify-center items-center px-5'>
+          <div className="container-480 level-intro-content">
             <div className="mb-8 text-center flex flex-col items-center">
               <div className="mb-4 relative w-24 h-24">
                  <Image 
@@ -410,7 +410,7 @@ export default function BasicWordsLevel() {
         )}
 
         {progressLoaded && (
-          <div className='levelscreen-footer px-5'>
+          <div className="levelscreen-footer">
             {isFinished ? (
               <div className='text-center p-6 bg-green-50 rounded-xl'>
                 <div className="text-4xl mb-2">🎉</div>
@@ -418,7 +418,7 @@ export default function BasicWordsLevel() {
                 <p className="text-green-600">You've learned all basic words</p>
               </div>
             ) : (
-              <button onClick={startGameplay} className='btn btn-block btn-primary btn-lg mb-2'>
+              <button onClick={startGameplay} className='btn btn-block btn-primary btn-large mb-2'>
                 Start Session
               </button>
             )}
@@ -430,7 +430,7 @@ export default function BasicWordsLevel() {
 
   // Gameplay component
   return (
-    <div className='app h-svh flex flex-col justify-between py-4'>
+    <div className="app app-screen">
 
       {!allCardsReviewed && (
         <div className="screen-gameplay">
@@ -468,7 +468,7 @@ export default function BasicWordsLevel() {
                 const isLearned = learnedWords.includes(item.id);
                 return (
                   <SwiperSlide key={item.id}>
-                    <div className={`h-full w-full flex items-center justify-center ${isLearned ? 'learned' : 'not-learned'}`}>
+                    <div className={`full-center ${isLearned ? 'learned' : 'not-learned'}`}>
                         <FlashcardWord
                           word={item}
                           onNext={() => markAsToReview(item.id)}

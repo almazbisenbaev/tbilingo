@@ -327,6 +327,49 @@ input[type=submit]:focus {
   max-width: 100%;
   width: 480px;
   margin: 0 auto;
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+.app-screen {
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.container-480 {
+  width: 480px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+.level-intro-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.full-center {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fullscreen-center {
+  width: 100vw;
+  height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .gameplay-game {
@@ -338,6 +381,27 @@ input[type=submit]:focus {
 
 .welcome {
   position: relative;
+}
+
+.landing {
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+.modal-text-input {
+  font-size: 1.125rem;
+  font-weight: 500;
+  width: 100%;
+  padding: 16px 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.modal-text-input:focus {
+  outline: none;
+  border-color: #000;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.12);
 }
 
 .welcome-inner {
@@ -486,6 +550,7 @@ input[type=submit]:focus {
   /* max-width: 100%;
   margin: 0 auto; */
   /* min-height: 100svh; */
+  width: 100%;
 }
 
 

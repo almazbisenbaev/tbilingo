@@ -272,7 +272,7 @@ export default function PhrasesAdvancedPage() {
   // Show loading state
   if (phrasesLoading) {
     return (
-      <div className='h-screen w-screen flex items-center justify-center'>Loading...</div>
+      <div className="fullscreen-center">Loading...</div>
     );
   }
 
@@ -307,7 +307,7 @@ export default function PhrasesAdvancedPage() {
     const isFinished = phrases.length > 0 && learnedPhrases.length >= phrases.length;
 
     return (
-      <div className='app h-svh flex flex-col justify-between py-4'>
+      <div className="app app-screen">
 
         <div className="navbar">
           <div className="navbar-row">
@@ -322,7 +322,7 @@ export default function PhrasesAdvancedPage() {
         </div>
 
         {progressLoaded && courseInfo && (
-          <div className='max-w-full w-[480px]  mx-auto px-5 flex-1 flex flex-col justify-center items-center px-5'>
+          <div className="container-480 level-intro-content">
             <div className="mb-8 text-center flex flex-col items-center">
               <div className="mb-4 relative w-24 h-24">
                  <Image 
@@ -354,7 +354,7 @@ export default function PhrasesAdvancedPage() {
         )}
 
         {progressLoaded && (
-          <div className='w-full  mx-auto px-5'>
+          <div className="levelscreen-footer">
             {isFinished ? (
               <div className='text-center p-6 bg-green-50 rounded-xl'>
                 <div className="text-4xl mb-2">🎉</div>
@@ -362,7 +362,7 @@ export default function PhrasesAdvancedPage() {
                 <p className="text-green-600">You've learned all phrases</p>
               </div>
             ) : (
-              <button onClick={startGameplay} className='btn btn-block btn-primary btn-lg mb-2'>
+              <button onClick={startGameplay} className='btn btn-block btn-primary btn-large mb-2'>
                 Start Session
               </button>
             )}
@@ -380,7 +380,7 @@ export default function PhrasesAdvancedPage() {
 
     return (
       <motion.div
-        className="app h-svh flex flex-col justify-between py-4"
+        className="app app-screen"
         initial={{ opacity: 0, scale: 0.8, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{
@@ -401,7 +401,7 @@ export default function PhrasesAdvancedPage() {
           </div>
         </div>
 
-        <div className='w-full  mx-auto px-5'>
+        <div className="container-480">
           <div className="text-center">
             <div className='text-4xl mb-4'>🎉</div>
             <h2 className='font-semibold text-2xl mb-4'>Great work!</h2>
@@ -413,7 +413,7 @@ export default function PhrasesAdvancedPage() {
           </div>
         </div>
 
-        <div className='w-full  mx-auto px-5'>
+        <div className="levelscreen-footer">
           <button onClick={startGameplay} className='btn btn-block btn-primary mb-2'>
             Continue Learning
           </button>
@@ -427,8 +427,8 @@ export default function PhrasesAdvancedPage() {
 
   // Active gameplay
   return (
-    <div className="app h-svh flex flex-col justify-between py-4 phrases-advanced-level">
-      <div className="w-full  mx-auto px-5">
+    <div className="app app-screen phrases-advanced-level">
+      <div className="container-480">
         <AppHeader
           title={
             <ProgressBar
@@ -443,7 +443,7 @@ export default function PhrasesAdvancedPage() {
           customBackIcon={<X size={24} />}
         />
       </div>
-      <div className="w-full  mx-auto px-5">
+      <div className="container-480">
         {phrasesToReview.map((item, index) => {
           if (index === processedPhrases.length) {
             return (

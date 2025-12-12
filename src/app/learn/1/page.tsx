@@ -188,7 +188,7 @@ export default function AlphabetLevel() {
   // Show loading state
   if (alphabetLoading) {
     return (
-      <div className='h-screen w-screen flex items-center justify-center'>Loading...</div>
+      <div className="fullscreen-center">Loading...</div>
     );
   }
 
@@ -380,7 +380,7 @@ export default function AlphabetLevel() {
     const isFinished = allAlphabetItems.length > 0 && learnedCharacters.length === allAlphabetItems.length;
 
     return (
-      <div className='app h-svh flex flex-col justify-between py-4'>
+      <div className="app app-screen">
 
         <div className="navbar">
           <div className="navbar-row">
@@ -400,7 +400,7 @@ export default function AlphabetLevel() {
         </div>
 
         {progressLoaded && courseInfo && (
-          <div className='max-w-full w-[480px]  mx-auto px-5 flex-1 flex flex-col justify-center items-center px-5'>
+          <div className="container-480 level-intro-content">
             <div className="mb-8 text-center flex flex-col items-center">
               <div className="mb-4 relative w-24 h-24">
                  <Image 
@@ -432,7 +432,7 @@ export default function AlphabetLevel() {
         )}
 
         {progressLoaded && (
-          <div className='levelscreen-footer w-full  mx-auto px-5'>
+          <div className="levelscreen-footer">
             {isFinished ? (
               <div className='text-center p-6 bg-green-50 rounded-xl'>
                 <div className="text-4xl mb-2">🎉</div>
@@ -440,7 +440,7 @@ export default function AlphabetLevel() {
                 <p className="text-green-600">You've learned the whole alphabet</p>
               </div>
             ) : (
-              <button onClick={startGameplay} className='btn btn-block btn-primary btn-lg mb-2'>
+              <button onClick={startGameplay} className='btn btn-block btn-primary btn-large mb-2'>
                 Start Session
               </button>
             )}
@@ -453,7 +453,7 @@ export default function AlphabetLevel() {
 
   // Gameplay component
   return (
-    <div className='app h-svh flex flex-col justify-between py-4'>
+    <div className="app app-screen">
 
       {!allCardsReviewed && (
         <div className={`screen-gameplay`}>
@@ -492,7 +492,7 @@ export default function AlphabetLevel() {
                 const isLearned = learnedCharacters.includes(item.id);
                 return (
                   <SwiperSlide key={item.id}>
-                    <div className={`h-full w-full flex items-center justify-center ${isLearned ? 'learned' : 'not-learned'}`}>
+                    <div className={`full-center ${isLearned ? 'learned' : 'not-learned'}`}>
                         <FlashcardLetter
                           letter={item}
                           onNext={() => markAsToReview(item.id)}

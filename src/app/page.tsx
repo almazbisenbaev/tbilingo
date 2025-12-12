@@ -25,7 +25,7 @@ export default function LandingPage() {
   }, [router]);
 
   return (
-    <div className="landing py-20">
+    <div className="landing">
       <div className="container mx-auto">
 
         <div className="text-center flex flex-col items-center gap-3 mx-auto px-4 max-w-[280px] mb-12">

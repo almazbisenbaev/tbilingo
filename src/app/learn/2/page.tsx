@@ -183,7 +183,7 @@ export default function NumbersLevel() {
   // Show loading state
   if (numbersLoading) {
     return (
-      <div className='h-screen w-screen flex items-center justify-center'>Loading...</div>
+      <div className="fullscreen-center">Loading...</div>
     );
   }
 
@@ -372,7 +372,7 @@ export default function NumbersLevel() {
     const isFinished = numbers.length > 0 && learnedNumbers.length === numbers.length;
 
     return (
-      <div className='app h-svh flex flex-col justify-between py-4'>
+      <div className="app app-screen">
 
         <div className="navbar">
           <div className="navbar-row">
@@ -392,7 +392,7 @@ export default function NumbersLevel() {
         </div>
 
         {progressLoaded && courseInfo && (
-          <div className='max-w-full w-[480px]  mx-auto px-5 flex-1 flex flex-col justify-center items-center px-5'>
+          <div className="container-480 level-intro-content">
             <div className="mb-8 text-center flex flex-col items-center">
               <div className="mb-4 relative w-24 h-24">
                  <Image 
@@ -424,7 +424,7 @@ export default function NumbersLevel() {
         )}
 
         {progressLoaded && (
-          <div className='levelscreen-footer px-5'>
+          <div className="levelscreen-footer">
             {isFinished ? (
               <div className='text-center p-6 bg-green-50 rounded-xl'>
                 <div className="text-4xl mb-2">🎉</div>
@@ -432,7 +432,7 @@ export default function NumbersLevel() {
                 <p className="text-green-600">You've learned all numbers</p>
               </div>
             ) : (
-              <button onClick={startGameplay} className='btn btn-block btn-primary btn-lg mb-2'>
+              <button onClick={startGameplay} className='btn btn-block btn-primary btn-large mb-2'>
                 Start Session
               </button>
             )}
@@ -445,7 +445,7 @@ export default function NumbersLevel() {
 
   // Gameplay component
   return (
-    <div className='app h-svh flex flex-col justify-between py-4'>
+    <div className="app app-screen">
 
       {!allCardsReviewed && (
         <div className={`screen-gameplay`}>
@@ -483,7 +483,7 @@ export default function NumbersLevel() {
                 const isLearned = learnedNumbers.includes(item.id);
                 return (
                   <SwiperSlide key={item.id}>
-                    <div className={`h-full w-full flex items-center justify-center ${isLearned ? 'learned' : 'not-learned'}`}>
+                    <div className={`full-center ${isLearned ? 'learned' : 'not-learned'}`}>
                         <FlashcardNumber
                           number={item}
                           onNext={() => markAsToReview(item.id)}
