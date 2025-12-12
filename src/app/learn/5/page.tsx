@@ -313,22 +313,20 @@ export default function BusinessWorkPage() {
     return (
       <div className='app h-svh flex flex-col justify-between py-4'>
 
-        <div className='w-full  mx-auto px-5'>
-          <div className="navbar">
-            <div className="navbar-row">
-              <div className="navbar-aside">
-                <Link href="/learn" className='navbar-button'>
-                  <Image src="/images/icon-back.svg" alt="Back" width={24} height={24} />
-                </Link>
-              </div>
-              <h1 className="navbar-title">{LEVEL_TITLE}</h1>
-              <div className="navbar-aside"></div>
+        <div className="navbar">
+          <div className="navbar-row">
+            <div className="navbar-aside">
+              <Link href="/learn" className='navbar-button'>
+                <Image src="/images/icon-back.svg" alt="Back" width={24} height={24} />
+              </Link>
             </div>
+            <h1 className="navbar-title">{LEVEL_TITLE}</h1>
+            <div className="navbar-aside"></div>
           </div>
         </div>
 
         {progressLoaded && courseInfo && (
-          <div className='w-full  mx-auto px-5 flex-1 flex flex-col justify-center items-center px-5'>
+          <div className='max-w-full w-[480px]  mx-auto px-5 flex-1 flex flex-col justify-center items-center px-5'>
             <div className="mb-8 text-center flex flex-col items-center">
               <div className="mb-4 relative w-24 h-24">
                  <Image 
@@ -394,17 +392,16 @@ export default function BusinessWorkPage() {
           ease: [0.34, 1.56, 0.64, 1]
         }}
       >
-        <div className='w-full  mx-auto px-5'>
-          <div className="navbar">
-            <div className="navbar-row">
-              <div className="navbar-aside">
-                <button onClick={resetGameplay} className='navbar-button'>
-                  <Image src="/images/icon-back.svg" alt="Back" width={24} height={24} />
-                </button>
-              </div>
-              <h1 className="navbar-title">{LEVEL_TITLE}</h1>
-              <div className="navbar-aside"></div>
+
+        <div className="navbar">
+          <div className="navbar-row">
+            <div className="navbar-aside">
+              <button onClick={resetGameplay} className='navbar-button'>
+                <Image src="/images/icon-back.svg" alt="Back" width={24} height={24} />
+              </button>
             </div>
+            <h1 className="navbar-title">{LEVEL_TITLE}</h1>
+            <div className="navbar-aside"></div>
           </div>
         </div>
 

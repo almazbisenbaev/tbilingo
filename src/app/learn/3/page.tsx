@@ -378,7 +378,7 @@ export default function BasicWordsLevel() {
         </div>
 
         {progressLoaded && courseInfo && (
-          <div className='w-full  mx-auto px-5 flex-1 flex flex-col justify-center items-center px-5'>
+          <div className='max-w-full w-[480px]  mx-auto px-5 flex-1 flex flex-col justify-center items-center px-5'>
             <div className="mb-8 text-center flex flex-col items-center">
               <div className="mb-4 relative w-24 h-24">
                  <Image 
@@ -410,7 +410,7 @@ export default function BasicWordsLevel() {
         )}
 
         {progressLoaded && (
-          <div className='w-full  mx-auto px-5'>
+          <div className='levelscreen-footer px-5'>
             {isFinished ? (
               <div className='text-center p-6 bg-green-50 rounded-xl'>
                 <div className="text-4xl mb-2">🎉</div>
@@ -435,25 +435,23 @@ export default function BasicWordsLevel() {
       {!allCardsReviewed && (
         <div className="screen-gameplay">
 
-          <div className='w-full  mx-auto px-5'>
-            <div className="navbar">
-              <div className="navbar-row">
-                <div className="navbar-aside">
-                  <button onClick={resetGameplay} className='navbar-button'>
-                    <X size={24} />
-                  </button>
-                </div>
-                <div className="navbar-title">
-                  {/* Progress bar */}
-                  <ProgressBar
-                    current={processedWords.length}
-                    total={wordsToReview.length}
-                    width="200px"
-                    height={12}
-                  />
-                </div>
-                <div className="navbar-aside"></div>
+          <div className="navbar">
+            <div className="navbar-row">
+              <div className="navbar-aside">
+                <button onClick={resetGameplay} className='navbar-button'>
+                  <X size={24} />
+                </button>
               </div>
+              <div className="navbar-title">
+                {/* Progress bar */}
+                <ProgressBar
+                  current={processedWords.length}
+                  total={wordsToReview.length}
+                  width="200px"
+                  height={12}
+                />
+              </div>
+              <div className="navbar-aside"></div>
             </div>
           </div>
 
