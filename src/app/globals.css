@@ -215,11 +215,13 @@ input[type=submit]:focus {
 }
 
 /* The green ring on learned card */
-.learned .flashcard-front {
+.learned .flashcard-front,
+.gameplay-slide--learned .flashcard-front {
   box-shadow: inset 0px 0px 0px 8px rgba(14, 194, 113, 1);
 }
 
-.finish-message {
+.finish-message,
+.gameplay-finish-message {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -232,16 +234,19 @@ input[type=submit]:focus {
   min-height: 90vh;
 }
 
-.finish-message-text {
+.finish-message-text,
+.gameplay-finish-message-text {
   text-align: center;
 }
 
-.finish-message-text p {
+.finish-message-text p,
+.gameplay-finish-message-text p {
   margin: 0;
   margin-bottom: 0.5em;
 }
 
-.finish-message-actions {
+.finish-message-actions,
+.gameplay-finish-message-actions {
   margin-top: 24px;
 }
 
@@ -312,7 +317,8 @@ input[type=submit]:focus {
   width: auto;
 }
 
-.screen-gameplay {
+.screen-gameplay,
+.gameplay-screen {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -321,6 +327,14 @@ input[type=submit]:focus {
   width: 100%;
   max-width: 100%;
   min-height: 100svh;
+}
+
+.screen-finish,
+.gameplay-finish-screen {
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
 }
 
 .levelscreen-footer {
@@ -372,11 +386,17 @@ input[type=submit]:focus {
   justify-content: center;
 }
 
-.gameplay-game {
+.gameplay-game,
+.gameplay-stage {
   overflow: hidden;
   flex: 1;
   width: 100%;
   position: relative;
+}
+
+.phrases-advanced-level,
+.level-phrases-advanced {
+  width: 100%;
 }
 
 .welcome {
@@ -386,6 +406,88 @@ input[type=submit]:focus {
 .landing {
   padding-top: 80px;
   padding-bottom: 80px;
+}
+
+.landing-container {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding-right: 16px;
+  padding-left: 16px;
+}
+
+.landing-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  max-width: 280px;
+  margin: 0 auto 48px;
+}
+
+.landing-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto 48px;
+}
+
+.landing-secondary-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.landing-playmarket-icon {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  right: 12px;
+  object-fit: contain;
+  object-position: bottom;
+}
+
+.landing-preview {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.learn-header {
+  display: flex;
+  justify-content: center;
+}
+
+.settings-tab {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 80px;
+}
+
+.settings-user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 96px;
+}
+
+.settings-footer-credit {
+  font-size: 0.875rem;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.3em;
+  padding-right: 20px;
+  padding-left: 20px;
+  margin-top: 32px;
 }
 
 .modal-text-input {

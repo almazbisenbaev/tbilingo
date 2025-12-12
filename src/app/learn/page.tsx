@@ -133,10 +133,10 @@ function SettingsTab() {
 
   return (
     <>
-      <div className="pb-20 flex flex-col justify-between">
+      <div className="settings-tab">
 
         {currentUser && (
-          <div className="flex flex-col items-center py-5 mb-24">
+          <div className="settings-user">
             <p>Welcome, {currentUser.displayName || currentUser.email}!</p>
 
             <div>
@@ -154,7 +154,7 @@ function SettingsTab() {
           </div>
         )}
 
-        <div className="text-sm text-center flex justify-center items-center gap-[0.3em] px-5 mt-8">Made by <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
+        <div className="settings-footer-credit">Made by <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
 
       </div>
 
@@ -294,7 +294,7 @@ function LearnTabView() {
   if (globalLoading) {
     return (
       <div className="learn-content">
-        <div className='flex justify-center'>
+        <div className="learn-header">
           <Image src="/images/logo.svg" alt="Tbilingo" width={120} height={48} className='object-contain' />
         </div>
 
@@ -309,7 +309,7 @@ function LearnTabView() {
 
   return (
     <div className="learn-content">
-      <div className='flex justify-center'>
+      <div className="learn-header">
         <Link href="/">
           <Image src="/images/logo.svg" alt="Tbilingo" width={120} height={48} className='object-contain' />
         </Link>

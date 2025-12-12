@@ -427,7 +427,7 @@ export default function PhrasesAdvancedPage() {
 
   // Active gameplay
   return (
-    <div className="app app-screen phrases-advanced-level">
+    <div className="app app-screen level-phrases-advanced">
       <div className="container-480">
         <AppHeader
           title={

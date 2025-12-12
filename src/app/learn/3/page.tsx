@@ -433,7 +433,7 @@ export default function BasicWordsLevel() {
     <div className="app app-screen">
 
       {!allCardsReviewed && (
-        <div className="screen-gameplay">
+        <div className="gameplay-screen">
 
           <div className="navbar">
             <div className="navbar-row">
@@ -455,7 +455,7 @@ export default function BasicWordsLevel() {
             </div>
           </div>
 
-          <div className="gameplay-game">
+          <div className="gameplay-stage">
             <Swiper
               spaceBetween={20}
               slidesPerView={1}
@@ -468,7 +468,7 @@ export default function BasicWordsLevel() {
                 const isLearned = learnedWords.includes(item.id);
                 return (
                   <SwiperSlide key={item.id}>
-                    <div className={`full-center ${isLearned ? 'learned' : 'not-learned'}`}>
+                    <div className={`full-center ${isLearned ? 'gameplay-slide--learned' : 'gameplay-slide--not-learned'}`}>
                         <FlashcardWord
                           word={item}
                           onNext={() => markAsToReview(item.id)}
@@ -487,7 +487,7 @@ export default function BasicWordsLevel() {
       <AnimatePresence mode="wait">
         {allCardsReviewed && (
           <motion.div
-            className="screen-finish"
+            className="gameplay-finish-screen"
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
@@ -496,16 +496,17 @@ export default function BasicWordsLevel() {
               ease: [0.34, 1.56, 0.64, 1]
             }}
           >
-            <div className="finish-message">
+            <div className="gameplay-finish-message">
               <div className='text-center text-4xl'>🙌</div>
               <h2 className='font-semibold text-2xl'>That's it for today!</h2>
-              <div className='text-lg finish-message-text'>
+              <div className='text-lg gameplay-finish-message-text'>
                 <p>You've looked through all the flashcards for this session. You can go back to the homepage and start again.</p>
               </div>
-              <div className='finish-message-actions'>
+              <div className='gameplay-finish-message-actions'>
                 <button onClick={resetGameplay} className='btn btn-small btn-secondary'>Go back</button>
               </div>
             </div>
+
           </motion.div>
         )}
       </AnimatePresence>
