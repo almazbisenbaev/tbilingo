@@ -265,13 +265,15 @@ export default function PhrasesAdvancedPage() {
               const currentIds: string[] = currentDoc?.learnedItemIds || [];
               if (!currentIds.includes(String(phraseId))) {
                 const updatedIds = [...currentIds, String(phraseId)];
+                const isFinished = currentDoc?.isFinished === true || (phrases.length > 0 && updatedIds.length >= phrases.length);
                 await setDoc(progressRef, {
                   userId: user.uid,
                   courseId: String(level_id),
                   learnedItemIds: updatedIds,
+                  isFinished,
                   lastUpdated: serverTimestamp(),
                   createdAt: currentDoc?.createdAt || serverTimestamp()
-                });
+                }, { merge: true });
               }
             } catch (e) {
               console.error('❌ Error saving learned phrase:', e);
@@ -286,11 +288,46 @@ export default function PhrasesAdvancedPage() {
   const handleWrongAnswer = async (phraseId: number) => {
     setPhrasesMemory(prev => {
       const current = prev[phraseId] || { correctAnswers: 0, isLearned: false };
+      const wasLearned = current.isLearned;
       const nextCorrect = Math.max(0, current.correctAnswers - 1);
       const nextLearned = nextCorrect >= 3;
       const updated = { correctAnswers: nextCorrect, isLearned: nextLearned };
       if (!nextLearned) {
         setLearnedPhrases(prevLearned => prevLearned.filter(id => id !== phraseId));
+      }
+
+      // Persist "unlearn" transition so Firestore matches in-memory state.
+      // Keep isFinished monotonic (once true, never set back to false).
+      if (wasLearned && !nextLearned) {
+        const user = auth.currentUser;
+        if (user) {
+          (async () => {
+            try {
+              const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
+              const snap = await getDoc(progressRef);
+              const currentDoc = snap.exists() ? (snap.data() as any) : null;
+              const currentIds: string[] = currentDoc?.learnedItemIds || [];
+              if (currentIds.includes(String(phraseId))) {
+                const updatedIds = currentIds.filter((id) => id !== String(phraseId));
+                const isFinished = currentDoc?.isFinished === true || (phrases.length > 0 && updatedIds.length >= phrases.length);
+                await setDoc(
+                  progressRef,
+                  {
+                    userId: user.uid,
+                    courseId: String(level_id),
+                    learnedItemIds: updatedIds,
+                    isFinished,
+                    lastUpdated: serverTimestamp(),
+                    createdAt: currentDoc?.createdAt || serverTimestamp(),
+                  },
+                  { merge: true }
+                );
+              }
+            } catch (e) {
+              console.error('❌ Error persisting unlearned phrase:', e);
+            }
+          })();
+        }
       }
       return { ...prev, [phraseId]: updated };
     });
