@@ -53,6 +53,12 @@ const COURSE_FIELDS: Record<string, { name: string; label: string; type?: string
   '4': [ // Phrases
     { name: 'english', label: 'English' },
     { name: 'georgian', label: 'Georgian' },
+    { name: 'fakeWords', label: 'Fake Words', type: 'stringArray' },
+  ],
+  '5': [ // Phrases
+    { name: 'english', label: 'English' },
+    { name: 'georgian', label: 'Georgian' },
+    { name: 'fakeWords', label: 'Fake Words', type: 'stringArray' },
   ],
 };
 
@@ -153,6 +159,10 @@ export default function AdminPage() {
     fetchItems(course.id);
   };
 
+  const selectedCourseFields = selectedCourse
+    ? (COURSE_FIELDS[selectedCourse.id] || (selectedCourse.type === 'phrases' ? COURSE_FIELDS['4'] : undefined))
+    : undefined;
+
   const filteredItems = useMemo(() => {
     if (!searchQuery) return items;
     const lowerQuery = searchQuery.toLowerCase();
@@ -233,15 +243,23 @@ export default function AdminPage() {
 
   const startEditItem = (item?: CourseItem) => {
     if (item) {
-      setItemForm({ ...item });
+      const nextItem = { ...item };
+      if (
+        selectedCourse &&
+        (selectedCourse.type === 'phrases' || selectedCourse.id === '4' || selectedCourse.id === '5') &&
+        !Array.isArray(nextItem.fakeWords)
+      ) {
+        nextItem.fakeWords = [];
+      }
+      setItemForm(nextItem);
     } else {
       // Default template
       const template: any = { id: "" };
       // Pre-fill fields based on course type
       if (selectedCourse) {
-        const fields = COURSE_FIELDS[selectedCourse.id];
+        const fields = COURSE_FIELDS[selectedCourse.id] || (selectedCourse.type === 'phrases' ? COURSE_FIELDS['4'] : undefined);
         if (fields) {
-          fields.forEach(f => template[f.name] = "");
+          fields.forEach(f => template[f.name] = f.type === 'stringArray' ? [] : "");
         }
       }
       setItemForm(template);
@@ -484,16 +502,58 @@ export default function AdminPage() {
                   </div>
                   
                   {/* Dynamic Fields based on Course ID */}
-                  {selectedCourse && COURSE_FIELDS[selectedCourse.id] ? (
-                    COURSE_FIELDS[selectedCourse.id].map((field) => (
+                  {selectedCourse && selectedCourseFields ? (
+                    selectedCourseFields.map((field) => (
                       <div key={field.name} className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor={`field-${field.name}`} className="text-right">{field.label}</Label>
-                        <Input 
-                          id={`field-${field.name}`}
-                          value={itemForm[field.name] || ''}
-                          onChange={(e) => setItemForm({...itemForm, [field.name]: e.target.value})}
-                          className="col-span-3"
-                        />
+                        {field.type === 'stringArray' ? (
+                          <div className="col-span-3 space-y-2">
+                            {(Array.isArray(itemForm[field.name]) ? (itemForm[field.name] as string[]) : []).map((word, idx) => (
+                              <div key={idx} className="flex gap-2">
+                                <Input
+                                  id={`field-${field.name}-${idx}`}
+                                  value={word}
+                                  onChange={(e) => {
+                                    const current = Array.isArray(itemForm[field.name]) ? (itemForm[field.name] as string[]) : [];
+                                    const next = [...current];
+                                    next[idx] = e.target.value;
+                                    setItemForm({ ...itemForm, [field.name]: next });
+                                  }}
+                                />
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => {
+                                    const current = Array.isArray(itemForm[field.name]) ? (itemForm[field.name] as string[]) : [];
+                                    const next = current.filter((_, i) => i !== idx);
+                                    setItemForm({ ...itemForm, [field.name]: next });
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            ))}
+
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => {
+                                const current = Array.isArray(itemForm[field.name]) ? (itemForm[field.name] as string[]) : [];
+                                setItemForm({ ...itemForm, [field.name]: [...current, ""] });
+                              }}
+                            >
+                              <Plus className="h-4 w-4 mr-2" /> Add word
+                            </Button>
+                          </div>
+                        ) : (
+                          <Input 
+                            id={`field-${field.name}`}
+                            value={itemForm[field.name] || ''}
+                            onChange={(e) => setItemForm({...itemForm, [field.name]: e.target.value})}
+                            className="col-span-3"
+                          />
+                        )}
                       </div>
                     ))
                   ) : (
@@ -512,7 +572,7 @@ export default function AdminPage() {
                   )}
                   
                   {/* Add New Field Button (Simple implementation) */}
-                  {!COURSE_FIELDS[selectedCourse?.id || ''] && (
+                  {!selectedCourseFields && (
                       <div className="text-xs text-center text-gray-500 pt-2">
                           To add new fields, switch to JSON mode.
                       </div>

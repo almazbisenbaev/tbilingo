@@ -25,6 +25,7 @@ export interface PhraseAdvancedItem {
   id: number;
   english: string;
   georgian: string;
+  fakeWords: string[];
 }
 
 export interface PhraseAdvancedMemory {

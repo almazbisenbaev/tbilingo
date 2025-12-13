@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { PhraseAdvancedItem, PhraseAdvancedMemory } from '@/types';
 import { processGeorgianSentence, normalizeForComparison } from '@/utils/georgian-text-utils';
+import { shuffleArray } from '@/utils/shuffle-array';
 import './SentenceForm.css';
 
 interface SentenceFormProps {
@@ -30,11 +31,12 @@ const SentenceForm: React.FC<SentenceFormProps> = ({
   // Extract words from Georgian sentence when phrase changes
   useEffect(() => {
     const words = processGeorgianSentence(phrase.georgian);
-    setGeorgianWords(words);
+    const fakeWords = Array.isArray(phrase.fakeWords) ? phrase.fakeWords : [];
+    setGeorgianWords(shuffleArray([...words, ...fakeWords]));
     setSelectedWords([]);
     setIsSubmitted(false);
     setIsCorrect(false);
-  }, [phrase.id, phrase.georgian]);
+  }, [phrase.id, phrase.georgian, phrase.fakeWords]);
 
   /**
    * Handles clicking a word button

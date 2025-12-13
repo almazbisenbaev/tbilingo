@@ -171,7 +171,8 @@ export default function PhrasesAdvancedPage() {
         const phraseItems: PhraseAdvancedItem[] = snapshot.docs.map(docSnap => ({
           id: typeof docSnap.id === 'string' ? parseInt(docSnap.id) : (docSnap.id as unknown as number),
           english: (docSnap.data() as any).english,
-          georgian: (docSnap.data() as any).georgian
+          georgian: (docSnap.data() as any).georgian,
+          fakeWords: Array.isArray((docSnap.data() as any).fakeWords) ? (docSnap.data() as any).fakeWords : [],
         })).sort((a, b) => a.id - b.id);
         setPhrases(phraseItems);
 
