@@ -172,6 +172,7 @@ export default function PhrasesAdvancedPage() {
           id: typeof docSnap.id === 'string' ? parseInt(docSnap.id) : (docSnap.id as unknown as number),
           english: (docSnap.data() as any).english,
           georgian: (docSnap.data() as any).georgian,
+          latin: typeof (docSnap.data() as any).latin === 'string' ? (docSnap.data() as any).latin : '',
           fakeWords: Array.isArray((docSnap.data() as any).fakeWords) ? (docSnap.data() as any).fakeWords : [],
         })).sort((a, b) => a.id - b.id);
         setPhrases(phraseItems);

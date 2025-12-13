@@ -25,6 +25,7 @@ export interface PhraseAdvancedItem {
   id: number;
   english: string;
   georgian: string;
+  latin: string;
   fakeWords: string[];
 }
 

@@ -53,11 +53,13 @@ const COURSE_FIELDS: Record<string, { name: string; label: string; type?: string
   '4': [ // Phrases
     { name: 'english', label: 'English' },
     { name: 'georgian', label: 'Georgian' },
+    { name: 'latin', label: 'Latin' },
     { name: 'fakeWords', label: 'Fake Words', type: 'stringArray' },
   ],
   '5': [ // Phrases
     { name: 'english', label: 'English' },
     { name: 'georgian', label: 'Georgian' },
+    { name: 'latin', label: 'Latin' },
     { name: 'fakeWords', label: 'Fake Words', type: 'stringArray' },
   ],
 };

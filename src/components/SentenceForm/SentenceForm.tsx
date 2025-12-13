@@ -175,6 +175,11 @@ const SentenceForm: React.FC<SentenceFormProps> = ({
                 <div className="correct-answer">
                   <span className="label">Correct answer:</span>
                   <span className="answer">{phrase.georgian}</span>
+                  {phrase.latin && (
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                      {phrase.latin}
+                    </div>
+                  )}
                 </div>
               )}
               <button 
