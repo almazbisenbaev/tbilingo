@@ -21,7 +21,7 @@ import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const LEVEL_TITLE = 'Phrases Advanced';
+const LEVEL_TITLE = 'Essential Phrases';
 const LEVEL_DESCRIPTION = 'Advanced Georgian phrases with sentence construction gameplay';
 
 function PhrasesAdvancedProgressCard({

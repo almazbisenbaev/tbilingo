@@ -38,8 +38,8 @@ const LEVELS: LevelConfig[] = [
   { id: '1', title: 'Alphabet', icon: '/images/icon-alphabet.svg', type: 'characters' },
   { id: '2', title: 'Numbers', icon: '/images/icon-numbers.svg', requiredLevelId: '1', requiredLevelTitle: 'Learn Alphabet', type: 'numbers' },
   { id: '3', title: 'Basic Words', icon: '/images/icon-phrases.svg', requiredLevelId: '2', requiredLevelTitle: 'Learn Numbers', type: 'words' },
-  { id: '4', title: 'Phrases Advanced', icon: '/images/icon-phrases.svg', requiredLevelId: '3', requiredLevelTitle: 'Basic Words', type: 'phrases' },
-  { id: '5', title: 'Business Georgian', icon: '/images/icon-phrases.svg', requiredLevelId: '4', requiredLevelTitle: 'Phrases Advanced', type: 'phrases' },
+  { id: '4', title: 'Essential Phrases', icon: '/images/icon-phrases.svg', requiredLevelId: '3', requiredLevelTitle: 'Basic Words', type: 'phrases' },
+  { id: '5', title: 'Business Georgian', icon: '/images/icon-phrases.svg', requiredLevelId: '4', requiredLevelTitle: 'Essential Phrases', type: 'phrases' },
 ];
 
 // --- Main Component ---

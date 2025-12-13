@@ -1,5 +1,5 @@
 /**
- * Utility functions for processing Georgian text for the Phrases Advanced level
+ * Utility functions for processing Georgian text for the Essential Phrases level
  */
 
 /**

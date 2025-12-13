@@ -1,7 +1,7 @@
 ## Architecture Overview
 
 ### Tech Stack
-- **Frontend**: Next.js 15 (React 19), TypeScript, Tailwind 4
+- **Frontend**: Next.js 16 (React 19), TypeScript, Tailwind 4
 - **Backend**: Firebase (Firestore + Auth)
 - **PWA**: Custom service worker for offline support
 
@@ -45,41 +45,38 @@ function MyComponent() {
 ### Authentication Flow
 
 #### Email/Password Signup:
-1. User fills signup form (`SignupPage.tsx`)
+1. User fills signup form (`SignupView` in `src/app/learn/page.tsx`)
 2. Calls `signup(email, password, displayName)`
 3. Firebase creates account
 4. Optional display name is set via `updateProfile()`
 5. User automatically logged in
-6. `AuthWrapper` switches to main app view
+6. `LearnApp` (in `src/app/learn/page.tsx`) re-renders based on `currentUser`
 
 #### Email/Password Login:
-1. User fills login form (`LoginPage.tsx`)
+1. User fills login form (`LoginView` in `src/app/learn/page.tsx`)
 2. Calls `login(email, password)`
 3. Firebase validates credentials
 4. User logged in
-5. `AuthWrapper` switches to main app view
+5. `LearnApp` (in `src/app/learn/page.tsx`) re-renders based on `currentUser`
 
 #### Google Sign-In:
-1. User clicks Google button (in `AuthScreen`, `LoginPage`, or `SignupPage`)
+1. User clicks Google button (in `AuthView`, `LoginView`, or `SignupView` in `src/app/learn/page.tsx`)
 2. Calls `loginWithGoogle()`
 3. Opens Google OAuth popup via `signInWithPopup()`
 4. User selects Google account
 5. Firebase handles authentication
 6. User logged in (creates account if new user)
-7. `AuthWrapper` switches to main app view
+7. `LearnApp` (in `src/app/learn/page.tsx`) re-renders based on `currentUser`
 
 ### Components
 
-#### AuthWrapper (`src/components/AuthWrapper.tsx`)
-Orchestrates the authentication flow. Shows:
-- `AuthScreen` when not authenticated
-- `LoginPage` or `SignupPage` when user chooses auth method
-- `LearnTab` when authenticated
+#### Auth Views (`src/app/learn/page.tsx`)
+Auth UI is implemented as in-file components:
+- `AuthView` (initial unauthenticated screen)
+- `LoginView`
+- `SignupView`
 
-#### AuthScreen (`src/components/welcome-screen/welcome-screen.tsx`)
-Landing page with authentication options:
-- **Primary**: "Continue with Google" button
-- **Secondary**: "Sign Up with Email" and "Sign In with Email"
+The authenticated experience is `LearnApp` which renders tab content (learn/settings) and the tab bar.
 
 #### GoogleSignInButton Component
 Isolated, reusable Google sign-in button with its own CSS.
@@ -115,13 +112,13 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 ## Course Architecture & Isolation
 
 ### Overview
-**All courses in the application are completely isolated from each other.** Each course has its own dedicated `page.tsx` file containing all course-specific logic, state management, and gameplay mechanics. This architecture allows each course to evolve independently without affecting others.
+Each course has its own dedicated `page.tsx` file containing the course-specific orchestration, state management, and gameplay flow. This architecture allows each course to evolve independently, while still reusing shared UI building blocks.
 
 ### Design Philosophy
 - **Independence**: Modify one course without affecting others
 - **Clarity**: All course logic in one file
 - **Flexibility**: Different courses can have completely different mechanics
-- **No shared course logic**: Only UI components and utilities are shared
+- **Minimal shared course logic**: Prefer sharing UI components and small utilities, while keeping course orchestration inside the course page
 
 ### Levels
 
@@ -140,10 +137,11 @@ Flip cards to learn individual items with "Mark as Learned" confirmation
 Use sentence construction gameplay where users build Georgian sentences by selecting words in correct order
 
 ### Levels
-- **Alphabet** (`/app/learn/1/page.tsx`)
-- **Numbers** (`/app/learn/2/page.tsx`)
-- **Basic Words** (`/app/learn/3/page.tsx`)
-- **Essential Phrases** (`/app/learn/4/page.tsx`)
+- **Alphabet** (`src/app/learn/1/page.tsx`)
+- **Numbers** (`src/app/learn/2/page.tsx`)
+- **Basic Words** (`src/app/learn/3/page.tsx`)
+- **Essential Phrases** (`src/app/learn/4/page.tsx`)
+- **Business Georgian / Business & Work** (`src/app/learn/5/page.tsx`)
 
 
 ### What's Shared vs Isolated
@@ -151,19 +149,23 @@ Use sentence construction gameplay where users build Georgian sentences by selec
 #### ✅ Shared (Acceptable)
 
 **UI Components:**
-- `PageTransition` - Animation wrapper
 - `ErrorState` - Error display
 - `AppHeader` - Navigation header
-- `PageLayout` - Page structure
-- `ContentContainer` - Content wrapper
+- `LoadingScreen` - Full-screen loading state
 - `ProgressBar` - Progress indicator
 - `ConfirmationDialog` - Confirmation dialogs
 - `SuccessModal` - Success messages
+- `GoogleSignInButton` - Reusable Google sign-in button
+- `TabBar` and `AnimatedTabContent` - Tab navigation
+- `LevelLink` - Course/level list item
 - Standard Next.js components (`Image`, `Link`)
+
+**Learning UI Components:**
+- `FlashcardLetter`, `FlashcardNumber`, `FlashcardWord`
+- `SentenceForm`
 
 #### ❌ NOT Shared (Isolated)
 
-- Course-specific components (each course has its own inline components)
 - Course gameplay logic (each course manages its own gameplay)
 - Course state management (embedded in each course)
 - Course business logic functions
@@ -176,7 +178,6 @@ Use sentence construction gameplay where users build Georgian sentences by selec
 3. **Maintain consistent patterns** - Use similar structure across courses for maintainability
 4. **Test independently** - Each course should work independently
 5. **Document unique features** - If a course has unique mechanics, document them in the course file
-6. **Import required styles** - For phrase courses, import `PhraseAdvancedComponent.css`
 
 
 ### Code Organization Principles
@@ -187,7 +188,6 @@ Use sentence construction gameplay where users build Georgian sentences by selec
 ### Key Files to Understand
 - `src/app/layout.tsx` - App root with AuthProvider
 - `src/contexts/AuthContext.tsx` - Authentication logic
-- `src/components/AuthWrapper.tsx` - Auth flow orchestration
-- `src/components/screens/LearnTab.tsx` - Main course list
-- `src/app/learn/[id]/page.tsx` - Individual course pages (isolated logic)
+- `src/app/learn/page.tsx` - Main authenticated app (tabs) + unauthenticated auth UI
+- `src/app/learn/<levelId>/page.tsx` - Individual course pages (isolated logic)
 - `src/types/index.ts` - Core data interfaces
