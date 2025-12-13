@@ -24,6 +24,87 @@ import Link from 'next/link';
 const LEVEL_TITLE = 'Phrases Advanced';
 const LEVEL_DESCRIPTION = 'Advanced Georgian phrases with sentence construction gameplay';
 
+function PhrasesAdvancedProgressCard({
+  course,
+  phrases,
+  onLoading,
+  onLoaded,
+}: {
+  course: { title: string; description: string; icon: string };
+  phrases: PhraseAdvancedItem[];
+  onLoading: () => void;
+  onLoaded: (learnedIds: number[]) => void;
+}) {
+  const [learnedCount, setLearnedCount] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const load = async () => {
+      onLoading();
+      setLearnedCount(0);
+
+      try {
+        const user = auth.currentUser;
+        let learnedIds: number[] = [];
+
+        if (user) {
+          const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
+          const progressSnap = await getDoc(progressRef);
+          const learnedItemIds: string[] = progressSnap.exists()
+            ? (((progressSnap.data() as any).learnedItemIds as string[]) || [])
+            : [];
+          learnedIds = learnedItemIds.map((id) => parseInt(id));
+        }
+
+        if (cancelled) return;
+
+        setLearnedCount(learnedIds.length);
+        onLoaded(learnedIds);
+      } catch (e) {
+        console.error('Error loading progress:', e);
+        if (!cancelled) {
+          setLearnedCount(0);
+          onLoaded([]);
+        }
+      }
+    };
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+    // Intentionally mount-only: the parent toggles this card on/off.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="container-480 level-intro-content">
+      <div className="mb-8 text-center flex flex-col items-center">
+        <div className="mb-4 relative w-24 h-24">
+          <Image src={course.icon} alt={course.title} fill className="object-contain" />
+        </div>
+        <h2 className="text-2xl font-bold mb-2">{course.title}</h2>
+        <p className="text-gray-500">{course.description}</p>
+      </div>
+
+      <div className=" w-full bg-white/50 rounded-2xl p-6 mb-8">
+        <div className="flex justify-between items-end mb-2">
+          <span className="text-sm font-medium text-gray-500">Progress</span>
+          <span className="text-2xl font-bold text-primary">
+            {phrases.length > 0 ? Math.round((learnedCount / phrases.length) * 100) : 0}%
+          </span>
+        </div>
+        <ProgressBar current={learnedCount} total={phrases.length} width="100%" />
+        <div className="mt-2 text-center text-sm text-gray-400">
+          {learnedCount} / {phrases.length} phrases learned
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function PhrasesAdvancedPage() {
 
 
@@ -37,7 +118,6 @@ export default function PhrasesAdvancedPage() {
   const [learnedPhrases, setLearnedPhrases] = useState<number[]>([]);
   const [progressLoaded, setProgressLoaded] = useState(false);
   const [phrasesMemory, setPhrasesMemory] = useState<Record<number, PhraseAdvancedMemory>>({});
-  const [isInitialized, setIsInitialized] = useState(false);
 
   const [isGameplayActive, setIsGameplayActive] = useState<boolean>(false);
   const [processedPhrases, setProcessedPhrases] = useState<number[]>([]);
@@ -107,45 +187,26 @@ export default function PhrasesAdvancedPage() {
     fetchPhrasesData();
   }, []);
 
-  // Initialize level memory
-  useEffect(() => {
-    if (!phrasesLoading && phrases.length > 0 && !isInitialized) {
-      const loadProgress = async () => {
-        try {
-          const user = auth.currentUser;
-          const initialMemory: Record<number, PhraseAdvancedMemory> = {};
-          let learnedIds: number[] = [];
-          if (user) {
-            const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
-            const progressSnap = await getDoc(progressRef);
-            if (progressSnap.exists()) {
-              const data = progressSnap.data() as any;
-              const learnedItemIds: string[] = data.learnedItemIds || [];
-              learnedIds = learnedItemIds.map(id => parseInt(id));
-            }
-          }
-          phrases.forEach(phrase => {
-            const isLearned = learnedIds.includes(phrase.id);
-            initialMemory[phrase.id] = { correctAnswers: isLearned ? 3 : 0, isLearned };
-          });
-          setPhrasesMemory(initialMemory);
-          setLearnedPhrases(learnedIds);
-          setProgressLoaded(true);
-        } catch (error) {
-          console.error('Error loading progress:', error);
-          const initialMemory: Record<number, PhraseAdvancedMemory> = {};
-          phrases.forEach(phrase => {
-            initialMemory[phrase.id] = { correctAnswers: 0, isLearned: false };
-          });
-          setPhrasesMemory(initialMemory);
-          setLearnedPhrases([]);
-          setProgressLoaded(true);
-        }
-      };
-      loadProgress();
-      setIsInitialized(true);
-    }
-  }, [phrasesLoading, phrases.length, isInitialized, phrases]);
+  const handleProgressLoading = () => {
+    setProgressLoaded(false);
+    setLearnedPhrases([]);
+    const emptyMemory: Record<number, PhraseAdvancedMemory> = {};
+    phrases.forEach((phrase) => {
+      emptyMemory[phrase.id] = { correctAnswers: 0, isLearned: false };
+    });
+    setPhrasesMemory(emptyMemory);
+  };
+
+  const handleProgressLoaded = (learnedIds: number[]) => {
+    const nextMemory: Record<number, PhraseAdvancedMemory> = {};
+    phrases.forEach((phrase) => {
+      const isLearned = learnedIds.includes(phrase.id);
+      nextMemory[phrase.id] = { correctAnswers: isLearned ? 3 : 0, isLearned };
+    });
+    setPhrasesMemory(nextMemory);
+    setLearnedPhrases(learnedIds);
+    setProgressLoaded(true);
+  };
 
   // Check if all cards reviewed
   useEffect(() => {
@@ -255,6 +316,10 @@ export default function PhrasesAdvancedPage() {
   };
 
   const resetGameplay = () => {
+    // Ensure intro screen mounts with 0 progress (no stale flash)
+    setProgressLoaded(false);
+    setLearnedPhrases([]);
+    setPhrasesMemory({});
     setIsGameplayActive(false);
     setAllCardsReviewed(false);
     setProcessedPhrases([]);
@@ -321,36 +386,13 @@ export default function PhrasesAdvancedPage() {
           </div>
         </div>
 
-        {progressLoaded && courseInfo && (
-          <div className="container-480 level-intro-content">
-            <div className="mb-8 text-center flex flex-col items-center">
-              <div className="mb-4 relative w-24 h-24">
-                 <Image 
-                   src={courseInfo.icon} 
-                   alt={courseInfo.title} 
-                   fill
-                   className="object-contain"
-                 />
-              </div>
-              <h2 className="text-2xl font-bold mb-2">{courseInfo.title}</h2>
-              <p className="text-gray-500">{courseInfo.description}</p>
-            </div>
-
-            <div className=" w-full bg-white/50 rounded-2xl p-6 mb-8">
-              <div className="flex justify-between items-end mb-2">
-                <span className="text-sm font-medium text-gray-500">Progress</span>
-                <span className="text-2xl font-bold text-primary">{phrases.length > 0 ? Math.round((learnedPhrases.length / phrases.length) * 100) : 0}%</span>
-              </div>
-              <ProgressBar 
-                current={learnedPhrases.length} 
-                total={phrases.length} 
-                width="100%" 
-              />
-              <div className="mt-2 text-center text-sm text-gray-400">
-                {learnedPhrases.length} / {phrases.length} phrases learned
-              </div>
-            </div>
-          </div>
+        {courseInfo && (
+          <PhrasesAdvancedProgressCard
+            course={courseInfo}
+            phrases={phrases}
+            onLoading={handleProgressLoading}
+            onLoaded={handleProgressLoaded}
+          />
         )}
 
         {progressLoaded && (

@@ -25,6 +25,89 @@ import Link from 'next/link';
 import { collection, doc, getDocs, setDoc, getDoc, query, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
 
+function NumbersProgressCard({
+  course,
+  total,
+  onLoading,
+  onLoaded,
+}: {
+  course: { title: string; description: string; icon: string };
+  total: number;
+  onLoading: () => void;
+  onLoaded: (learnedIds: number[]) => void;
+}) {
+  const [learnedCount, setLearnedCount] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const load = async () => {
+      onLoading();
+      setLearnedCount(0);
+
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          if (!cancelled) onLoaded([]);
+          return;
+        }
+
+        const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
+        const progressSnap = await getDoc(progressRef);
+
+        if (cancelled) return;
+
+        const learnedItemIds: string[] = progressSnap.exists()
+          ? (((progressSnap.data() as any).learnedItemIds as string[]) || [])
+          : [];
+        const learnedIds = learnedItemIds.map((id) => parseInt(id));
+
+        setLearnedCount(learnedIds.length);
+        onLoaded(learnedIds);
+      } catch (e) {
+        console.error('❌ Error loading user progress:', e);
+        if (!cancelled) {
+          setLearnedCount(0);
+          onLoaded([]);
+        }
+      }
+    };
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+    // Intentionally mount-only: the parent toggles this card on/off.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="container-480 level-intro-content">
+      <div className="mb-8 text-center flex flex-col items-center">
+        <div className="mb-4 relative w-24 h-24">
+          <Image src={course.icon} alt={course.title} fill className="object-contain" />
+        </div>
+        <h2 className="text-2xl font-bold mb-2">{course.title}</h2>
+        <p className="text-gray-500">{course.description}</p>
+      </div>
+
+      <div className=" w-full bg-white/50 rounded-2xl p-6 mb-8">
+        <div className="flex justify-between items-end mb-2">
+          <span className="text-sm font-medium text-gray-500">Progress</span>
+          <span className="text-2xl font-bold text-primary">
+            {total > 0 ? Math.round((learnedCount / total) * 100) : 0}%
+          </span>
+        </div>
+        <ProgressBar current={learnedCount} total={total} width="100%" />
+        <div className="mt-2 text-center text-sm text-gray-400">
+          {learnedCount} / {total} numbers learned
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function NumbersLevel() {
 
 
@@ -113,35 +196,15 @@ export default function NumbersLevel() {
     fetchNumbersData();
   }, []);
 
-  useEffect(() => {
-    if (!numbersLoading && numbers.length > 0) {
-      const loadProgress = async () => {
-        try {
-          const user = auth.currentUser;
-          if (!user) {
-            setLearnedNumbers([]);
-            setProgressLoaded(true);
-            return;
-          }
-          const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
-          const progressSnap = await getDoc(progressRef);
-          if (progressSnap.exists()) {
-            const data = progressSnap.data() as any;
-            const learnedItemIds: string[] = data.learnedItemIds || [];
-            setLearnedNumbers(learnedItemIds.map(id => parseInt(id)));
-          } else {
-            setLearnedNumbers([]);
-          }
-          setProgressLoaded(true);
-        } catch (e) {
-          console.error('❌ Error loading user progress:', e);
-          setLearnedNumbers([]);
-          setProgressLoaded(true);
-        }
-      };
-      loadProgress();
-    }
-  }, [numbersLoading, numbers.length]);
+  const handleProgressLoading = () => {
+    setProgressLoaded(false);
+    setLearnedNumbers([]);
+  };
+
+  const handleProgressLoaded = (learnedIds: number[]) => {
+    setLearnedNumbers(learnedIds);
+    setProgressLoaded(true);
+  };
 
   // Check if all cards have been reviewed - moved to top level to avoid hooks order issues
   useEffect(() => {
@@ -340,31 +403,13 @@ export default function NumbersLevel() {
 
   // Reset gameplay and go back to main page
   const resetGameplay = () => {
+    // Ensure intro screen mounts with 0 progress (no stale flash)
+    setProgressLoaded(false);
+    setLearnedNumbers([]);
     setIsGameplayActive(false);
     setAllCardsReviewed(false);
     setProcessedNumbers([]);
     setNumbersToReview([]);
-    const user = auth.currentUser;
-    if (!user) {
-      setLearnedNumbers([]);
-      return;
-    }
-    (async () => {
-      try {
-        const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
-        const progressSnap = await getDoc(progressRef);
-        if (progressSnap.exists()) {
-          const data = progressSnap.data() as any;
-          const learnedItemIds: string[] = data.learnedItemIds || [];
-          setLearnedNumbers(learnedItemIds.map(id => parseInt(id)));
-        } else {
-          setLearnedNumbers([]);
-        }
-      } catch (e) {
-        console.error('❌ Error reloading user progress:', e);
-        setLearnedNumbers([]);
-      }
-    })();
   };
 
   // Main numbers page
@@ -391,36 +436,13 @@ export default function NumbersLevel() {
           </div>
         </div>
 
-        {progressLoaded && courseInfo && (
-          <div className="container-480 level-intro-content">
-            <div className="mb-8 text-center flex flex-col items-center">
-              <div className="mb-4 relative w-24 h-24">
-                 <Image 
-                   src={courseInfo.icon} 
-                   alt={courseInfo.title} 
-                   fill
-                   className="object-contain"
-                 />
-              </div>
-              <h2 className="text-2xl font-bold mb-2">{courseInfo.title}</h2>
-              <p className="text-gray-500">{courseInfo.description}</p>
-            </div>
-
-            <div className=" w-full bg-white/50 rounded-2xl p-6 mb-8">
-              <div className="flex justify-between items-end mb-2">
-                <span className="text-sm font-medium text-gray-500">Progress</span>
-                <span className="text-2xl font-bold text-primary">{numbers.length > 0 ? Math.round((learnedNumbers.length / numbers.length) * 100) : 0}%</span>
-              </div>
-              <ProgressBar 
-                current={learnedNumbers.length} 
-                total={numbers.length} 
-                width="100%" 
-              />
-              <div className="mt-2 text-center text-sm text-gray-400">
-                {learnedNumbers.length} / {numbers.length} numbers learned
-              </div>
-            </div>
-          </div>
+        {courseInfo && (
+          <NumbersProgressCard
+            course={courseInfo}
+            total={numbers.length}
+            onLoading={handleProgressLoading}
+            onLoaded={handleProgressLoaded}
+          />
         )}
 
         {progressLoaded && (
