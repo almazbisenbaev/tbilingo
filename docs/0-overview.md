@@ -1,14 +1,3 @@
-## Table of Contents
-1. [Architecture Overview](#architecture-overview)
-2. [Authentication System](#authentication-system)
-3. [Database Structure](#database-structure)
-4. [Course System](#course-system)
-5. [Course Architecture & Isolation](#course-architecture--isolation)
-6. [Development Guide](#development-guide)
-7. [Maintenance & Fixes](#maintenance--fixes)
-
----
-
 ## Architecture Overview
 
 ### Tech Stack
@@ -109,8 +98,6 @@ import GoogleSignInButton from '@/components/GoogleSignInButton/GoogleSignInButt
 </GoogleSignInButton>
 ```
 
-**Styling**: Self-contained in `GoogleSignInButton.css` (not in global styles)
-
 ### Firebase Configuration
 Required environment variables in `.env.local`:
 ```env
@@ -122,11 +109,6 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 ```
-
-**Firebase Console Setup:**
-1. Enable Email/Password provider
-2. Enable Google provider
-3. Add authorized domains
 
 ---
 
@@ -141,66 +123,28 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 - **Flexibility**: Different courses can have completely different mechanics
 - **No shared course logic**: Only UI components and utilities are shared
 
-### Course Categories
+### Levels
 
-#### 1. Flashcard-based Courses
+Levels can be of 4 types: 'characters', 'numbers', 'words', 'phrases'
+
+#### characters
+Flip cards to learn individual items with "Mark as Learned" confirmation
+
+#### numbers
+Flip cards to learn individual items with "Mark as Learned" confirmation
+
+#### words
+Flip cards to learn individual items with "Mark as Learned" confirmation
+
+#### phrases
+Use sentence construction gameplay where users build Georgian sentences by selecting words in correct order
+
+### Levels
 - **Alphabet** (`/app/learn/1/page.tsx`)
 - **Numbers** (`/app/learn/2/page.tsx`)
-- **Words** (`/app/learn/3/page.tsx`)
-- **Gameplay**: Flip cards to learn individual items with "Mark as Learned" confirmation
+- **Basic Words** (`/app/learn/3/page.tsx`)
+- **Essential Phrases** (`/app/learn/4/page.tsx`)
 
-#### 2. Phrase Construction Courses
-All phrase courses use sentence construction gameplay where users build Georgian sentences by selecting words in correct order:
-
-- **Phrases Advanced** (`/app/learn/4/page.tsx`)
-- **Business Georgian** (`/app/learn/5/page.tsx`)
-
-### Course File Structure
-
-Every course's `page.tsx` contains:
-
-#### 1. Configuration Constants
-```typescript
-const COURSE_ID = 'phrases-restaurant';      // Unique identifier for Firebase
-const COURSE_TITLE = 'Restaurant & Food';    // Display name
-const COURSE_DESCRIPTION = 'Georgian phrases for dining...'; // Intro description
-```
-
-#### 2. Inline Gameplay Component
-Each course defines its own gameplay component (e.g., `PhraseComponent`, `FlashcardLetter`). For phrase courses, this includes:
-- Word selection and sentence construction logic
-- Answer validation
-- Memory progress display (3-dot system)
-- Correct/incorrect feedback
-
-#### 3. State Management
-```typescript
-// Progress tracking
-const [learnedItems, setLearnedItems] = useState<number[]>([]);
-const [itemsMemory, setItemsMemory] = useState<Record<number, Memory>>({});
-const [isInitialized, setIsInitialized] = useState(false);
-
-// Gameplay flow
-const [isGameplayActive, setIsGameplayActive] = useState(false);
-const [processedItems, setProcessedItems] = useState<number[]>([]);
-const [itemsToReview, setItemsToReview] = useState<Item[]>([]);
-const [allCardsReviewed, setAllCardsReviewed] = useState(false);
-```
-
-#### 4. Business Logic Functions
-Each course implements its own:
-- `startGameplay()` - Initialize learning session
-- `resetGameplay()` - Return to intro screen  
-- `handleCorrectAnswer()` - Process correct answers (phrase courses)
-- `handleWrongAnswer()` - Process incorrect answers (phrase courses)
-- `markAsLearned()` - Mark item as learned (flashcard courses)
-- `markAsToReview()` - Mark item as reviewed
-
-#### 5. Three-Screen Flow
-All courses follow this pattern:
-1. **Intro Screen** - Progress stats, description, "Start learning" button
-2. **Gameplay Screen** - Active learning experience
-3. **Completion Screen** - Session summary with options to continue or go back
 
 ### What's Shared vs Isolated
 
@@ -235,51 +179,10 @@ All courses follow this pattern:
 6. **Import required styles** - For phrase courses, import `PhraseAdvancedComponent.css`
 
 
-### Adding Google Sign-In to a New Component
-
-```tsx
-import { useAuth } from '@/contexts/AuthContext';
-import GoogleSignInButton from '@/components/GoogleSignInButton/GoogleSignInButton';
-
-function MyComponent() {
-  const { loginWithGoogle } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleGoogleSignIn = async () => {
-    try {
-      setError('');
-      setLoading(true);
-      await loginWithGoogle();
-      // User is now authenticated
-    } catch (error: any) {
-      if (error.code === 'auth/popup-closed-by-user') {
-        setError('Sign-in cancelled');
-      } else if (error.code === 'auth/popup-blocked') {
-        setError('Pop-up blocked');
-      } else {
-        setError('Failed to sign in');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <GoogleSignInButton 
-      onClick={handleGoogleSignIn}
-      disabled={loading}
-    />
-  );
-}
-```
-
 ### Code Organization Principles
 1. **Feature-first**: Organize by feature, not file type
 2. **Component composition**: Build complex UIs from simple components
-3. **Custom hooks**: Extract reusable logic
-4. **Type safety**: Use TypeScript for everything
-5. **Isolated styles**: Component-specific CSS in component folders (like GoogleSignInButton)
+3. **Isolated styles**: Component-specific CSS in component folders (like GoogleSignInButton)
 
 ### Key Files to Understand
 - `src/app/layout.tsx` - App root with AuthProvider
