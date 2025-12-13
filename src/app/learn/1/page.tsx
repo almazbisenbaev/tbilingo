@@ -438,7 +438,8 @@ export default function AlphabetLevel() {
                 />
               </Link>
             </div>
-            <h1 className="navbar-title">Learn alphabet</h1>
+            {/* Previously hardcoded: "Learn alphabet" */}
+            <h1 className="navbar-title">{courseInfo?.title ? `Learn ${courseInfo.title}` : 'Learn alphabet'}</h1>
             <div className="navbar-aside"></div>
           </div>
         </div>

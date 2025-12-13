@@ -422,7 +422,8 @@ export default function BusinessWorkPage() {
                 <Image src="/images/icon-back.svg" alt="Back" width={24} height={24} />
               </Link>
             </div>
-            <h1 className="navbar-title">{LEVEL_TITLE}</h1>
+            {/* Previously hardcoded: LEVEL_TITLE = "Business & Work" */}
+            <h1 className="navbar-title">{courseInfo?.title || LEVEL_TITLE}</h1>
             <div className="navbar-aside"></div>
           </div>
         </div>
@@ -479,7 +480,8 @@ export default function BusinessWorkPage() {
                 <Image src="/images/icon-back.svg" alt="Back" width={24} height={24} />
               </button>
             </div>
-            <h1 className="navbar-title">{LEVEL_TITLE}</h1>
+            {/* Previously hardcoded: LEVEL_TITLE = "Business & Work" */}
+            <h1 className="navbar-title">{courseInfo?.title || LEVEL_TITLE}</h1>
             <div className="navbar-aside"></div>
           </div>
         </div>

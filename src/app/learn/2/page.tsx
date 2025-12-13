@@ -431,7 +431,8 @@ export default function NumbersLevel() {
                 />
               </Link>
             </div>
-            <h1 className="navbar-title">Learn numbers</h1>
+            {/* Previously hardcoded: "Learn numbers" */}
+            <h1 className="navbar-title">{courseInfo?.title ? `Learn ${courseInfo.title}` : 'Learn numbers'}</h1>
             <div className="navbar-aside"></div>
           </div>
         </div>

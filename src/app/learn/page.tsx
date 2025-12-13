@@ -181,6 +181,9 @@ function LearnTabView() {
     isCompleted: boolean;
     loading: boolean;
     type?: LevelType;
+    title?: string;
+    description?: string;
+    icon?: string;
   }>>({});
 
   const [globalLoading, setGlobalLoading] = useState(true);
@@ -203,13 +206,25 @@ function LearnTabView() {
 
       await Promise.all(LEVELS.map(async (level) => {
         try {
-          // Fetch level metadata (including type) from Firestore
+          // Fetch level metadata (title/description/icon/type) from Firestore
           const levelDocRef = doc(db, 'courses', level.id);
           const levelDocSnap = await getDoc(levelDocRef);
 
           let levelType = level.type; // Use default from config as fallback
+          let levelTitle = level.title;
+          let levelDescription: string | undefined = undefined;
+          let levelIcon = level.icon;
           if (levelDocSnap.exists()) {
             const levelData = levelDocSnap.data();
+            if (levelData.title) {
+              levelTitle = levelData.title as string;
+            }
+            if (levelData.description) {
+              levelDescription = levelData.description as string;
+            }
+            if (levelData.icon) {
+              levelIcon = levelData.icon as string;
+            }
             if (levelData.type) {
               levelType = levelData.type as LevelType;
             }
@@ -226,10 +241,22 @@ function LearnTabView() {
             isCompleted: false,
             loading: false,
             type: levelType,
+            title: levelTitle,
+            description: levelDescription,
+            icon: levelIcon,
           };
         } catch (error) {
           console.error(`Error fetching items for level ${level.id}:`, error);
-          newLevelsData[level.id] = { totalItems: 0, learnedItems: 0, isCompleted: false, loading: false, type: level.type };
+          // Previously hardcoded titles were used directly from LEVELS (e.g. 'Alphabet', 'Numbers', 'Basic Words', ...)
+          newLevelsData[level.id] = {
+            totalItems: 0,
+            learnedItems: 0,
+            isCompleted: false,
+            loading: false,
+            type: level.type,
+            title: level.title,
+            icon: level.icon,
+          };
         }
       }));
 
@@ -281,7 +308,12 @@ function LearnTabView() {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [user]);
 
-  const handleLockedClick = (requiredTitle: string) => {
+  const handleLockedClick = (requiredLevelId?: string, fallbackRequiredTitle?: string) => {
+    // Previously hardcoded required titles were passed from LEVELS (e.g. 'Learn Alphabet', 'Learn Numbers').
+    const requiredTitle = requiredLevelId
+      ? (levelsData[requiredLevelId]?.title || fallbackRequiredTitle || '')
+      : (fallbackRequiredTitle || '');
+
     setRequiredLevelTitle(requiredTitle);
     setShowLockedDialog(true);
   };
@@ -322,18 +354,21 @@ function LearnTabView() {
             ? !(levelsData[level.requiredLevelId]?.isCompleted)
             : false;
 
+          const title = levelsData[level.id]?.title || level.title;
+          const icon = levelsData[level.id]?.icon || level.icon;
+
           return (
             <div key={level.id} className="level-item-wrapper">
               <LevelLink
                 href={`/learn/${level.id}`}
-                title={level.title}
-                icon={level.icon}
+                title={title}
+                icon={icon}
                 disabled={false}
                 locked={isLocked}
                 progress={getCompletionPercentage(data.learnedItems, data.totalItems)}
                 completedItems={data.learnedItems}
                 totalItems={data.totalItems}
-                onLockedClick={() => handleLockedClick(level.requiredLevelTitle || '')}
+                onLockedClick={() => handleLockedClick(level.requiredLevelId, level.requiredLevelTitle)}
               />
             </div>
           );

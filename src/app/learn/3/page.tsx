@@ -416,7 +416,8 @@ export default function BasicWordsLevel() {
                 />
               </Link>
             </div>
-            <h1 className="navbar-title">Basic Words</h1>
+            {/* Previously hardcoded: "Basic Words" */}
+            <h1 className="navbar-title">{courseInfo?.title || 'Basic Words'}</h1>
             <div className="navbar-aside"></div>
           </div>
         </div>
