@@ -49,9 +49,11 @@ const COURSE_FIELDS: Record<string, { name: string; label: string; type?: string
     { name: 'english', label: 'English' },
     { name: 'georgian', label: 'Georgian' },
     { name: 'latin', label: 'Latin' },
-    { name: 'transcription', label: 'Transcription' },
-    { name: 'audioUrl', label: 'Audio URL' },
-  ]
+  ],
+  '4': [ // Phrases
+    { name: 'english', label: 'English' },
+    { name: 'georgian', label: 'Georgian' },
+  ],
 };
 
 export default function AdminPage() {
