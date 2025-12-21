@@ -6,7 +6,7 @@ console.log(level_id);
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
-import { PhraseAdvancedItem, PhraseAdvancedMemory } from '@/types';
+import { PhraseItem, PhraseMemory } from '@/types';
 import { shuffleArray } from '@/utils/shuffle-array';
 import { collection, doc, getDocs, setDoc, getDoc, query, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
@@ -35,9 +35,9 @@ function BusinessWorkProgressCard({
   onLoaded,
 }: {
   course: { title: string; description: string; icon: string };
-  phrases: PhraseAdvancedItem[];
+  phrases: PhraseItem[];
   onLoading: () => void;
-  onLoaded: (learnedIds: number[]) => void;
+  onLoaded: (learnedIds: number[], itemProgress: Record<string, number>) => void;
 }) {
   const [learnedCount, setLearnedCount] = useState(0);
 
@@ -51,6 +51,7 @@ function BusinessWorkProgressCard({
       try {
         const user = auth.currentUser;
         let learnedIds: number[] = [];
+        let itemProgress: Record<string, number> = {};
 
         if (user) {
           const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
@@ -58,18 +59,19 @@ function BusinessWorkProgressCard({
           const learnedItemIds: string[] = progressSnap.exists()
             ? (((progressSnap.data() as any).learnedItemIds as string[]) || [])
             : [];
+          itemProgress = progressSnap.exists() ? ((progressSnap.data() as any).itemProgress || {}) : {};
           learnedIds = learnedItemIds.map((id) => parseInt(id));
         }
 
         if (cancelled) return;
 
         setLearnedCount(learnedIds.length);
-        onLoaded(learnedIds);
+        onLoaded(learnedIds, itemProgress);
       } catch (e) {
         console.error('Error loading progress:', e);
         if (!cancelled) {
           setLearnedCount(0);
-          onLoaded([]);
+          onLoaded([], {});
         }
       }
     };
@@ -115,17 +117,17 @@ export default function BusinessWorkPage() {
 
 
   // State for phrases data fetching
-  const [phrases, setPhrases] = useState<PhraseAdvancedItem[]>([]);
+  const [phrases, setPhrases] = useState<PhraseItem[]>([]);
   const [phrasesLoading, setPhrasesLoading] = useState<boolean>(true);
   const [phrasesError, setPhrasesError] = useState<string | null>(null);
 
   const [learnedPhrases, setLearnedPhrases] = useState<number[]>([]);
   const [progressLoaded, setProgressLoaded] = useState(false);
-  const [phrasesMemory, setPhrasesMemory] = useState<Record<number, PhraseAdvancedMemory>>({});
+  const [phrasesMemory, setPhrasesMemory] = useState<Record<number, PhraseMemory>>({});
 
   const [isGameplayActive, setIsGameplayActive] = useState<boolean>(false);
   const [processedPhrases, setProcessedPhrases] = useState<number[]>([]);
-  const [phrasesToReview, setPhrasesToReview] = useState<PhraseAdvancedItem[]>([]);
+  const [phrasesToReview, setPhrasesToReview] = useState<PhraseItem[]>([]);
   const [allCardsReviewed, setAllCardsReviewed] = useState<boolean>(false);
 
   const [courseInfo, setCourseInfo] = useState<{title: string, description: string, icon: string} | null>(null);
@@ -172,7 +174,7 @@ export default function BusinessWorkPage() {
         const itemsRef = collection(db, 'courses', String(level_id), 'items');
         const qItems = query(itemsRef);
         const snapshot = await getDocs(qItems);
-        const phraseItems: PhraseAdvancedItem[] = snapshot.docs.map(docSnap => ({
+        const phraseItems: PhraseItem[] = snapshot.docs.map(docSnap => ({
           id: typeof docSnap.id === 'string' ? parseInt(docSnap.id) : (docSnap.id as unknown as number),
           english: (docSnap.data() as any).english,
           georgian: (docSnap.data() as any).georgian,
@@ -196,18 +198,20 @@ export default function BusinessWorkPage() {
   const handleProgressLoading = () => {
     setProgressLoaded(false);
     setLearnedPhrases([]);
-    const emptyMemory: Record<number, PhraseAdvancedMemory> = {};
+    const emptyMemory: Record<number, PhraseMemory> = {};
     phrases.forEach((phrase) => {
       emptyMemory[phrase.id] = { correctAnswers: 0, isLearned: false };
     });
     setPhrasesMemory(emptyMemory);
   };
 
-  const handleProgressLoaded = (learnedIds: number[]) => {
-    const nextMemory: Record<number, PhraseAdvancedMemory> = {};
+  const handleProgressLoaded = (learnedIds: number[], itemProgress: Record<string, number>) => {
+    const nextMemory: Record<number, PhraseMemory> = {};
     phrases.forEach((phrase) => {
       const isLearned = learnedIds.includes(phrase.id);
-      nextMemory[phrase.id] = { correctAnswers: isLearned ? 3 : 0, isLearned };
+      let correct = itemProgress[String(phrase.id)] || 0;
+      if (isLearned) correct = 3; // Enforce 3 if in learned list
+      nextMemory[phrase.id] = { correctAnswers: correct, isLearned };
     });
     setPhrasesMemory(nextMemory);
     setLearnedPhrases(learnedIds);
@@ -259,34 +263,48 @@ export default function BusinessWorkPage() {
       const nextCorrect = Math.min(3, current.correctAnswers + 1);
       const nextLearned = nextCorrect >= 3;
       const updated = { correctAnswers: nextCorrect, isLearned: nextLearned };
+      
       if (nextLearned && !learnedPhrases.includes(phraseId)) {
         setLearnedPhrases(lp => lp.includes(phraseId) ? lp : [...lp, phraseId]);
-        const user = auth.currentUser;
-        if (user) {
-          (async () => {
-            try {
-              const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
-              const snap = await getDoc(progressRef);
-              const currentDoc = snap.exists() ? (snap.data() as any) : null;
-              const currentIds: string[] = currentDoc?.learnedItemIds || [];
-              if (!currentIds.includes(String(phraseId))) {
-                const updatedIds = [...currentIds, String(phraseId)];
-                const isFinished = currentDoc?.isFinished === true || (phrases.length > 0 && updatedIds.length >= phrases.length);
-                await setDoc(progressRef, {
-                  userId: user.uid,
-                  courseId: String(level_id),
-                  learnedItemIds: updatedIds,
-                  isFinished,
-                  lastUpdated: serverTimestamp(),
-                  createdAt: currentDoc?.createdAt || serverTimestamp()
-                }, { merge: true });
-              }
-            } catch (e) {
-              console.error('❌ Error saving learned phrase:', e);
-            }
-          })();
-        }
       }
+      
+      const user = auth.currentUser;
+      if (user) {
+        (async () => {
+          try {
+            const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
+            const snap = await getDoc(progressRef);
+            const currentDoc = snap.exists() ? (snap.data() as any) : null;
+            const currentIds: string[] = currentDoc?.learnedItemIds || [];
+            const currentItemProgress = currentDoc?.itemProgress || {};
+
+            let updatedIds = [...currentIds];
+            if (nextLearned) {
+              if (!updatedIds.includes(String(phraseId))) {
+                updatedIds.push(String(phraseId));
+              }
+            }
+
+            const updatedItemProgress = { ...currentItemProgress, [String(phraseId)]: nextCorrect };
+
+            const isFinished = currentDoc?.isFinished === true || (phrases.length > 0 && updatedIds.length >= phrases.length);
+            
+            await setDoc(progressRef, {
+              userId: user.uid,
+              courseId: String(level_id),
+              learnedItemIds: updatedIds,
+              itemProgress: updatedItemProgress,
+              isFinished,
+              lastUpdated: serverTimestamp(),
+              createdAt: currentDoc?.createdAt || serverTimestamp()
+            }, { merge: true });
+            
+          } catch (e) {
+            console.error('❌ Error saving learned phrase:', e);
+          }
+        })();
+      }
+      
       return { ...prev, [phraseId]: updated };
     });
   };
@@ -302,38 +320,43 @@ export default function BusinessWorkPage() {
         setLearnedPhrases(prevLearned => prevLearned.filter(id => id !== phraseId));
       }
 
-      // Persist "unlearn" transition so Firestore matches in-memory state.
-      // Keep isFinished monotonic (once true, never set back to false).
-      if (wasLearned && !nextLearned) {
-        const user = auth.currentUser;
-        if (user) {
-          (async () => {
-            try {
-              const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
-              const snap = await getDoc(progressRef);
-              const currentDoc = snap.exists() ? (snap.data() as any) : null;
-              const currentIds: string[] = currentDoc?.learnedItemIds || [];
-              if (currentIds.includes(String(phraseId))) {
-                const updatedIds = currentIds.filter((id) => id !== String(phraseId));
-                const isFinished = currentDoc?.isFinished === true || (phrases.length > 0 && updatedIds.length >= phrases.length);
-                await setDoc(
-                  progressRef,
-                  {
-                    userId: user.uid,
-                    courseId: String(level_id),
-                    learnedItemIds: updatedIds,
-                    isFinished,
-                    lastUpdated: serverTimestamp(),
-                    createdAt: currentDoc?.createdAt || serverTimestamp(),
-                  },
-                  { merge: true }
-                );
-              }
-            } catch (e) {
-              console.error('❌ Error persisting unlearned phrase:', e);
+      // Persist "unlearn" and updated count so Firestore matches in-memory state.
+      const user = auth.currentUser;
+      if (user) {
+        (async () => {
+          try {
+            const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
+            const snap = await getDoc(progressRef);
+            const currentDoc = snap.exists() ? (snap.data() as any) : null;
+            const currentIds: string[] = currentDoc?.learnedItemIds || [];
+            const currentItemProgress = currentDoc?.itemProgress || {};
+
+            let updatedIds = [...currentIds];
+            if (!nextLearned) {
+               updatedIds = updatedIds.filter((id) => id !== String(phraseId));
             }
-          })();
-        }
+            
+            const updatedItemProgress = { ...currentItemProgress, [String(phraseId)]: nextCorrect };
+
+            const isFinished = currentDoc?.isFinished === true || (phrases.length > 0 && updatedIds.length >= phrases.length);
+            
+            await setDoc(
+              progressRef,
+              {
+                userId: user.uid,
+                courseId: String(level_id),
+                learnedItemIds: updatedIds,
+                itemProgress: updatedItemProgress,
+                isFinished,
+                lastUpdated: serverTimestamp(),
+                createdAt: currentDoc?.createdAt || serverTimestamp(),
+              },
+              { merge: true }
+            );
+          } catch (e) {
+            console.error('❌ Error persisting unlearned phrase:', e);
+          }
+        })();
       }
       return { ...prev, [phraseId]: updated };
     });

@@ -21,7 +21,7 @@ export interface WordItem {
   latin: string;
 }
 
-export interface PhraseAdvancedItem {
+export interface PhraseItem {
   id: number;
   english: string;
   georgian: string;
@@ -29,7 +29,7 @@ export interface PhraseAdvancedItem {
   fakeWords: string[];
 }
 
-export interface PhraseAdvancedMemory {
+export interface PhraseMemory {
   correctAnswers: number;
   isLearned: boolean;
 }

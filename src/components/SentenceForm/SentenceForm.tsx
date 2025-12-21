@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { PhraseAdvancedItem, PhraseAdvancedMemory } from '@/types';
+import { PhraseItem, PhraseMemory } from '@/types';
 import { processGeorgianSentence, normalizeForComparison } from '@/utils/georgian-text-utils';
 import { shuffleArray } from '@/utils/shuffle-array';
 import './SentenceForm.css';
 
 interface SentenceFormProps {
-  phrase: PhraseAdvancedItem;
-  memory: PhraseAdvancedMemory;
+  phrase: PhraseItem;
+  memory: PhraseMemory;
   onNext: () => void;
   onCorrectAnswer: () => void;
   onWrongAnswer: () => void;
