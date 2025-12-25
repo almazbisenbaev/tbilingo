@@ -2,7 +2,7 @@
 
 "use client";
 
-const level_id = 2;
+const level_id = 'numbers';
 console.log(level_id);
 
 import { useState, useEffect } from 'react';
