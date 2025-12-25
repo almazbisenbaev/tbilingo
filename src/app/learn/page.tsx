@@ -265,7 +265,8 @@ function LearnTabView() {
       if (user) {
         await Promise.all(LEVELS.map(async (level) => {
           try {
-            const progressRef = doc(db, 'users', user.uid, 'progress', level.id);
+            const targetProgressId = level.courseId || level.id;
+            const progressRef = doc(db, 'users', user.uid, 'progress', targetProgressId);
             const progressSnap = await getDoc(progressRef);
 
             if (progressSnap.exists()) {

@@ -2,7 +2,7 @@
 
 "use client";
 
-const level_id = 1;
+const level_id = 'alphabet';
 const course_id = 'alphabet';
 
 import { useState, useEffect } from 'react';

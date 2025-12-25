@@ -87,7 +87,10 @@ export default function AdminPage() {
   
   const [isRenamingCourse, setIsRenamingCourse] = useState<boolean>(false);
   const [newCourseId, setNewCourseId] = useState<string>("");
-
+  const [isMigratingProgress, setIsMigratingProgress] = useState<boolean>(false);
+  const [sourceProgressId, setSourceProgressId] = useState<string>("");
+  const [targetProgressId, setTargetProgressId] = useState<string>("");
+  
   const router = useRouter();
 
   useEffect(() => {
@@ -298,12 +301,74 @@ export default function AdminPage() {
         
         await fetchCourses();
         await fetchItems(newCourseId);
-        
+
         alert("Course cloned successfully!");
 
     } catch (error) {
         console.error("Error renaming course:", error);
         alert("Error renaming course: " + error);
+    } finally {
+        setLoadingData(false);
+    }
+  };
+
+  const handleMigrateUserProgress = async (oldId: string, newId: string) => {
+    setLoadingData(true);
+    try {
+        console.log(`Starting migration of user progress from ${oldId} to ${newId}...`);
+        
+        // 1. Get all users
+        const usersSnap = await getDocs(collection(db, 'users'));
+        console.log(`Found ${usersSnap.size} users.`);
+
+        let batch = writeBatch(db);
+        let opCount = 0;
+        let processedUsers = 0;
+
+        for (const userDoc of usersSnap.docs) {
+            const userId = userDoc.id;
+            
+            // NOTE: The user was having issues where it said "Found 1 user" or similar, 
+            // likely because they expected it to find all users with progress. 
+            // The previous logic checked for a specific document ID.
+            // Let's make sure we are looking at the right path: users/{userId}/progress/{oldId}
+            
+            const oldProgressRef = doc(db, 'users', userId, 'progress', oldId);
+            const newProgressRef = doc(db, 'users', userId, 'progress', newId);
+
+            const oldProgressSnap = await getDoc(oldProgressRef);
+            
+            if (oldProgressSnap.exists()) {
+                console.log(`Found progress for user ${userId} in course ${oldId}`);
+                const data = oldProgressSnap.data();
+                // Clone data to new ID, merge to preserve existing data in target if any
+                batch.set(newProgressRef, { ...data, courseId: newId }, { merge: true });
+                
+                opCount++;
+                processedUsers++;
+
+                if (opCount >= 400) {
+                    await batch.commit();
+                    batch = writeBatch(db);
+                    opCount = 0;
+                }
+            } else {
+                // console.log(`No progress found for user ${userId} in course ${oldId}`);
+            }
+        }
+
+        if (opCount > 0) {
+            await batch.commit();
+        }
+
+        alert(`Migration complete! Processed progress for ${processedUsers} users.`);
+        setIsMigratingProgress(false);
+        setSourceProgressId("");
+        setTargetProgressId("");
+
+    } catch (error) {
+        console.error("Error migrating user progress:", error);
+        alert("Error migrating user progress: " + error);
     } finally {
         setLoadingData(false);
     }
@@ -365,7 +430,17 @@ export default function AdminPage() {
   return (
     <div className="flex h-screen flex-col bg-gray-50">
       <header className="bg-white shadow-sm p-4 flex justify-between items-center border-b">
-        <h1 className="text-xl font-bold">Admin Dashboard</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-xl font-bold">Admin Dashboard</h1>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setIsMigratingProgress(true)}
+          >
+            <FileType className="h-4 w-4 mr-2" />
+            Migrate User Progress
+          </Button>
+        </div>
         <div className="text-sm text-gray-600">
           Logged in as: <span className="font-semibold">{currentUser.email}</span>
         </div>
@@ -532,35 +607,94 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* Rename Course Modal */}
+      {/* Rename/Clone Course Modal */}
       {isRenamingCourse && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md shadow-xl">
+          <Card className="w-full max-w-lg shadow-xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle>Clone Course</CardTitle>
+              <CardTitle>Clone / Rename Course</CardTitle>
               <Button variant="ghost" size="icon" onClick={() => setIsRenamingCourse(false)}>
                 <X className="h-4 w-4" />
               </Button>
             </CardHeader>
-            <CardContent className="space-y-4 pt-4">
-              <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-3 rounded text-sm">
-                Warning: This will create a new course with the new ID and copy all items. The original course will NOT be deleted.
-              </div>
+            <CardContent className="space-y-6 pt-4">
+              <p className="text-sm text-gray-500">
+                Create a copy of <strong>{selectedCourse?.title || selectedCourse?.id}</strong> (and its items) with a new ID.
+              </p>
+              
               <div className="space-y-2">
-                <Label htmlFor="new-course-id">New Course ID</Label>
-                <Input 
-                  id="new-course-id" 
-                  value={newCourseId} 
-                  onChange={(e) => setNewCourseId(e.target.value)}
-                  placeholder="new-course-id"
-                />
-              </div>
-              <div className="flex justify-end gap-2 pt-4">
-                <Button variant="outline" onClick={() => setIsRenamingCourse(false)}>Cancel</Button>
-                <Button onClick={handleRenameCourse}>Clone Course</Button>
+                  <Label htmlFor="new-course-id">New Course ID</Label>
+                  <div className="flex gap-2">
+                      <Input 
+                          id="new-course-id" 
+                          value={newCourseId} 
+                          onChange={(e) => setNewCourseId(e.target.value)}
+                          placeholder="e.g. alphabet"
+                      />
+                      <Button onClick={handleRenameCourse} disabled={!newCourseId}>
+                          Clone
+                      </Button>
+                  </div>
               </div>
             </CardContent>
           </Card>
+        </div>
+      )}
+
+      {/* Migrate Progress Modal - Standalone */}
+      {isMigratingProgress && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-lg shadow-xl">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle>Migrate User Progress</CardTitle>
+                    <Button variant="ghost" size="icon" onClick={() => setIsMigratingProgress(false)}>
+                        <X className="h-4 w-4" />
+                    </Button>
+                </CardHeader>
+                <CardContent className="space-y-6 pt-4">
+                    <div className="bg-blue-50 border border-blue-200 text-blue-800 p-3 rounded text-sm">
+                        This tool copies user progress from one Course ID to another for ALL users. 
+                        It does NOT delete the original progress.
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="source-progress-id">Original Course ID (Source)</Label>
+                            <Input 
+                                id="source-progress-id" 
+                                value={sourceProgressId} 
+                                onChange={(e) => setSourceProgressId(e.target.value)}
+                                placeholder="e.g. 1"
+                            />
+                            <p className="text-xs text-gray-500">The ID of the progress collection to copy FROM.</p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="target-progress-id">New Course ID (Target)</Label>
+                            <Input 
+                                id="target-progress-id" 
+                                value={targetProgressId} 
+                                onChange={(e) => setTargetProgressId(e.target.value)}
+                                placeholder="e.g. alphabet"
+                            />
+                            <p className="text-xs text-gray-500">The ID of the progress collection to copy TO.</p>
+                        </div>
+
+                        <div className="pt-2 flex justify-end">
+                            <Button 
+                                onClick={() => {
+                                    if(confirm(`Are you sure you want to copy progress from "${sourceProgressId}" to "${targetProgressId}" for ALL users?`)) {
+                                        handleMigrateUserProgress(sourceProgressId, targetProgressId);
+                                    }
+                                }}
+                                disabled={!sourceProgressId || !targetProgressId}
+                            >
+                                Start Migration
+                            </Button>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
       )}
 
