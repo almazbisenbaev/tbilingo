@@ -2,7 +2,7 @@
 
 "use client";
 
-const level_id = 3;
+const level_id = 'words-basic';
 console.log(level_id);
 
 import { useState, useEffect } from 'react';

@@ -46,7 +46,7 @@ const COURSE_FIELDS: Record<string, { name: string; label: string; type?: string
     { name: 'translation', label: 'Translation' },
     { name: 'translationLatin', label: 'Translation (Latin)' },
   ],
-  '3': [ // Words
+  'words-basic': [ // Words
     { name: 'english', label: 'English' },
     { name: 'georgian', label: 'Georgian' },
     { name: 'latin', label: 'Latin' },
