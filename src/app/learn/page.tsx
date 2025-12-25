@@ -27,6 +27,7 @@ const UNLOCK_ALL_LEVELS_FOR_TESTING = false;
 
 interface LevelConfig {
   id: string;
+  courseId?: string; // If different from id
   title: string;
   icon: string;
   requiredLevelId?: string;
@@ -35,7 +36,7 @@ interface LevelConfig {
 }
 
 const LEVELS: LevelConfig[] = [
-  { id: '1', title: 'Alphabet', icon: '/images/icon-alphabet.svg', type: 'characters' },
+  { id: '1', courseId: 'alphabet', title: 'Alphabet', icon: '/images/icon-alphabet.svg', type: 'characters' },
   { id: '2', title: 'Numbers', icon: '/images/icon-numbers.svg', requiredLevelId: '1', requiredLevelTitle: 'Learn Alphabet', type: 'numbers' },
   { id: '3', title: 'Basic Words', icon: '/images/icon-phrases.svg', requiredLevelId: '2', requiredLevelTitle: 'Learn Numbers', type: 'words' },
   { id: '4', title: 'Essential Phrases', icon: '/images/icon-phrases.svg', requiredLevelId: '3', requiredLevelTitle: 'Basic Words', type: 'phrases' },
@@ -207,7 +208,8 @@ function LearnTabView() {
       await Promise.all(LEVELS.map(async (level) => {
         try {
           // Fetch level metadata (title/description/icon/type) from Firestore
-          const levelDocRef = doc(db, 'courses', level.id);
+          const targetCourseId = level.courseId || level.id;
+          const levelDocRef = doc(db, 'courses', targetCourseId);
           const levelDocSnap = await getDoc(levelDocRef);
 
           let levelType = level.type; // Use default from config as fallback
@@ -231,7 +233,7 @@ function LearnTabView() {
           }
 
           // Fetch items count
-          const itemsRef = collection(db, 'courses', level.id, 'items');
+          const itemsRef = collection(db, 'courses', targetCourseId, 'items');
           const q = query(itemsRef);
           const snapshot = await getDocs(q);
 

@@ -3,6 +3,7 @@
 "use client";
 
 const level_id = 1;
+const course_id = 'alphabet';
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -136,7 +137,7 @@ export default function AlphabetLevel() {
   useEffect(() => {
     const fetchCourseInfo = async () => {
       try {
-        const courseRef = doc(db, 'courses', String(level_id));
+        const courseRef = doc(db, 'courses', course_id);
         const courseSnap = await getDoc(courseRef);
         if (courseSnap.exists()) {
           const data = courseSnap.data();
@@ -173,7 +174,7 @@ export default function AlphabetLevel() {
       try {
         setAlphabetLoading(true);
         setAlphabetError(null);
-        const itemsRef = collection(db, 'courses', String(level_id), 'items');
+        const itemsRef = collection(db, 'courses', course_id, 'items');
         const qItems = query(itemsRef);
         const snapshot = await getDocs(qItems);
         const alphabetItems: AlphabetItem[] = snapshot.docs.map(docSnap => ({

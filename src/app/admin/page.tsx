@@ -10,9 +10,10 @@ import {
   getDoc, 
   setDoc, 
   deleteDoc, 
+  writeBatch,
 } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
-import { Loader2, Plus, Trash2, Edit, X, ChevronRight, Search, Save } from 'lucide-react';
+import { Loader2, Plus, Trash2, Edit, X, ChevronRight, Search, Save, FileType } from 'lucide-react';
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -34,7 +35,7 @@ interface CourseItem {
 
 // Field definitions for known courses
 const COURSE_FIELDS: Record<string, { name: string; label: string; type?: string }[]> = {
-  '1': [ // Alphabet
+  'alphabet': [ // Alphabet
     { name: 'character', label: 'Character' },
     { name: 'name', label: 'Name' },
     { name: 'pronunciation', label: 'Pronunciation' },
@@ -83,6 +84,9 @@ export default function AdminPage() {
   const [isEditingItem, setIsEditingItem] = useState<boolean>(false);
   const [itemForm, setItemForm] = useState<CourseItem>({ id: '' });
   const [isJsonMode, setIsJsonMode] = useState<boolean>(false); // Toggle between Form and JSON
+  
+  const [isRenamingCourse, setIsRenamingCourse] = useState<boolean>(false);
+  const [newCourseId, setNewCourseId] = useState<string>("");
 
   const router = useRouter();
 
@@ -234,6 +238,77 @@ export default function AdminPage() {
     }
   };
 
+  const handleRenameCourse = async () => {
+    if (!selectedCourse || !newCourseId) return;
+    
+    if (newCourseId === selectedCourse.id) {
+        setIsRenamingCourse(false);
+        return;
+    }
+
+    try {
+        const newDocRef = doc(db, 'courses', newCourseId);
+        const newDocSnap = await getDoc(newDocRef);
+        if (newDocSnap.exists()) {
+            alert(`Course with ID "${newCourseId}" already exists.`);
+            return;
+        }
+
+        if (!confirm(`Are you sure you want to clone "${selectedCourse.id}" to "${newCourseId}"? This will create a new course and copy all items.`)) {
+            return;
+        }
+
+        setLoadingData(true);
+
+        // 1. Create new course doc
+        await setDoc(newDocRef, { ...selectedCourse, id: newCourseId });
+
+        // 2. Move items
+        let currentBatch = writeBatch(db);
+        let count = 0;
+        
+        for (const item of items) {
+            const newItemRef = doc(db, 'courses', newCourseId, 'items', item.id);
+            // const oldItemRef = doc(db, 'courses', selectedCourse.id, 'items', item.id);
+            
+            currentBatch.set(newItemRef, item);
+            // currentBatch.delete(oldItemRef); // We keep the original
+            count += 1; // Only 1 op per item now
+            
+            if (count >= 450) { // Batch limit is 500
+                await currentBatch.commit();
+                currentBatch = writeBatch(db);
+                count = 0;
+            }
+        }
+        
+        if (count > 0) {
+            await currentBatch.commit();
+        }
+
+        // 3. Do NOT delete old course doc
+        // await deleteDoc(doc(db, 'courses', selectedCourse.id));
+
+        // 4. Update UI
+        const newCourse = { ...selectedCourse, id: newCourseId };
+        
+        setIsRenamingCourse(false);
+        setNewCourseId("");
+        setSelectedCourse(newCourse);
+        
+        await fetchCourses();
+        await fetchItems(newCourseId);
+        
+        alert("Course cloned successfully!");
+
+    } catch (error) {
+        console.error("Error renaming course:", error);
+        alert("Error renaming course: " + error);
+    } finally {
+        setLoadingData(false);
+    }
+  };
+
   const startEditCourse = (course?: Course) => {
     if (course) {
       setCourseForm({ ...course });
@@ -333,6 +408,9 @@ export default function AdminPage() {
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => startEditCourse(selectedCourse)}>
                       <Edit className="h-4 w-4 mr-2" /> Edit
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => { setNewCourseId(selectedCourse.id); setIsRenamingCourse(true); }}>
+                      <FileType className="h-4 w-4 mr-2" /> Clone
                     </Button>
                     <Button variant="destructive" size="sm" onClick={() => handleDeleteCourse(selectedCourse.id)}>
                       <Trash2 className="h-4 w-4 mr-2" /> Delete
@@ -448,6 +526,38 @@ export default function AdminPage() {
               <div className="flex justify-end gap-2 pt-4">
                 <Button variant="outline" onClick={() => setIsEditingCourse(false)}>Cancel</Button>
                 <Button onClick={handleSaveCourse}>Save Changes</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Rename Course Modal */}
+      {isRenamingCourse && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md shadow-xl">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle>Clone Course</CardTitle>
+              <Button variant="ghost" size="icon" onClick={() => setIsRenamingCourse(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </CardHeader>
+            <CardContent className="space-y-4 pt-4">
+              <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-3 rounded text-sm">
+                Warning: This will create a new course with the new ID and copy all items. The original course will NOT be deleted.
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new-course-id">New Course ID</Label>
+                <Input 
+                  id="new-course-id" 
+                  value={newCourseId} 
+                  onChange={(e) => setNewCourseId(e.target.value)}
+                  placeholder="new-course-id"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-4">
+                <Button variant="outline" onClick={() => setIsRenamingCourse(false)}>Cancel</Button>
+                <Button onClick={handleRenameCourse}>Clone Course</Button>
               </div>
             </CardContent>
           </Card>
