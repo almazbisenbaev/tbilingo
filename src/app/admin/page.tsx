@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useTransition } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@root/firebaseConfig';
 import { 
@@ -75,7 +75,9 @@ export default function AdminPage() {
   const [loadingData, setLoadingData] = useState<boolean>(false);
   
   // Search state
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(""); // Input value
+  const [filterQuery, setFilterQuery] = useState(""); // Deferred value for filtering
+  const [isPending, startTransition] = useTransition();
 
   // Editor states
   const [isEditingCourse, setIsEditingCourse] = useState<boolean>(false);
@@ -160,6 +162,7 @@ export default function AdminPage() {
   const handleSelectCourse = (course: Course) => {
     setSelectedCourse(course);
     setSearchQuery("");
+    setFilterQuery("");
     setIsEditingCourse(false);
     setIsEditingItem(false);
     fetchItems(course.id);
@@ -170,14 +173,14 @@ export default function AdminPage() {
     : undefined;
 
   const filteredItems = useMemo(() => {
-    if (!searchQuery) return items;
-    const lowerQuery = searchQuery.toLowerCase();
+    if (!filterQuery) return items;
+    const lowerQuery = filterQuery.toLowerCase();
     return items.filter(item => 
       Object.values(item).some(val => 
         String(val).toLowerCase().includes(lowerQuery)
       )
     );
-  }, [items, searchQuery]);
+  }, [items, filterQuery]);
 
   const handleSaveCourse = async () => {
     try {
@@ -434,12 +437,17 @@ export default function AdminPage() {
                   <div className="flex items-center gap-4">
                     <CardTitle>Items ({items.length})</CardTitle>
                     <div className="relative w-64">
-                      <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Search className={`absolute left-2 top-2.5 h-4 w-4 text-muted-foreground ${isPending ? 'animate-pulse text-blue-500' : ''}`} />
                       <Input 
                         placeholder="Search items..." 
                         className="pl-8" 
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          startTransition(() => {
+                            setFilterQuery(e.target.value);
+                          });
+                        }}
                       />
                     </div>
                   </div>
