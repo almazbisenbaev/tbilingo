@@ -51,7 +51,7 @@ const COURSE_FIELDS: Record<string, { name: string; label: string; type?: string
     { name: 'georgian', label: 'Georgian' },
     { name: 'latin', label: 'Latin' },
   ],
-  '4': [ // Phrases
+  'phrases-essential': [ // Phrases
     { name: 'english', label: 'English' },
     { name: 'georgian', label: 'Georgian' },
     { name: 'latin', label: 'Latin' },
@@ -166,7 +166,7 @@ export default function AdminPage() {
   };
 
   const selectedCourseFields = selectedCourse
-    ? (COURSE_FIELDS[selectedCourse.id] || (selectedCourse.type === 'phrases' ? COURSE_FIELDS['4'] : undefined))
+    ? (COURSE_FIELDS[selectedCourse.id] || (selectedCourse.type === 'phrases' ? COURSE_FIELDS['phrases-essential'] : undefined))
     : undefined;
 
   const filteredItems = useMemo(() => {
@@ -325,7 +325,7 @@ export default function AdminPage() {
       const nextItem = { ...item };
       if (
         selectedCourse &&
-        (selectedCourse.type === 'phrases' || selectedCourse.id === '4' || selectedCourse.id === '5') &&
+        (selectedCourse.type === 'phrases' || selectedCourse.id === 'phrases-essential' || selectedCourse.id === '5') &&
         !Array.isArray(nextItem.fakeWords)
       ) {
         nextItem.fakeWords = [];
@@ -336,7 +336,7 @@ export default function AdminPage() {
       const template: any = { id: "" };
       // Pre-fill fields based on course type
       if (selectedCourse) {
-        const fields = COURSE_FIELDS[selectedCourse.id] || (selectedCourse.type === 'phrases' ? COURSE_FIELDS['4'] : undefined);
+        const fields = COURSE_FIELDS[selectedCourse.id] || (selectedCourse.type === 'phrases' ? COURSE_FIELDS['phrases-essential'] : undefined);
         if (fields) {
           fields.forEach(f => template[f.name] = f.type === 'stringArray' ? [] : "");
         }
