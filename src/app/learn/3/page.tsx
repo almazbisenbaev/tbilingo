@@ -1,8 +1,8 @@
-// Level: Basic Words
+// Level: Numbers
 
 "use client";
 
-const level_id = 'words-basic';
+const level_id = 'numbers';
 console.log(level_id);
 
 import { useState, useEffect } from 'react';
@@ -12,19 +12,20 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperType } from 'swiper/types';
 import 'swiper/css';
 
-import { WordItem, PendingWordAction } from '@/types';
-import { shuffleArray } from '@/utils/shuffle-array';
-import FlashcardWord from '@/components/FlashcardWord/FlashcardWord';
+import { NumberItem, PendingNumberAction } from '@/types';
+// import { shuffleArray } from '@/utils/shuffle-array';
+import FlashcardNumber from '@/components/FlashcardNumber/FlashcardNumber';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 // import SuccessModal from '@/components/SuccessModal';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
+
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { collection, doc, getDocs, setDoc, getDoc, query, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
 
-function BasicWordsProgressCard({
+function NumbersProgressCard({
   course,
   total,
   onLoading,
@@ -100,34 +101,34 @@ function BasicWordsProgressCard({
         </div>
         <ProgressBar current={learnedCount} total={total} width="100%" />
         <div className="mt-2 text-center text-sm text-gray-400">
-          {learnedCount} / {total} words learned
+          {learnedCount} / {total} numbers learned
         </div>
       </div>
     </div>
   );
 }
 
-export default function BasicWordsLevel() {
+export default function NumbersLevel() {
 
 
-  // State for words data fetching
-  const [words, setWords] = useState<WordItem[]>([]);
-  const [wordsLoading, setWordsLoading] = useState<boolean>(true);
-  const [wordsError, setWordsError] = useState<string | null>(null);
+  // State for numbers data fetching
+  const [numbers, setNumbers] = useState<NumberItem[]>([]);
+  const [numbersLoading, setNumbersLoading] = useState<boolean>(true);
+  const [numbersError, setNumbersError] = useState<string | null>(null);
 
-  const [learnedWords, setLearnedWords] = useState<number[]>([]); // Store words that the user has learned
+  const [learnedNumbers, setLearnedNumbers] = useState<number[]>([]); // Store numbers that the viewers has seen during the gameplay
   const [progressLoaded, setProgressLoaded] = useState(false);
 
   // Gameplay states
   const [isGameplayActive, setIsGameplayActive] = useState<boolean>(false);
-  const [processedWords, setProcessedWords] = useState<number[]>([]);
-  const [wordsToReview, setWordsToReview] = useState<WordItem[]>([]);
+  const [processedNumbers, setProcessedNumbers] = useState<number[]>([]);
+  const [numbersToReview, setNumbersToReview] = useState<NumberItem[]>([]);
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [allCardsReviewed, setAllCardsReviewed] = useState<boolean>(false);
 
   // Confirmation dialog state
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-  const [pendingLearnedAction, setPendingLearnedAction] = useState<{ wordId: number } | null>(null);
+  const [pendingLearnedAction, setPendingLearnedAction] = useState<{ numberId: number } | null>(null);
 
   const [courseInfo, setCourseInfo] = useState<{title: string, description: string, icon: string} | null>(null);
 
@@ -140,23 +141,23 @@ export default function BasicWordsLevel() {
         if (courseSnap.exists()) {
           const data = courseSnap.data();
           setCourseInfo({
-            title: data.title || 'Basic Words',
-            description: data.description || 'Essential vocabulary for daily use',
-            icon: data.icon || '/images/icon-phrases.svg'
+            title: data.title || 'Numbers',
+            description: data.description || 'Learn to count in Georgian',
+            icon: data.icon || '/images/icon-numbers.svg'
           });
         } else {
            setCourseInfo({
-            title: 'Basic Words',
-            description: 'Essential vocabulary for daily use',
-            icon: '/images/icon-phrases.svg'
+            title: 'Numbers',
+            description: 'Learn to count in Georgian',
+            icon: '/images/icon-numbers.svg'
           });
         }
       } catch (e) {
         console.error('Error fetching course info:', e);
          setCourseInfo({
-            title: 'Basic Words',
-            description: 'Essential vocabulary for daily use',
-            icon: '/images/icon-phrases.svg'
+            title: 'Numbers',
+            description: 'Learn to count in Georgian',
+            icon: '/images/icon-numbers.svg'
           });
       }
     };
@@ -165,54 +166,52 @@ export default function BasicWordsLevel() {
 
   // const isHydrated = useStoreHydration();
 
-
-
-  // Fetch words data from Firebase
+  // Fetch numbers data from Firebase
   useEffect(() => {
-    const fetchWordsData = async () => {
+    const fetchNumbersData = async () => {
       try {
-        setWordsLoading(true);
-        setWordsError(null);
+        setNumbersLoading(true);
+        setNumbersError(null);
 
         const itemsRef = collection(db, 'courses', String(level_id), 'items');
         const qItems = query(itemsRef);
         const snapshot = await getDocs(qItems);
-        const wordItems: WordItem[] = snapshot.docs.map(docSnap => ({
+        const numberItems: NumberItem[] = snapshot.docs.map(docSnap => ({
           id: typeof docSnap.id === 'string' ? parseInt(docSnap.id) : (docSnap.id as unknown as number),
-          english: (docSnap.data() as any).english,
-          georgian: (docSnap.data() as any).georgian,
-          latin: (docSnap.data() as any).latin
+          number: (docSnap.data() as any).number,
+          translation: (docSnap.data() as any).translation,
+          translationLatin: (docSnap.data() as any).translationLatin
         })).sort((a, b) => a.id - b.id);
-        setWords(wordItems);
+        setNumbers(numberItems);
 
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        console.error('❌ Error fetching words data:', error);
-        setWordsError(errorMessage);
+        console.error('❌ Error fetching numbers data:', error);
+        setNumbersError(errorMessage);
       } finally {
-        setWordsLoading(false);
+        setNumbersLoading(false);
       }
     };
 
-    fetchWordsData();
+    fetchNumbersData();
   }, []);
 
   const handleProgressLoading = () => {
     setProgressLoaded(false);
-    setLearnedWords([]);
+    setLearnedNumbers([]);
   };
 
   const handleProgressLoaded = (learnedIds: number[]) => {
-    setLearnedWords(learnedIds);
+    setLearnedNumbers(learnedIds);
     setProgressLoaded(true);
   };
 
   // Check if all cards have been reviewed - moved to top level to avoid hooks order issues
   useEffect(() => {
-    if (wordsToReview.length > 0 && processedWords.length === wordsToReview.length) {
+    if (numbersToReview.length > 0 && processedNumbers.length === numbersToReview.length) {
       setAllCardsReviewed(true);
     }
-  }, [processedWords, wordsToReview]);
+  }, [processedNumbers, numbersToReview]);
 
   useEffect(() => {
     if (allCardsReviewed) {
@@ -223,7 +222,7 @@ export default function BasicWordsLevel() {
           const progressRef = doc(db, 'users', user.uid, 'progress', String(level_id));
           const snap = await getDoc(progressRef);
           const learnedItemIds: string[] = snap.exists() ? ((snap.data() as any).learnedItemIds || []) : [];
-          const totalItems = words.length;
+          const totalItems = numbers.length;
           if (totalItems > 0 && learnedItemIds.length >= totalItems) {
             await setDoc(
               progressRef,
@@ -242,17 +241,17 @@ export default function BasicWordsLevel() {
         }
       })();
     }
-  }, [allCardsReviewed, words.length]);
+  }, [allCardsReviewed, numbers.length]);
 
   // Show loading state
-  if (wordsLoading) {
+  if (numbersLoading) {
     return (
       <div className="fullscreen-center">Loading...</div>
     );
   }
 
   // Show error state
-  if (wordsError) {
+  if (numbersError) {
     return (
       <div style={{
         display: 'flex',
@@ -261,14 +260,14 @@ export default function BasicWordsLevel() {
         minHeight: '100svh',
         flexDirection: 'column'
       }}>
-        <p>Error loading words: {wordsError}</p>
+        <p>Error loading numbers: {numbersError}</p>
         <button onClick={() => window.location.reload()}>Retry</button>
       </div>
     );
   }
 
   // Show empty state
-  if (words.length === 0) {
+  if (numbers.length === 0) {
     return (
       <div style={{
         display: 'flex',
@@ -277,40 +276,44 @@ export default function BasicWordsLevel() {
         minHeight: '100svh',
         flexDirection: 'column'
       }}>
-        <p>No words data found. Please check the manual data entry guide.</p>
+        <p>No numbers data found. Please check the manual data entry guide.</p>
         <Link href="/learn">Go back to home</Link>
       </div>
     );
   }
 
   /**
-   * Initializes the gameplay session with word/phrase items
-   * Selects 10 random items from unlearned words
+   * Initializes the gameplay session with flashcards
+   * This function:
+   * 1. Loads the user's progress from localStorage
+   * 2. Filters out already learned numbers
+   * 3. Randomly selects numbers for the current session
+   * 4. Sets up the UI for the learning experience
    */
   const startGameplay = () => {
-    const learnedWordsInFirebase = learnedWords;
-    const unlearnedWords = words.filter((word: any) => !learnedWordsInFirebase.includes(word.id)) as WordItem[];
+    const learnedNumbersInFirebase = learnedNumbers;
+    const unlearnedNumbers = numbers.filter((number: any) => !learnedNumbersInFirebase.includes(number.id)) as NumberItem[];
 
     // Reset session state
-    setProcessedWords([]);
+    setProcessedNumbers([]);
 
-    // Shuffle remaining words and select a subset for this session
-    const shuffledWords = shuffleArray(unlearnedWords);
-    // Limit to 10 words per session for better learning experience
-    const selectedWords = shuffledWords.slice(0, 10);
+    // No need to shuffle numbers, they should be learned in order
+    // Limit to 10 numbers per session for better learning experience
+    const selectedNumbers = unlearnedNumbers.slice(0, 10);
 
     // Update state to start the gameplay
-    setWordsToReview(selectedWords);
+    setNumbersToReview(selectedNumbers);
     setIsGameplayActive(true);
   };
 
 
 
   /**
-   * Persists a learned word to the progress store
-   * @param wordId - The ID of the word to save as learned
+   * Persists a learned number to the progress store to maintain user progress across sessions
+   * This function is called when a user confirms they've learned a number
+   * @param numberId - The ID of the number to save as learned
    */
-  const saveItemAsLearned = (wordId: number) => {
+  const saveItemAsLearned = (numberId: number) => {
     const user = auth.currentUser;
     if (!user) return;
     (async () => {
@@ -319,11 +322,11 @@ export default function BasicWordsLevel() {
         const snap = await getDoc(progressRef);
         const current = snap.exists() ? (snap.data() as any) : null;
         const currentIds: string[] = current?.learnedItemIds || [];
-        if (currentIds.includes(String(wordId))) return;
-        const updatedIds = [...currentIds, String(wordId)];
+        if (currentIds.includes(String(numberId))) return;
+        const updatedIds = [...currentIds, String(numberId)];
 
         // Check if level is finished
-        const isFinished = words.length > 0 && updatedIds.length >= words.length;
+        const isFinished = numbers.length > 0 && updatedIds.length >= numbers.length;
 
         await setDoc(progressRef, {
           userId: user.uid,
@@ -334,48 +337,60 @@ export default function BasicWordsLevel() {
           createdAt: current?.createdAt || serverTimestamp()
         }, { merge: true });
       } catch (e) {
-        console.error('❌ Error saving learned word:', e);
+        console.error('❌ Error saving learned number:', e);
       }
     })();
   };
 
   /**
-   * Marks a word as "to review" and advances to the next card
-   * @param wordId - The ID of the word to mark as reviewed
+   * Marks a number as "to review" and advances to the next card
+   * This function is called when the user clicks "Next card" without marking it as learned
+   * @param numberId - The ID of the number to mark as reviewed
    */
-  const markAsToReview = (wordId: number) => {
-    if (!processedWords.includes(wordId)) {
+  const markAsToReview = (numberId: number) => {
+    if (!processedNumbers.includes(numberId)) {
       setTimeout(() => {
-        setProcessedWords((prevProcessedWords) => [...prevProcessedWords, wordId]);
+        setProcessedNumbers((prevProcessedNumbers) => [...prevProcessedNumbers, numberId]);
         swiperInstance?.slideNext();
-      }, 250);
+      }, 250); // Small delay for better user experience
     }
   };
 
   /**
-   * Initiates the process of marking a word as learned
-   * @param wordId - The ID of the word to mark as learned
+   * Initiates the process of marking a number as learned
+   * Shows a confirmation dialog before actually marking it as learned
+   * This is called when the user clicks "Mark as learned" button
+   * @param numberId - The ID of the number to mark as learned
    */
-  const markAsLearned = (wordId: number) => {
-    if (!processedWords.includes(wordId)) {
-      setPendingLearnedAction({ wordId });
+  const markAsLearned = (numberId: number) => {
+    if (!processedNumbers.includes(numberId)) {
+      // Store the action details to be executed after confirmation
+      setPendingLearnedAction({ numberId });
+      // Show confirmation dialog
       setShowConfirmation(true);
     }
   };
 
   /**
-   * Handles the confirmation of marking a word as learned
+   * Handles the confirmation of marking a number as learned
+   * This is executed when the user confirms in the dialog
+   * Performs multiple actions:
+   * 1. Adds the number to processed numbers (for this session)
+   * 2. Adds the number to learned numbers (persistent)
+   * 3. Advances to the next slide
+   * 4. Saves the learned status to localStorage
    */
   const confirmMarkAsLearned = () => {
     if (pendingLearnedAction) {
-      const { wordId } = pendingLearnedAction;
+      const { numberId } = pendingLearnedAction;
       setTimeout(() => {
-        setProcessedWords((prev) => [...prev, wordId]);
-        setLearnedWords((prev) => [...prev, wordId]);
-        swiperInstance?.slideNext();
-        saveItemAsLearned(wordId);
-      }, 450);
+        setProcessedNumbers((prev) => [...prev, numberId]); // Add to processed numbers for this session
+        setLearnedNumbers((prev) => [...prev, numberId]); // Add to learned numbers list
+        swiperInstance?.slideNext(); // Animate to the next slide
+        saveItemAsLearned(numberId); // Persist the learned status in localStorage
+      }, 450); // Delay for better user experience and to allow animation to complete
     }
+    // Clean up the confirmation state
     setShowConfirmation(false);
     setPendingLearnedAction(null);
   };
@@ -390,16 +405,16 @@ export default function BasicWordsLevel() {
   const resetGameplay = () => {
     // Ensure intro screen mounts with 0 progress (no stale flash)
     setProgressLoaded(false);
-    setLearnedWords([]);
+    setLearnedNumbers([]);
     setIsGameplayActive(false);
     setAllCardsReviewed(false);
-    setProcessedWords([]);
-    setWordsToReview([]);
+    setProcessedNumbers([]);
+    setNumbersToReview([]);
   };
 
-  // Main words page
+  // Main numbers page
   if (!isGameplayActive) {
-    const isFinished = words.length > 0 && learnedWords.length === words.length;
+    const isFinished = numbers.length > 0 && learnedNumbers.length === numbers.length;
 
     return (
       <div className="app app-screen">
@@ -416,16 +431,16 @@ export default function BasicWordsLevel() {
                 />
               </Link>
             </div>
-            {/* Previously hardcoded: "Basic Words" */}
-            <h1 className="navbar-title">{courseInfo?.title || 'Basic Words'}</h1>
+            {/* Previously hardcoded: "Learn numbers" */}
+            <h1 className="navbar-title">{courseInfo?.title ? `Learn ${courseInfo.title}` : 'Learn numbers'}</h1>
             <div className="navbar-aside"></div>
           </div>
         </div>
 
         {courseInfo && (
-          <BasicWordsProgressCard
+          <NumbersProgressCard
             course={courseInfo}
-            total={words.length}
+            total={numbers.length}
             onLoading={handleProgressLoading}
             onLoaded={handleProgressLoaded}
           />
@@ -437,7 +452,7 @@ export default function BasicWordsLevel() {
               <div className='text-center p-6 bg-green-50 rounded-xl'>
                 <div className="text-4xl mb-2">🎉</div>
                 <h3 className="font-bold text-lg text-green-800">Course Completed!</h3>
-                <p className="text-green-600">You've learned all basic words</p>
+                <p className="text-green-600">You've learned all numbers</p>
               </div>
             ) : (
               <button onClick={startGameplay} className='btn btn-block btn-primary btn-large mb-2'>
@@ -446,6 +461,7 @@ export default function BasicWordsLevel() {
             )}
           </div>
         )}
+
       </div>
     )
   }
@@ -467,8 +483,8 @@ export default function BasicWordsLevel() {
               <div className="navbar-title">
                 {/* Progress bar */}
                 <ProgressBar
-                  current={processedWords.length}
-                  total={wordsToReview.length}
+                  current={processedNumbers.length}
+                  total={numbersToReview.length}
                   width="200px"
                   height={12}
                 />
@@ -486,13 +502,13 @@ export default function BasicWordsLevel() {
               onSwiper={(swiper) => setSwiperInstance(swiper)}
               className="w-full h-full"
             >
-              {wordsToReview.map((item) => {
-                const isLearned = learnedWords.includes(item.id);
+              {numbersToReview.map((item) => {
+                const isLearned = learnedNumbers.includes(item.id);
                 return (
                   <SwiperSlide key={item.id}>
                     <div className={`full-center ${isLearned ? 'gameplay-slide--learned' : 'gameplay-slide--not-learned'}`}>
-                        <FlashcardWord
-                          word={item}
+                        <FlashcardNumber
+                          number={item}
                           onNext={() => markAsToReview(item.id)}
                           onLearned={() => markAsLearned(item.id)}
                         />
@@ -536,7 +552,7 @@ export default function BasicWordsLevel() {
       {/* Confirmation Dialog for Mark as Learned */}
       <ConfirmationDialog
         isOpen={showConfirmation}
-        title="Are you sure you want to mark this item as learned?"
+        title="Are you sure you want to mark this number as learned?"
         confirmText="Confirm"
         cancelText="Cancel"
         onConfirm={confirmMarkAsLearned}
