@@ -158,7 +158,7 @@ const SentenceForm: React.FC<SentenceFormProps> = ({
 
         {/* Action buttons */}
         <div className="phrase-actions">
-          {!isSubmitted ? (
+          {!isSubmitted && (
             <button 
               onClick={handleSubmit}
               disabled={selectedWords.length === 0}
@@ -166,32 +166,45 @@ const SentenceForm: React.FC<SentenceFormProps> = ({
             >
               Check Answer
             </button>
-          ) : (
-            <div className="result-section">
-              <div className={`result-message ${isCorrect ? 'correct' : 'wrong'}`}>
-                {isCorrect ? '✅ Correct!' : '❌ Incorrect'}
-              </div>
-              {!isCorrect && (
-                <div className="correct-answer">
-                  <span className="label">Correct answer:</span>
-                  <span className="answer">{phrase.georgian}</span>
-                </div>
-              )}
-              {phrase.latin && (
-                <div style={{ fontSize: '0.875rem', color: '#6b7280', textAlign: 'center' }}>
-                  {phrase.latin}
-                </div>
-              )}
-              <button 
-                onClick={handleNext}
-                className="btn btn-primary btn-block"
-              >
-                Continue
-              </button>
-            </div>
           )}
         </div>
       </div>
+
+      {/* Result Overlay */}
+      {isSubmitted && (
+        <div className={`result-overlay ${isCorrect ? 'correct' : 'wrong'}`}>
+          <div className="result-content">
+            <div className="result-header">
+              <div className="result-icon">
+                {isCorrect ? '🎉' : '❌'}
+              </div>
+              <div className="result-title">
+                {isCorrect ? 'Correct!' : 'Incorrect'}
+              </div>
+            </div>
+            
+            {!isCorrect && (
+              <div className="correct-answer">
+                <span className="label">Correct answer:</span>
+                <span className="answer">{phrase.georgian}</span>
+              </div>
+            )}
+            
+            {phrase.latin && (
+              <div className="latin-text">
+                {phrase.latin}
+              </div>
+            )}
+            
+            <button 
+              onClick={handleNext}
+              className={`btn btn-block ${isCorrect ? 'btn-success' : 'btn-danger'}`}
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
