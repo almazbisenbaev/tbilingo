@@ -522,7 +522,7 @@ export default function AlphabetLevel() {
       <AnimatePresence mode="wait">
         {allCardsReviewed && (
           <motion.div
-            className="gameplay-finish-screen"
+            className="app app-screen"
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
@@ -531,17 +531,32 @@ export default function AlphabetLevel() {
               ease: [0.34, 1.56, 0.64, 1]
             }}
           >
-            <div className="gameplay-finish-message">
-              <div className='text-center text-4xl'>🙌</div>
-              <h2 className='font-semibold text-2xl'>That's it for today!</h2>
-              <div className='text-lg gameplay-finish-message-text'>
-                <p>You've looked through all the flashcards for this session. You can go back to the homepage and start again.</p>
-              </div>
-              <div className='gameplay-finish-message-actions'>
-                <button onClick={resetGameplay} className='btn btn-small btn-secondary'>Go back</button>
+            
+            <LevelNavbar
+              title={courseInfo?.title ? `Learn ${courseInfo.title}` : 'Learn alphabet'}
+              onBackClick={resetGameplay}
+            />
+
+            <div className="container-480">
+              <div className="text-center">
+                <div className='text-4xl mb-4'>🎉</div>
+                <h2 className='font-semibold text-2xl mb-4'>Great work!</h2>
+                <div className='text-lg'>
+                  <p className='mb-2'>You completed this session!</p>
+                  <p className='mb-2'>Session progress: <b>{charactersToReview.filter(char => learnedCharacters.includes(char.id)).length}</b> characters mastered</p>
+                  <p>Total progress: <b>{learnedCharacters.length}</b> / <b>{allAlphabetItems.length}</b> learned</p>
+                </div>
               </div>
             </div>
 
+            <div className="levelscreen-footer">
+              <button onClick={startGameplay} className='btn btn-block btn-primary mb-2'>
+                Continue Learning
+              </button>
+              <button onClick={resetGameplay} className='btn btn-block btn-secondary'>
+                Go Back
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
