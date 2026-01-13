@@ -26,7 +26,7 @@ import Link from 'next/link';
 const LEVEL_TITLE = 'Greetings';
 const LEVEL_DESCRIPTION = '';
 
-function BusinessWorkProgressCard({
+function GreetingsProgressCard({
   course,
   phrases,
   onLoading,
@@ -109,7 +109,7 @@ function BusinessWorkProgressCard({
   );
 }
 
-export default function BusinessWorkPage() {
+export default function GreetingsPage() {
 
 
 
@@ -310,7 +310,6 @@ export default function BusinessWorkPage() {
   const handleWrongAnswer = async (phraseId: number) => {
     setPhrasesMemory(prev => {
       const current = prev[phraseId] || { correctAnswers: 0, isLearned: false };
-      const wasLearned = current.isLearned;
       const nextCorrect = Math.max(0, current.correctAnswers - 1);
       const nextLearned = nextCorrect >= 3;
       const updated = { correctAnswers: nextCorrect, isLearned: nextLearned };
@@ -444,7 +443,7 @@ export default function BusinessWorkPage() {
         </div>
 
         {courseInfo && (
-          <BusinessWorkProgressCard
+          <GreetingsProgressCard
             course={courseInfo}
             phrases={phrases}
             onLoading={handleProgressLoading}
@@ -495,7 +494,7 @@ export default function BusinessWorkPage() {
                 <Image src="/images/icon-back.svg" alt="Back" width={24} height={24} />
               </button>
             </div>
-            {/* Previously hardcoded: LEVEL_TITLE = "Business & Work" */}
+            {/* Previously hardcoded: LEVEL_TITLE = "Greetings" */}
             <h1 className="navbar-title">{courseInfo?.title || LEVEL_TITLE}</h1>
             <div className="navbar-aside"></div>
           </div>
