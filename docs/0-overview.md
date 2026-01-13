@@ -149,7 +149,7 @@ Use sentence construction gameplay where users build Georgian sentences by selec
 #### ✅ Shared (Acceptable)
 
 **UI Components:**
-- `ErrorState` - Error display
+
 - `AppHeader` - Navigation header
 - `LoadingScreen` - Full-screen loading state
 - `ProgressBar` - Progress indicator

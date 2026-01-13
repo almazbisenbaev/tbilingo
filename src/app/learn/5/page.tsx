@@ -11,7 +11,6 @@ import { shuffleArray } from '@/utils/shuffle-array';
 import { collection, doc, getDocs, setDoc, getDoc, query, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
 
-import ErrorState from '@/components/common/ErrorState';
 import AppHeader from '@/components/layout/AppHeader';
 
 
@@ -410,26 +409,18 @@ export default function BusinessWorkPage() {
   // Show error state
   if (phrasesError) {
     return (
-      <ErrorState
-        title="Loading Error"
-        message={`Error loading phrases: ${phrasesError}`}
-        actionText="Go Home"
-        actionHref="/"
-        showRetry={true}
-      />
+      <div className="fullscreen-center">
+        Error loading phrases: {phrasesError}
+      </div>
     );
   }
 
   // Show empty state
   if (phrases.length === 0) {
     return (
-      <ErrorState
-        title="No Data Found"
-        message="No phrases data found. Please use the migration page to add sample data."
-        actionText="Go to Migration"
-        actionHref="/migrate"
-        showRetry={false}
-      />
+      <div className="fullscreen-center">
+        No phrases data found. Please use the migration page to add sample data.
+      </div>
     );
   }
 
