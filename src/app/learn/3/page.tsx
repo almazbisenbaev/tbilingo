@@ -24,6 +24,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { collection, doc, getDocs, setDoc, getDoc, query, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
+import LevelNavbar from '@/components/LevelNavbar';
 
 function NumbersProgressCard({
   course,
@@ -419,23 +420,10 @@ export default function NumbersLevel() {
     return (
       <div className="app app-screen">
 
-        <div className="navbar">
-          <div className="navbar-row">
-            <div className="navbar-aside">
-              <Link href="/learn" className='navbar-button'>
-                <Image
-                  src="/images/icon-back.svg"
-                  alt="Back"
-                  width={24}
-                  height={24}
-                />
-              </Link>
-            </div>
-            {/* Previously hardcoded: "Learn numbers" */}
-            <h1 className="navbar-title">{courseInfo?.title ? `Learn ${courseInfo.title}` : 'Learn numbers'}</h1>
-            <div className="navbar-aside"></div>
-          </div>
-        </div>
+        <LevelNavbar
+          title={courseInfo?.title ? `Learn ${courseInfo.title}` : 'Learn numbers'}
+          backHref="/learn"
+        />
 
         {courseInfo && (
           <NumbersProgressCard

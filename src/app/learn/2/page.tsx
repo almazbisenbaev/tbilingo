@@ -23,6 +23,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { collection, doc, getDocs, setDoc, getDoc, query, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@root/firebaseConfig';
+import LevelNavbar from '@/components/LevelNavbar';
 
 function BasicWordsProgressCard({
   course,
@@ -404,23 +405,10 @@ export default function BasicWordsLevel() {
     return (
       <div className="app app-screen">
 
-        <div className="navbar">
-          <div className="navbar-row">
-            <div className="navbar-aside">
-              <Link href="/learn" className='navbar-button'>
-                <Image
-                  src="/images/icon-back.svg"
-                  alt="Back"
-                  width={24}
-                  height={24}
-                />
-              </Link>
-            </div>
-            {/* Previously hardcoded: "Basic Words" */}
-            <h1 className="navbar-title">{courseInfo?.title || 'Basic Words'}</h1>
-            <div className="navbar-aside"></div>
-          </div>
-        </div>
+        <LevelNavbar
+          title={courseInfo?.title || 'Basic Words'}
+          backHref="/learn"
+        />
 
         {courseInfo && (
           <BasicWordsProgressCard

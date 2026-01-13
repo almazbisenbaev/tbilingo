@@ -15,6 +15,7 @@ import AppHeader from '@/components/layout/AppHeader';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
 import SentenceForm from '@/components/SentenceForm/SentenceForm';
 import PhraseProgressCard from '@/components/Phrases/PhraseProgressCard';
+import LevelNavbar from '@/components/LevelNavbar';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -342,18 +343,10 @@ export default function GreetingsPage() {
     return (
       <div className="app app-screen">
 
-        <div className="navbar">
-          <div className="navbar-row">
-            <div className="navbar-aside">
-              <Link href="/learn" className='navbar-button'>
-                <Image src="/images/icon-back.svg" alt="Back" width={24} height={24} />
-              </Link>
-            </div>
-            {/* Previously hardcoded: LEVEL_TITLE = "Business & Work" */}
-            <h1 className="navbar-title">{courseInfo?.title || LEVEL_TITLE}</h1>
-            <div className="navbar-aside"></div>
-          </div>
-        </div>
+        <LevelNavbar
+          title={courseInfo?.title || LEVEL_TITLE}
+          backHref="/learn"
+        />
 
         {courseInfo && (
           <PhraseProgressCard
@@ -401,18 +394,10 @@ export default function GreetingsPage() {
         }}
       >
 
-        <div className="navbar">
-          <div className="navbar-row">
-            <div className="navbar-aside">
-              <button onClick={resetGameplay} className='navbar-button'>
-                <Image src="/images/icon-back.svg" alt="Back" width={24} height={24} />
-              </button>
-            </div>
-            {/* Previously hardcoded: LEVEL_TITLE = "Greetings" */}
-            <h1 className="navbar-title">{courseInfo?.title || LEVEL_TITLE}</h1>
-            <div className="navbar-aside"></div>
-          </div>
-        </div>
+        <LevelNavbar
+          title={courseInfo?.title || LEVEL_TITLE}
+          onBackClick={resetGameplay}
+        />
 
         <div className="container-480">
           <div className="text-center">

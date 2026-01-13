@@ -22,6 +22,7 @@ import Link from 'next/link';
 import FlashcardLetter from '@/components/FlashcardLetter/FlashcardLetter';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import ProgressBar from '@/components/ProgressBar/ProgressBar';
+import LevelNavbar from '@/components/LevelNavbar';
 
 
 import { collection, doc, getDocs, setDoc, getDoc, query, serverTimestamp } from 'firebase/firestore';
@@ -427,23 +428,10 @@ export default function AlphabetLevel() {
     return (
       <div className="app app-screen">
 
-        <div className="navbar">
-          <div className="navbar-row">
-            <div className="navbar-aside">
-              <Link href="/learn" className='navbar-button'>
-                <Image
-                  src="/images/icon-back.svg"
-                  alt="Back"
-                  width={24}
-                  height={24}
-                />
-              </Link>
-            </div>
-            {/* Previously hardcoded: "Learn alphabet" */}
-            <h1 className="navbar-title">{courseInfo?.title ? `Learn ${courseInfo.title}` : 'Learn alphabet'}</h1>
-            <div className="navbar-aside"></div>
-          </div>
-        </div>
+        <LevelNavbar
+          title={courseInfo?.title ? `Learn ${courseInfo.title}` : 'Learn alphabet'}
+          backHref="/learn"
+        />
 
         {courseInfo && (
           <AlphabetProgressCard
