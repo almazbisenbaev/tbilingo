@@ -1,7 +1,7 @@
 "use client";
 
-const level_id = 5;
-console.log(level_id);
+const level_id = 'greetings';
+// console.log(level_id);
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -21,11 +21,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 // Numeric level id for data and memory progress
-const LEVEL_ID = '5';
 // Store key for local progress state (UI uses slug)
-const LEVEL_STORE_KEY = 'phrases-business';
-const LEVEL_TITLE = 'Business & Work';
-const LEVEL_DESCRIPTION = 'Professional Georgian phrases for business and work settings';
+// const LEVEL_STORE_KEY = 'greetings';
+const LEVEL_TITLE = 'Greetings';
+const LEVEL_DESCRIPTION = '';
 
 function BusinessWorkProgressCard({
   course,

@@ -3,7 +3,7 @@
 "use client";
 
 const level_id = 'phrases-essential';
-console.log(level_id);
+// console.log(level_id);
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
