@@ -23,7 +23,7 @@ export default function ScopePreview() {
 
         <div className="levels-preview-item">
           <div className="levels-preview-icon">
-            <Image src="/images/icon-numbers.svg" alt="Georgian Numbers" width={38} height={38} />
+            <Image src="/images/icon-numbers.svg" alt="Numbers" width={38} height={38} />
           </div>
           <div className="levels-preview-content">
             <div className="levels-preview-name">Numbers</div>

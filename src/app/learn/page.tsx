@@ -36,11 +36,49 @@ interface LevelConfig {
 }
 
 const LEVELS: LevelConfig[] = [
-  { id: '1', courseId: 'alphabet', title: 'Alphabet', icon: '/images/icon-alphabet.svg', type: 'characters' },
-  { id: '2', courseId: 'words-basic', title: 'Basic Words', icon: '/images/icon-phrases.svg', requiredLevelId: '1', requiredLevelTitle: 'Learn Alphabet', type: 'words' },
-  { id: '3', courseId: 'numbers', title: 'Numbers', icon: '/images/icon-numbers.svg', requiredLevelId: '2', requiredLevelTitle: 'Learn Basic Words', type: 'numbers' },
-  { id: '4', courseId: 'phrases-essential', title: 'Essential Phrases', icon: '/images/icon-phrases.svg', requiredLevelId: '3', requiredLevelTitle: 'Learn Basic Words', type: 'phrases' },
-  { id: '5', courseId: 'greetings', title: "Greetings", icon: '/images/icon-phrases.svg', requiredLevelId: '4', requiredLevelTitle: 'Basic Words', type: 'phrases' },
+  { 
+    id: '1', 
+    courseId: 'alphabet', 
+    title: 'Alphabet', 
+    icon: '/images/icon-alphabet.svg', 
+    type: 'characters' 
+  },
+  { 
+    id: '2', 
+    courseId: 'words-basic', 
+    title: 'Basic Words', 
+    icon: '/images/icon-phrases.svg', 
+    requiredLevelId: '1', 
+    requiredLevelTitle: 'Learn Alphabet', 
+    type: 'words' 
+  },
+  { 
+    id: '3', 
+    courseId: 'phrases-essential', 
+    title: 'Essential Phrases', 
+    icon: '/images/icon-phrases.svg', 
+    requiredLevelId: '2', 
+    requiredLevelTitle: 'Learn Basic Words', 
+    type: 'phrases' 
+  },
+  { 
+    id: '4', 
+    courseId: 'numbers', 
+    title: 'Numbers', 
+    icon: '/images/icon-numbers.svg', 
+    requiredLevelId: '3', 
+    requiredLevelTitle: 'Learn Essential Phrases', 
+    type: 'numbers' 
+  },
+  { 
+    id: '5', 
+    courseId: 'greetings', 
+    title: "Greetings", 
+    icon: '/images/icon-phrases.svg', 
+    requiredLevelId: '4', 
+    requiredLevelTitle: 'Learn Numbers', 
+    type: 'phrases' 
+  },
 ];
 
 // --- Main Component ---
@@ -176,6 +214,7 @@ function SettingsTab() {
 // --- LearnTabView ---
 
 function LearnTabView() {
+
   const [levelsData, setLevelsData] = useState<Record<string, {
     totalItems: number;
     learnedItems: number;
@@ -216,6 +255,7 @@ function LearnTabView() {
           let levelTitle = level.title;
           let levelDescription: string | undefined = undefined;
           let levelIcon = level.icon;
+
           if (levelDocSnap.exists()) {
             const levelData = levelDocSnap.data();
             if (levelData.title) {
@@ -344,6 +384,7 @@ function LearnTabView() {
 
   return (
     <div className="learn-content">
+
       <div className="learn-header">
         <Link href="/">
           <Image src="/images/logo.svg" alt="Tbilingo" width={120} height={48} className='object-contain' />

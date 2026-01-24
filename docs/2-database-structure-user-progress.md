@@ -15,7 +15,7 @@ The document "1" has following fields:
 
 
 
-## 2nd course (Georgian Numbers)
+## 2nd course (Numbers)
 
 **users > [user id] > progress > 2**
 

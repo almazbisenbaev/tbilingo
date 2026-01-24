@@ -20,7 +20,7 @@ The item contains these fields:
 
 
 
-## Level 2: Georgian Numbers
+## Level 2: Numbers
 Type: 'numbers'
 
 The level data is located at: **courses > 2 > items > [item id]**
