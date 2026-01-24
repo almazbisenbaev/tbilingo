@@ -109,7 +109,7 @@ function NumbersProgressCard({
   );
 }
 
-export default function NumbersLevel() {
+export default function LevelNumbersPage() {
 
 
   // State for numbers data fetching

@@ -111,7 +111,7 @@ function AlphabetProgressCard({
   );
 }
 
-export default function AlphabetLevel() {
+export default function LevelAlphabetPage() {
 
   // State for alphabet data fetching
   const [allAlphabetItems, setAllAlphabetItems] = useState<AlphabetItem[]>([]);

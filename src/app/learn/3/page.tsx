@@ -25,7 +25,7 @@ import Link from 'next/link';
 const LEVEL_TITLE = 'Essential Phrases';
 const LEVEL_DESCRIPTION = 'Advanced Georgian phrases with sentence construction gameplay';
 
-export default function PhrasesPage() {
+export default function LevelEssentialPhrasesPage() {
 
 
 

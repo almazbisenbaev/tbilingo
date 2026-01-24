@@ -79,6 +79,15 @@ const LEVELS: LevelConfig[] = [
     requiredLevelTitle: 'Learn Numbers', 
     type: 'phrases' 
   },
+  { 
+    id: '6', 
+    courseId: 'pronouns', 
+    title: "Pronouns", 
+    icon: '/images/icon-phrases.svg', 
+    requiredLevelId: '5', 
+    requiredLevelTitle: 'Learn Greetings', 
+    type: 'words' 
+  },
 ];
 
 // --- Main Component ---

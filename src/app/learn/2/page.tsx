@@ -108,7 +108,7 @@ function BasicWordsProgressCard({
   );
 }
 
-export default function BasicWordsLevel() {
+export default function LevelBasicWordsPage() {
 
 
   // State for words data fetching

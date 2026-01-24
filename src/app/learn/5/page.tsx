@@ -23,7 +23,7 @@ import Link from 'next/link';
 const LEVEL_TITLE = 'Greetings';
 const LEVEL_DESCRIPTION = '';
 
-export default function GreetingsPage() {
+export default function LevelGreetingsPage() {
 
 
 
