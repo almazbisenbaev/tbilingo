@@ -410,7 +410,7 @@ export default function AdminPage() {
                 <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
                   <div>
                     <CardTitle className="text-2xl font-bold">{selectedCourse.title || selectedCourse.id}</CardTitle>
-                    <CardDescription>ID: {selectedCourse.id}</CardDescription>
+                    <CardDescription>ID: {selectedCourse.id} {selectedCourse.type && `• Type: ${selectedCourse.type}`}</CardDescription>
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => startEditCourse(selectedCourse)}>
@@ -534,6 +534,21 @@ export default function AdminPage() {
                   onChange={(e) => setCourseForm({...courseForm, description: e.target.value})}
                   placeholder="Course Description"
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="course-type">Type</Label>
+                <select
+                  id="course-type"
+                  value={courseForm.type || ''}
+                  onChange={(e) => setCourseForm({...courseForm, type: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                >
+                  <option value="">Select a type</option>
+                  <option value="characters">Characters</option>
+                  <option value="numbers">Numbers</option>
+                  <option value="words">Words</option>
+                  <option value="phrases">Phrases</option>
+                </select>
               </div>
               <div className="flex justify-end gap-2 pt-4">
                 <Button variant="outline" onClick={() => setIsEditingCourse(false)}>Cancel</Button>
