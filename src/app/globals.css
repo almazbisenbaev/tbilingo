@@ -40,9 +40,9 @@
     @apply border-border;
   }
 
-  body {
+  /* body {
     @apply bg-background text-foreground;
-  }
+  } */
 }
 
 :root {
@@ -92,7 +92,7 @@ body {
   font-size: 1rem;
   transition: .3s cubic-bezier(0.76, 0, 0.24, 1);
   /* background: linear-gradient(180deg, rgba(255, 118, 88, 0.03) 0%, rgba(255, 118, 88, 0.1) 100%), #FFFFFF; */
-  background: #FAEFE8;
+  background: #F6F4F0;
 }
 
 a {
