@@ -71,8 +71,8 @@ export default function LevelLink({
 
             {!locked && !disabled && !isCompleted && (
                 <div className="mt-4">
-                    <Link href={href} className="btn btn-primary btn-block">
-                        Learn now
+                    <Link href={href} className="btn btn-small btn-primary btn-block">
+                        {completedItems > 0 ? 'Continue learning' : 'Learn now'}
                     </Link>
                 </div>
             )}
