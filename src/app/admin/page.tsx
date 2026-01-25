@@ -33,37 +33,37 @@ interface CourseItem {
   [key: string]: any;
 }
 
-// Field definitions for known courses
-const COURSE_FIELDS: Record<string, { name: string; label: string; type?: string }[]> = {
-  'alphabet': [ // Alphabet
+const TYPE_FIELDS: Record<string, { name: string; label: string; type?: string }[]> = {
+  'characters': [
     { name: 'character', label: 'Character' },
     { name: 'name', label: 'Name' },
     { name: 'pronunciation', label: 'Pronunciation' },
     { name: 'audioUrl', label: 'Audio URL' },
   ],
-  'numbers': [ // Numbers
+  'numbers': [
     { name: 'number', label: 'Number' },
     { name: 'translation', label: 'Translation' },
     { name: 'translationLatin', label: 'Translation (Latin)' },
   ],
-  'words-basic': [ // Words
+  'words': [
     { name: 'english', label: 'English' },
     { name: 'georgian', label: 'Georgian' },
     { name: 'latin', label: 'Latin' },
   ],
-  'phrases-essential': [ // Phrases
-    { name: 'english', label: 'English' },
-    { name: 'georgian', label: 'Georgian' },
-    { name: 'latin', label: 'Latin' },
-    { name: 'fakeWords', label: 'Fake Words', type: 'stringArray' },
-  ],
-  '5': [ // Phrases
+  'phrases': [
     { name: 'english', label: 'English' },
     { name: 'georgian', label: 'Georgian' },
     { name: 'latin', label: 'Latin' },
     { name: 'fakeWords', label: 'Fake Words', type: 'stringArray' },
   ],
 };
+
+const getFieldsForCourse = (course: Course | null) => {
+  if (!course) return undefined;
+  if (course.type && TYPE_FIELDS[course.type]) return TYPE_FIELDS[course.type];
+  return undefined;
+};
+
 
 export default function AdminPage() {
   const { currentUser, loading: authLoading } = useAuth();
@@ -168,9 +168,9 @@ export default function AdminPage() {
     fetchItems(course.id);
   };
 
-  const selectedCourseFields = selectedCourse
-    ? (COURSE_FIELDS[selectedCourse.id] || (selectedCourse.type === 'phrases' ? COURSE_FIELDS['phrases-essential'] : undefined))
-    : undefined;
+  const selectedCourseFields = useMemo(() => {
+    return getFieldsForCourse(selectedCourse);
+  }, [selectedCourse]);
 
   const filteredItems = useMemo(() => {
     if (!filterQuery) return items;
@@ -328,7 +328,7 @@ export default function AdminPage() {
       const nextItem = { ...item };
       if (
         selectedCourse &&
-        (selectedCourse.type === 'phrases' || selectedCourse.id === 'phrases-essential' || selectedCourse.id === '5') &&
+        selectedCourse.type === 'phrases' &&
         !Array.isArray(nextItem.fakeWords)
       ) {
         nextItem.fakeWords = [];
@@ -339,7 +339,7 @@ export default function AdminPage() {
       const template: any = { id: "" };
       // Pre-fill fields based on course type
       if (selectedCourse) {
-        const fields = COURSE_FIELDS[selectedCourse.id] || (selectedCourse.type === 'phrases' ? COURSE_FIELDS['phrases-essential'] : undefined);
+        const fields = getFieldsForCourse(selectedCourse);
         if (fields) {
           fields.forEach(f => template[f.name] = f.type === 'stringArray' ? [] : "");
         }
