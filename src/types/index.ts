@@ -50,7 +50,6 @@ export interface LevelLinkProps {
   totalItems?: number; // Total number of items in the level
   completedItems?: number; // Number of completed items
   onLockedClick?: () => void; // Callback when locked level is clicked
-  type?: LevelType; // Level type from Firestore (characters, numbers, words, phrases)
 }
 
 export interface FlashcardProps {
