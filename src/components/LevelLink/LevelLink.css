@@ -4,28 +4,24 @@
     background: #fff;
     border-radius: 12px;
 
-    display: flex;
-    align-items: center;
-    gap: 22px;
-
     width: 100%;
-    min-height: 96px;
-    padding: 28px;
-    padding-right: 32px;
-
-    cursor: pointer;
+    padding: 32px;
 
     transition: .2s;
 }
 
-.level-link:hover {
-    color: #F24822;
-    /* background: #F2482210; */
+.level-link-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 22px;
 }
 
-.level-link:active {
-    /* background: #F2482220; */
-    transform: scale(0.98);
+.level-link-completed {
+    border: 2px solid #22c55e;
+}
+
+.level-link-locked {
+    opacity: 0.8;
 }
 
 .level-link-disabled {
@@ -34,10 +30,6 @@
     color: #000000;
     cursor: not-allowed;
     pointer-events: none;
-}
-
-.level-link-locked {
-    opacity: 0.3;
 }
 
 .level-link-disabled img {

@@ -418,6 +418,7 @@ function LearnTabView() {
                 icon={icon}
                 disabled={false}
                 locked={isLocked}
+                isCompleted={data.isCompleted}
                 progress={getCompletionPercentage(data.learnedItems, data.totalItems)}
                 completedItems={data.learnedItems}
                 totalItems={data.totalItems}

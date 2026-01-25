@@ -19,6 +19,7 @@ export default function LevelLink({
     icon,
     disabled = false,
     locked = false,
+    isCompleted: isCompletedProp = false,
     progress = 0,
     totalItems = 0,
     completedItems = 0,
@@ -33,23 +34,21 @@ export default function LevelLink({
     // Only show progress if mounted AND we have actual data
     const shouldShowProgress = isMounted && !disabled && progress !== undefined && progress >= 0;
 
-    const isCompleted = progress === 100;
+    const isCompleted = isCompletedProp || progress === 100;
 
     // Handle locked level click
-    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const handleCardClick = () => {
         if (locked) {
-            e.preventDefault();
             onLockedClick?.();
         }
     };
 
     return (
-        <>
-            <Link
-                href={href}
-                className={`level-link ${disabled ? 'level-link-disabled' : ''} ${isCompleted ? 'level-link-completed' : ''} ${locked ? 'level-link-locked' : ''}`}
-                onClick={handleClick}
-            >
+        <div
+            className={`level-link ${disabled ? 'level-link-disabled' : ''} ${isCompleted ? 'level-link-completed' : ''} ${locked ? 'level-link-locked cursor-pointer' : ''}`}
+            onClick={handleCardClick}
+        >
+            <div className='level-link-row'>
                 <div className='level-link-icon'>
                     <Image src={icon} alt={title} width={38} height={38} />
                 </div>
@@ -68,7 +67,16 @@ export default function LevelLink({
                         </div>
                     )}
                 </div>
-            </Link>
-        </>
+            </div>
+
+            {!locked && !disabled && !isCompleted && (
+                <div className="mt-4">
+                    <Link href={href} className="btn btn-primary btn-block">
+                        Learn now
+                    </Link>
+                </div>
+            )}
+
+        </div>
     )
 }

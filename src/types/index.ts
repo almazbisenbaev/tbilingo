@@ -46,6 +46,7 @@ export interface LevelLinkProps {
   icon: string;
   disabled: boolean;
   locked?: boolean; // Whether the level is locked (not yet unlocked)
+  isCompleted?: boolean; // Whether the level is completed/passed
   progress?: number; // Percentage of completion (0-100)
   totalItems?: number; // Total number of items in the level
   completedItems?: number; // Number of completed items
