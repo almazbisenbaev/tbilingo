@@ -466,13 +466,24 @@ export default function AdminPage() {
                       <div key={item.id} className="p-4 hover:bg-gray-50 flex justify-between items-center group transition-colors">
                         <div>
                           <div className="font-medium">
-                            {item.name || item.character || item.number || item.english || `Item ${item.id}`}
+                            {item.name || item.character || item.number || item.english || `Item ${item.id}`} <span className="text-gray-400 font-normal ml-2">#{item.id}</span>
                           </div>
                           <div className="text-xs text-gray-500 mt-1 flex flex-wrap gap-2">
-                            {Object.entries(item).slice(0, 4).map(([k, v]) => (
-                                k !== 'id' && typeof v === 'string' && v.length < 50 ? 
-                                <span key={k} className="bg-gray-100 px-1.5 py-0.5 rounded border">{k}: {v}</span> : null
-                            ))}
+                            {Object.entries(item).map(([k, v]) => {
+                                if (k === 'id') return null;
+                                let displayValue = String(v);
+                                if (Array.isArray(v)) {
+                                    displayValue = `[${v.join(', ')}]`;
+                                } else if (typeof v === 'object' && v !== null) {
+                                    displayValue = JSON.stringify(v);
+                                }
+                                
+                                return (
+                                    <span key={k} className="bg-gray-100 px-1.5 py-0.5 rounded border" title={displayValue}>
+                                        <span className="font-semibold">{k}:</span> {displayValue.length > 50 ? displayValue.substring(0, 50) + '...' : displayValue}
+                                    </span>
+                                );
+                            })}
                           </div>
                         </div>
                         <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
