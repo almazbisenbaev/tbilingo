@@ -182,7 +182,8 @@ export default function LevelBasicWordsPage() {
           id: typeof docSnap.id === 'string' ? parseInt(docSnap.id) : (docSnap.id as unknown as number),
           english: (docSnap.data() as any).english,
           georgian: (docSnap.data() as any).georgian,
-          latin: (docSnap.data() as any).latin
+          latin: (docSnap.data() as any).latin,
+          audioUrl: (docSnap.data() as any).audioUrl ?? undefined
         })).sort((a, b) => a.id - b.id);
         setWords(wordItems);
 

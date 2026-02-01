@@ -183,7 +183,7 @@ export default function LevelAlphabetPage() {
           character: (docSnap.data() as any).character,
           name: (docSnap.data() as any).name,
           pronunciation: (docSnap.data() as any).pronunciation,
-          audioUrl: (docSnap.data() as any).audioUrl || ''
+          audioUrl: (docSnap.data() as any).audioUrl ?? undefined
         })).sort((a, b) => a.id - b.id);
         setAllAlphabetItems(alphabetItems);
 

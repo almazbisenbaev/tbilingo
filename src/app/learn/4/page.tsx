@@ -181,7 +181,8 @@ export default function LevelNumbersPage() {
           id: typeof docSnap.id === 'string' ? parseInt(docSnap.id) : (docSnap.id as unknown as number),
           number: (docSnap.data() as any).number,
           translation: (docSnap.data() as any).translation,
-          translationLatin: (docSnap.data() as any).translationLatin
+          translationLatin: (docSnap.data() as any).translationLatin,
+          audioUrl: (docSnap.data() as any).audioUrl ?? undefined
         })).sort((a, b) => a.id - b.id);
         setNumbers(numberItems);
 

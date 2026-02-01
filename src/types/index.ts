@@ -4,7 +4,7 @@ export interface AlphabetItem {
   character: string;
   name: string;
   pronunciation: string;
-  audioUrl: string;
+  audioUrl?: string;
 }
 
 export interface NumberItem {
@@ -12,6 +12,7 @@ export interface NumberItem {
   number: string;
   translation: string;
   translationLatin: string;
+  audioUrl?: string;
 }
 
 export interface WordItem {
@@ -19,6 +20,7 @@ export interface WordItem {
   english: string;
   georgian: string;
   latin: string;
+  audioUrl?: string;
 }
 
 export interface PhraseItem {
@@ -27,6 +29,7 @@ export interface PhraseItem {
   georgian: string;
   latin: string;
   fakeWords: string[];
+  audioUrl?: string;
 }
 
 export interface PhraseMemory {

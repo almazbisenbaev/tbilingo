@@ -92,6 +92,7 @@ export default function LevelGreetingsPage() {
           georgian: (docSnap.data() as any).georgian,
           latin: typeof (docSnap.data() as any).latin === 'string' ? (docSnap.data() as any).latin : '',
           fakeWords: Array.isArray((docSnap.data() as any).fakeWords) ? (docSnap.data() as any).fakeWords : [],
+          audioUrl: (docSnap.data() as any).audioUrl ?? undefined
         })).sort((a, b) => a.id - b.id);
         setPhrases(phraseItems);
 

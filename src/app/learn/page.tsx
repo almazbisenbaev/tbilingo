@@ -202,7 +202,7 @@ function SettingsTab() {
           </div>
         )}
 
-        <div className="settings-footer-credit">Made by <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
+        <div className="settings-footer-credit">Author: <a target="_blank" href="https://www.threads.com/@almazbisenbaev">Almaz Bisenbaev</a></div>
 
       </div>
 

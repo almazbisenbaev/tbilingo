@@ -44,16 +44,19 @@ const TYPE_FIELDS: Record<string, { name: string; label: string; type?: string }
     { name: 'number', label: 'Number' },
     { name: 'translation', label: 'Translation' },
     { name: 'translationLatin', label: 'Translation (Latin)' },
+    { name: 'audioUrl', label: 'Audio URL' },
   ],
   'words': [
     { name: 'english', label: 'English' },
     { name: 'georgian', label: 'Georgian' },
     { name: 'latin', label: 'Latin' },
+    { name: 'audioUrl', label: 'Audio URL' },
   ],
   'phrases': [
     { name: 'english', label: 'English' },
     { name: 'georgian', label: 'Georgian' },
     { name: 'latin', label: 'Latin' },
+    { name: 'audioUrl', label: 'Audio URL' },
     { name: 'fakeWords', label: 'Fake Words', type: 'stringArray' },
   ],
 };
