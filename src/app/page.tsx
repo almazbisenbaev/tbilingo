@@ -36,7 +36,13 @@ export default function LandingPage() {
 
         <div className="landing-actions">
 
-          <Link href="/learn" className="btn btn-primary btn-large btn-block">Learn online</Link>
+          {/* <Link href="/learn" className="btn btn-primary btn-large btn-block">Learn online</Link> */}
+          <Link 
+            href="https://tbilingo-app.vercel.app" 
+            className="btn btn-primary btn-large btn-block"
+          >
+            Learn online
+          </Link>
 
           <div className="landing-secondary-action">
             <button
