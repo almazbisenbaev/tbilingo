@@ -9,19 +9,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: 'https://tbilingo.vercel.app/learn/1',
+      url: 'https://tbilingo.vercel.app/lessons',
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
-      url: 'https://tbilingo.vercel.app/learn/2',
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://tbilingo.vercel.app/learn/3',
+      url: 'https://tbilingo.vercel.app/lessons/1',
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
